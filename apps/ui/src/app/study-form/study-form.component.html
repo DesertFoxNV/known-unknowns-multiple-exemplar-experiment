@@ -1,97 +1,107 @@
-<mat-toolbar color="primary">
-  Study Form
-</mat-toolbar>
+<div class="d-flex justify-content-center align-items-center container min-vh-100">
+  <mat-card>
+    <mat-card-title>Study Form</mat-card-title>
+    <mat-divider></mat-divider>
+    <form [formGroup]="form" class="form-group form-padding-top">
 
-<div class="p-3">
-  <form [formGroup]="form">
-
-    <mat-form-field class="w-100" *ngIf="form.get('participantId') as participantIdCtrl">
-      <mat-label>Participant id</mat-label>
-      <input matInput formControlName="participantId">
-      <mat-error *ngIf="participantIdCtrl.hasError('required')">
-        Participant id is <strong>required</strong>
-      </mat-error>
-      <mat-error *ngIf="participantIdCtrl.hasError('minlength')">
-        Participant id must be a minimum of 3 characters
-      </mat-error>
-    </mat-form-field>
-
-    <mat-checkbox class="w-100 mb-2" formControlName="idk">IDK</mat-checkbox>
-
-    <mat-checkbox class="w-100 mb-2" formControlName="contextualControl">Contextual control</mat-checkbox>
-
-    <mat-form-field class="w-100" *ngIf="form.get('trialTimeout') as trialTimeoutCtrl">
-      <mat-label>Trial timeout</mat-label>
-      <input matInput min="1" max="1000" type="number" formControlName="trialTimeout">
-      <span matSuffix>seconds</span>
-      <mat-error *ngIf="trialTimeoutCtrl.hasError('min')">
-        Trial timeout must be a minimum of 1
-      </mat-error>
-      <mat-error *ngIf="trialTimeoutCtrl.hasError('max')">
-        Trial timeout must be a maximum of 1000
-      </mat-error>
-    </mat-form-field>
-
-    <ng-container formGroupName="balance" *ngIf="form.get('balance') as balanceGroup">
-      <div class="form-group">Balance</div>
-
-      <mat-form-field class="w-100" *ngIf="balanceGroup.get('lessThan') as lessThanCtrl">
-        <mat-label>Less than</mat-label>
-        <input matInput min="1" max="99" type="number" formControlName="lessThan">
-        <mat-error *ngIf="lessThanCtrl.hasError('min')">
-          Less than must be a minimum of 1
+      <mat-form-field *ngIf="form.get('participantId') as participantIdCtrl" appearance="outline">
+        <mat-label>Participant id</mat-label>
+        <input matInput formControlName="participantId">
+        <mat-error *ngIf="participantIdCtrl.hasError('required')">
+          Participant id is <strong>required</strong>
         </mat-error>
-        <mat-error *ngIf="lessThanCtrl.hasError('max')">
-          Less than must be a maximum of 99
+        <mat-error *ngIf="participantIdCtrl.hasError('minlength')">
+          Participant id must be a minimum of 3 characters
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field class="w-100" *ngIf="balanceGroup.get('equalTo') as equalToCtrl">
-        <mat-label>Equal to</mat-label>
-        <input matInput min="1" max="99" type="number" formControlName="equalTo">
-        <mat-error *ngIf="equalToCtrl.hasError('min')">
-          Equal to must be a minimum of 1
+      <mat-checkbox formControlName="idk">IDK</mat-checkbox>
+
+      <mat-checkbox formControlName="contextualControl">Contextual control</mat-checkbox>
+
+      <mat-form-field *ngIf="form.get('trialTimeout') as trialTimeoutCtrl" appearance="outline">
+        <mat-label>Trial timeout</mat-label>
+        <input matInput min="1" max="1000" type="number" formControlName="trialTimeout">
+        <span matSuffix>seconds</span>
+        <mat-error *ngIf="trialTimeoutCtrl.hasError('min')">
+          Trial timeout must be a minimum of 1
         </mat-error>
-        <mat-error *ngIf="equalToCtrl.hasError('max')">
-          Equal to must be a maximum of 99
+        <mat-error *ngIf="trialTimeoutCtrl.hasError('max')">
+          Trial timeout must be a maximum of 1000
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field class="w-100" *ngIf="balanceGroup.get('greaterThan') as greaterThanCtrl">
-        <mat-label>Greater than</mat-label>
-        <input matInput min="1" max="99" type="number" formControlName="greaterThan">
-        <mat-error *ngIf="greaterThanCtrl.hasError('min')">
-          Greater than must be a minimum of 1
-        </mat-error>
-        <mat-error *ngIf="greaterThanCtrl.hasError('max')">
-          Greater than must be a maximum of 99
-        </mat-error>
-      </mat-form-field>
 
-      <mat-form-field class="w-100" *ngIf="balanceGroup.get('idk') as idkCtrl">
-        <mat-label>Idk</mat-label>
-        <input matInput min="1" max="99" type="number" formControlName="idk">
-        <mat-error *ngIf="idkCtrl.hasError('min')">
-          Idk must be a minimum of 1
-        </mat-error>
-        <mat-error *ngIf="idkCtrl.hasError('max')">
-          Idk must be a maximum of 99
-        </mat-error>
-      </mat-form-field>
 
-    </ng-container>
+      <mat-divider></mat-divider>
 
-    <button
-      type="button"
-      class="me-2 mt-2"
-      mat-button
-      color="primary"
-      mat-raised-button
-      [disabled]="form.invalid"
-      (click)="showJson()"
-    >Start
-    </button>
 
-    <button type="button" mat-button color="primary" mat-raised-button [disabled]="true">Create Link</button>
-  </form>
+
+      <div class="form-padding-top" formGroupName="balance" *ngIf="form.get('balance') as balanceGroup">
+        <div class="mat-h4">Balance</div>
+
+        <mat-form-field *ngIf="balanceGroup.get('lessThan') as lessThanCtrl" appearance="outline">
+          <mat-label>Less than</mat-label>
+          <input matInput min="1" max="99" type="number" formControlName="lessThan">
+          <mat-error *ngIf="lessThanCtrl.hasError('min')">
+            Less than must be a minimum of 1
+          </mat-error>
+          <mat-error *ngIf="lessThanCtrl.hasError('max')">
+            Less than must be a maximum of 99
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="balanceGroup.get('equalTo') as equalToCtrl" appearance="outline">
+          <mat-label>Equal to</mat-label>
+          <input matInput min="1" max="99" type="number" formControlName="equalTo">
+          <mat-error *ngIf="equalToCtrl.hasError('min')">
+            Equal to must be a minimum of 1
+          </mat-error>
+          <mat-error *ngIf="equalToCtrl.hasError('max')">
+            Equal to must be a maximum of 99
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="balanceGroup.get('greaterThan') as greaterThanCtrl" appearance="outline">
+          <mat-label>Greater than</mat-label>
+          <input matInput min="1" max="99" type="number" formControlName="greaterThan">
+          <mat-error *ngIf="greaterThanCtrl.hasError('min')">
+            Greater than must be a minimum of 1
+          </mat-error>
+          <mat-error *ngIf="greaterThanCtrl.hasError('max')">
+            Greater than must be a maximum of 99
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="balanceGroup.get('idk') as idkCtrl" appearance="outline">
+          <mat-label>Idk</mat-label>
+          <input matInput min="1" max="99" type="number" formControlName="idk">
+          <mat-error *ngIf="idkCtrl.hasError('min')">
+            Idk must be a minimum of 1
+          </mat-error>
+          <mat-error *ngIf="idkCtrl.hasError('max')">
+            Idk must be a maximum of 99
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+    </form>
+    <mat-divider></mat-divider>
+    <mat-card-actions>
+      <button
+        type="button"
+        class="me-2 mt-2"
+        mat-button
+        color="primary"
+        [disabled]="form.invalid"
+        (click)="showJson()"
+      >Start
+      </button>
+
+      <button type="button" mat-button color="primary" [disabled]="true">Create Link</button>
+    </mat-card-actions>
+  </mat-card>
+
 </div>
+
+
