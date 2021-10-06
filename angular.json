@@ -24,6 +24,7 @@
               "apps/ui/src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "apps/ui/src/styles.scss"
             ],
             "scripts": []
@@ -71,7 +72,14 @@
               "browserTarget": "ui:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "browserTarget": "ui:build",
+            "host": "0.0.0.0",
+            "ssl": true,
+            "sslCert": "certs/localhost-cert.pem",
+            "sslKey": "certs/localhost-key.pem"
+          }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
