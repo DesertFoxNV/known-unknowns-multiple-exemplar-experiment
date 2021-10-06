@@ -1,6 +1,7 @@
 <div class="d-flex justify-content-center align-items-center container min-vh-100">
   <mat-card>
     <mat-card-title>Study Form</mat-card-title>
+    <mat-card-subtitle>Set the conditions and start now, or copy link to start later.</mat-card-subtitle>
     <mat-divider></mat-divider>
     <form [formGroup]="form" class="form-group form-padding-top">
 
@@ -87,10 +88,9 @@
       </div>
     </form>
     <mat-divider></mat-divider>
-    <mat-card-actions>
+    <mat-card-actions align="start">
       <button
         type="button"
-        class="me-2 mt-2"
         mat-button
         color="primary"
         [disabled]="form.invalid"
