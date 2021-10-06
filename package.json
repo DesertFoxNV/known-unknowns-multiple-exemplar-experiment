@@ -22,8 +22,11 @@
     "@angular/platform-browser": "^12.2.0",
     "@angular/platform-browser-dynamic": "^12.2.0",
     "@angular/router": "^12.2.0",
+    "@ngneat/reactive-forms": "^2.0.0",
+    "@ngneat/until-destroy": "^8.1.4",
     "@nrwl/angular": "12.9.0",
     "bootstrap": "^5.1.2",
+    "lodash-es": "^4.17.21",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4"
