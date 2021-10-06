@@ -41,17 +41,6 @@
       <div class="form-padding-top" formGroupName="balance" *ngIf="form.get('balance') as balanceGroup">
         <div class="mat-h4">Balance</div>
 
-        <mat-form-field *ngIf="balanceGroup.get('lessThan') as lessThanCtrl" appearance="outline">
-          <mat-label>Less than</mat-label>
-          <input matInput min="1" max="99" type="number" formControlName="lessThan">
-          <mat-error *ngIf="lessThanCtrl.hasError('min')">
-            Less than must be a minimum of 1
-          </mat-error>
-          <mat-error *ngIf="lessThanCtrl.hasError('max')">
-            Less than must be a maximum of 99
-          </mat-error>
-        </mat-form-field>
-
         <mat-form-field *ngIf="balanceGroup.get('equalTo') as equalToCtrl" appearance="outline">
           <mat-label>Equal to</mat-label>
           <input matInput min="1" max="99" type="number" formControlName="equalTo">
@@ -60,6 +49,17 @@
           </mat-error>
           <mat-error *ngIf="equalToCtrl.hasError('max')">
             Equal to must be a maximum of 99
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="balanceGroup.get('lessThan') as lessThanCtrl" appearance="outline">
+          <mat-label>Less than</mat-label>
+          <input matInput min="1" max="99" type="number" formControlName="lessThan">
+          <mat-error *ngIf="lessThanCtrl.hasError('min')">
+            Less than must be a minimum of 1
+          </mat-error>
+          <mat-error *ngIf="lessThanCtrl.hasError('max')">
+            Less than must be a maximum of 99
           </mat-error>
         </mat-form-field>
 
