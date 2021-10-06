@@ -94,11 +94,10 @@
         mat-button
         color="primary"
         [disabled]="form.invalid"
-        (click)="showJson()"
       >Start
       </button>
 
-      <button type="button" mat-button color="primary" [disabled]="true">Create Link</button>
+      <button type="button" mat-button color="primary" [disabled]="form.invalid" (click)="copyLink()">Copy Link</button>
     </mat-card-actions>
   </mat-card>
 

@@ -31,6 +31,13 @@ export class StudyFormComponent implements OnInit {
     });
   }
 
+  copyLink() {
+    const { balance, ...rest } = this.form.value;
+    const queryParamStr = Object.entries({ ...balance, ...rest }).map(([key, val]) => `${key}=${val}`).join('&');
+    this.clipboard.copy(
+      `https://desertfoxnv.github.io/known-unknowns-multiple-exemplar-experiment/study?${queryParamStr}`);
+  }
+
   ngOnInit(): void {
     this.form.get('idk').valueChanges.pipe(
       tap((idk) => {
@@ -41,10 +48,6 @@ export class StudyFormComponent implements OnInit {
       }),
       untilDestroyed(this)
     ).subscribe();
-  }
-
-  showJson() {
-    alert(JSON.stringify(this.form.value))
   }
 
 }
