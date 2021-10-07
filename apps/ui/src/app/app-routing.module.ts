@@ -9,7 +9,11 @@ const routes: Routes = [
   },
   {
     path: 'study-form',
-    loadChildren: () => import('./study-form/study-form.module').then((m) => m.StudyFormModule)
+    loadChildren: () => import('./study-config-form/study-config-form.module').then((m) => m.StudyConfigFormModule)
+  },
+  {
+    path: 'study',
+    loadChildren: () => import('./study/study.module').then((m) => m.StudyModule)
   },
   {
     path: '**',

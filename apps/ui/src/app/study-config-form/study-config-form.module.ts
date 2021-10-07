@@ -7,17 +7,19 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { AutoFocusModule } from '@known-unknowns-multiple-exemplar-experiment/ng/ui-auto-focus-directive';
 
-import { StudyFormRoutingModule } from './study-form-routing.module';
-import { StudyFormComponent } from './study-form.component';
+import { StudyConfigFormRoutingModule } from './study-config-form-routing.module';
+import { StudyConfigFormComponent } from './study-config-form.component';
 
 @NgModule({
   declarations: [
-    StudyFormComponent
+    StudyConfigFormComponent
   ],
   imports: [
+    AutoFocusModule,
     CommonModule,
-    StudyFormRoutingModule,
+    StudyConfigFormRoutingModule,
     MatToolbarModule,
     MatCheckboxModule,
     MatInputModule,
@@ -27,7 +29,7 @@ import { StudyFormComponent } from './study-form.component';
     MatDividerModule
   ],
   exports: [
-    StudyFormComponent
+    StudyConfigFormComponent
   ]
 })
-export class StudyFormModule {}
+export class StudyConfigFormModule {}

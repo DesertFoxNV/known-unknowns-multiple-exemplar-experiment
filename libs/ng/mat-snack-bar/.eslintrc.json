@@ -1,5 +1,5 @@
 {
-  "extends": ["../../.eslintrc.json"],
+  "extends": ["../../../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
   "overrides": [
     {
@@ -21,7 +21,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "kumee",
+            "prefix": "known-unknowns-multiple-exemplar-experiment",
             "style": "kebab-case"
           }
         ]

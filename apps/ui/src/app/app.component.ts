@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'known-unknowns-multiple-exemplar-experiment-root',
+  selector: 'kumee-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

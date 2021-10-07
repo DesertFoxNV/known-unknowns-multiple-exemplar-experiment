@@ -14,12 +14,7 @@
     "default": {
       "runner": "@nrwl/nx-cloud",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e"
-        ],
+        "cacheableOperations": ["build", "lint", "test", "e2e"],
         "accessToken": "ODY5OWQwM2MtMGNhZC00NGJmLWJjZDItNWJkNjI2MTg4YjYzfHJlYWQtd3JpdGU="
       }
     }
@@ -33,14 +28,18 @@
     ]
   },
   "projects": {
+    "ng-mat-snack-bar": {
+      "tags": []
+    },
+    "ng-ui-auto-focus-directive": {
+      "tags": []
+    },
     "ui": {
       "tags": []
     },
     "ui-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "ui"
-      ]
+      "implicitDependencies": ["ui"]
     }
   }
 }

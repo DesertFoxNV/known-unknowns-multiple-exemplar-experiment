@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { StudyFormComponent } from './study-form.component';
+import { StudyConfigFormComponent } from './study-config-form.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: StudyFormComponent
+    component: StudyConfigFormComponent
   },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];
@@ -14,4 +14,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class StudyFormRoutingModule {}
+export class StudyConfigFormRoutingModule {}

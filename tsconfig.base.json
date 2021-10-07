@@ -14,7 +14,14 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@known-unknowns-multiple-exemplar-experiment/ng/mat-snack-bar": [
+        "libs/ng/mat-snack-bar/src/index.ts"
+      ],
+      "@known-unknowns-multiple-exemplar-experiment/ng/ui-auto-focus-directive": [
+        "libs/ng/ui-auto-focus-directive/src/index.ts"
+      ]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
