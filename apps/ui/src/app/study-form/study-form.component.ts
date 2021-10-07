@@ -16,7 +16,7 @@ export class StudyFormComponent implements OnInit {
   form: FormGroup<StudyConditions>;
 
   constructor(private clipboard: Clipboard, private fb: FormBuilder) {
-    const numericValidators1To100 = [Validators.min(1), Validators.max(100)];
+    const numericValidators1To100 = [Validators.required, Validators.min(1), Validators.max(100)];
     this.form = this.fb.group({
       balance: this.fb.group<BalanceConditions>({
         lessThan: [1, numericValidators1To100],
@@ -27,7 +27,7 @@ export class StudyFormComponent implements OnInit {
       contextualControl: [false, Validators.required],
       idk: [false, Validators.required],
       participantId: ['', [Validators.required, Validators.minLength(3)]],
-      trialTimeout: [1, [Validators.min(1), Validators.max(1000)]]
+      trialTimeout: [1, [Validators.required, Validators.min(1), Validators.max(1000)]]
     });
   }
 
