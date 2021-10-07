@@ -14,6 +14,7 @@
 .project
 .classpath
 .c9/
+
 *.launch
 .settings/
 *.sublime-workspace
@@ -26,7 +27,8 @@
 !.vscode/extensions.json
 
 # misc
-Josh Time Sheet.ods
+*.ods#
+*.ods
 /.sass-cache
 /connect.lock
 /coverage
