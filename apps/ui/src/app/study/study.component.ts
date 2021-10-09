@@ -7,7 +7,7 @@ import { StudyConfigService } from '../study-config-form/study-config.service';
 @Component({
   selector: 'kumee-study',
   templateUrl: './study.component.html',
-  styleUrls: ['./study.component.css']
+  styleUrls: ['./study.component.scss']
 })
 export class StudyComponent {
   config$: Observable<StudyConfig>;

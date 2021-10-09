@@ -1,2 +1,27 @@
-<p>study works!</p>
-<p>{{config$ | async | json}}</p>
+<div class="container">
+  <p>study works!</p>
+  <p>{{config$ | async | json}}</p>
+  <button class="button-svg" mat-ripple [style.backgroundImage]="'url(\'../../assets/diagonal-slash.svg\')'">
+    <div>&nbsp;</div>
+  </button>
+  <button class="button-svg" mat-ripple [style.backgroundImage]="'url(\'../../assets/alien-button.svg\')'">
+    <div>&nbsp;</div>
+  </button>
+  <br>
+  <button class="button-svg" mat-ripple [style.backgroundImage]="'url(\'../../assets/button-base.svg\')'">
+    <div>SAME</div>
+  </button>
+  <button class="button-svg" mat-ripple [style.backgroundImage]="'url(\'../../assets/button-base.svg\')'">
+    <div>DIFFERENT</div>
+  </button>
+  <button class="button-svg" mat-ripple [style.backgroundImage]="'url(\'../../assets/button-base.svg\')'">
+    <div>GREATER THAN</div>
+  </button>
+  <button class="button-svg" mat-ripple [style.backgroundImage]="'url(\'../../assets/button-base.svg\')'">
+    <div>LESS THAN</div>
+  </button>
+  <button class="button-svg" mat-ripple [style.backgroundImage]="'url(\'../../assets/button-base.svg\')'">
+    <div>IDK</div>
+  </button>
+</div>
+
