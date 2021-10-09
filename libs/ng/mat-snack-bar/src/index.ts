@@ -1,1 +1,1 @@
-export * from './lib/ng-mat-snack-bar.module';
+export * from './lib/snack-bar.service';

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
+import { StudyConditionService } from '../study-conditions/study-condition.service';
 import { StudyConfig } from '../study-config-form/study-config.interfaces';
 import { StudyConfigService } from '../study-config-form/study-config.service';
 
@@ -9,12 +10,14 @@ import { StudyConfigService } from '../study-config-form/study-config.service';
   styleUrls: ['./study.component.css']
 })
 export class StudyComponent {
-  config: Observable<StudyConfig>;
+  config$: Observable<StudyConfig>;
 
   constructor(
-    private studyConfigSvc: StudyConfigService
+    readonly studyConfigSvc: StudyConfigService,
+    private studyConditionSvc: StudyConditionService
   ) {
-    this.config = this.studyConfigSvc.getConfig();
+    this.config$ = this.studyConfigSvc.config$();
+    this.studyConditionSvc.createStudy();
   }
 
 }

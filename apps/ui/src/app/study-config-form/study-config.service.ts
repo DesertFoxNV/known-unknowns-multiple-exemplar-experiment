@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup } from '@ngneat/reactive-forms';
 import { Observable } from 'rxjs';
 import { catchError, first, map, tap } from 'rxjs/operators';
 import { SnackBarService } from '../../../../../libs/ng/mat-snack-bar/src/lib/snack-bar.service';
-import { studyConfigFromParams } from '../study/param-conversion-functions';
+import { studyConfigFromParams } from '../study/study-config-from-params';
 import { BalanceConfig, StudyConfig } from './study-config.interfaces';
 
 @Injectable({
@@ -35,7 +35,7 @@ export class StudyConfigService {
     });
   }
 
-  getConfig(): Observable<StudyConfig> {
+  config$(): Observable<StudyConfig> {
     return this.activatedRoute.queryParams.pipe(
       first(),
       map(studyConfigFromParams),
