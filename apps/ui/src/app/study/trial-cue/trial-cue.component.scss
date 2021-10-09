@@ -1,0 +1,15 @@
+.cue-svg {
+  &:hover {
+    cursor: default;
+  }
+  strong {
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  margin: 2px;
+  background-color: white;
+  background-size: cover;
+  border: unset;
+  width: 100px;
+  height: 50px;
+}

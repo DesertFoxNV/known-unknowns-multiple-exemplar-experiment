@@ -5,7 +5,7 @@
       "projectType": "library",
       "root": "libs/ng/mat-snack-bar",
       "sourceRoot": "libs/ng/mat-snack-bar/src",
-      "prefix": "known-unknowns-multiple-exemplar-experiment",
+      "prefix": "kumee",
       "architect": {
         "test": {
           "builder": "@nrwl/jest:jest",

@@ -1,0 +1,23 @@
+
+.button-clear-defaults {
+  border: unset;
+}
+
+.button-svg {
+  &:hover {
+    box-shadow: inset 0 0 25px 25px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+  }
+
+  strong {
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  margin: 2px;
+  background-color: white;
+  background-size: cover;
+  border: unset;
+  width: 100px;
+  height: 50px;
+}

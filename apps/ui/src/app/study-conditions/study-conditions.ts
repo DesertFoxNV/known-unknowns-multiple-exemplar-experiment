@@ -1,15 +1,20 @@
-import { getRandomTrigrams } from './get-random-trigram';
-import { randomCueType, RelationCueType } from './relation-cue';
-import { randomTrigramCase, TrigramCase } from './trigram-case';
+import { CueCase, randomTrigramCase } from './cue-case';
+import { getRandomCues } from './get-random-cue';
+import { CueType, randomCueType } from './cue';
 
 export class StudyConditions {
-  relationalCueType: RelationCueType;
-  trigramCase: TrigramCase;
-  trigrams: string[];
+  cues: {
+    case: CueCase,
+    type: CueType,
+    options: string[]
+  };
 
   constructor() {
-    this.relationalCueType = randomCueType();
-    this.trigramCase = randomTrigramCase();
-    this.trigrams = getRandomTrigrams(12, this.trigramCase);
+    const cueCase = randomTrigramCase();
+    this.cues = {
+      case: cueCase,
+      type: randomCueType(),
+      options: getRandomCues(12, cueCase)
+    };
   }
 }

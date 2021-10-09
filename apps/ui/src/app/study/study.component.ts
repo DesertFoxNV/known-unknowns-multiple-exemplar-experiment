@@ -12,6 +12,7 @@ import { StudyConfigService } from '../study-config-form/study-config.service';
 export class StudyComponent {
   config$: Observable<StudyConfig>;
 
+
   constructor(
     readonly studyConfigSvc: StudyConfigService,
     private studyConditionSvc: StudyConditionService

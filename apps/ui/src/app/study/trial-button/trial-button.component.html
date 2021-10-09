@@ -1,0 +1,8 @@
+<div
+  *ngIf="fileName"
+  class="button-svg"
+  mat-ripple
+  [style.backgroundImage]="'url(\'./assets/' + fileName + '\')'"
+>
+  <strong>{{type === cueType.nonArbitrary ? cue : '&nbsp;'}}</strong>
+</div>
