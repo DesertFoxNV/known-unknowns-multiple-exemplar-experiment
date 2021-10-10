@@ -1,0 +1,11 @@
+<div
+  *ngIf="show"
+  (click)="cueClicked.emit(config)"
+  class="button-svg"
+  mat-ripple
+  [@enter]="{ value: '', params: { duration: 500, delay: 500 } }"
+  [@leave]="{ value: '', params: { duration: 250 } }"
+  [style.backgroundImage]="backgroundImage"
+>
+  <strong>{{type === cueType.nonArbitrary ? cue : '&nbsp;'}}</strong>
+</div>

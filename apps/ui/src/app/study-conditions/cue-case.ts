@@ -1,5 +1,10 @@
 import { sample } from 'lodash-es';
 
+export interface TrialButtonConfig {
+  cue: string,
+  fileName: string,
+}
+
 export enum CueCase {
   lower = 'lower',
   upper = 'upper'

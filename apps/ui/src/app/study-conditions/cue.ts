@@ -13,15 +13,17 @@ export function randomCueType(): CueType {
   return cueType;
 }
 
+export const BUTTON_TEXT_FILE_PATH = './assets/button-text.svg';
+
 export enum CueArbitraryFilenames {
-  image1 = 'button-1.svg',
-  image2 = 'button-2.svg',
-  image3 = 'button-3.svg',
-  image4 = 'button-4.svg',
-  image5 = 'button-5.svg',
+  image1 = './assets/button-1.svg',
+  image2 = './assets/button-2.svg',
+  image3 = './assets/button-3.svg',
+  image4 = './assets/button-4.svg',
+  image5 = './assets/button-5.svg',
 }
 
-export const CUES_ARBITRARY_FILE_NAMES: CueArbitraryFilenames[] = Object.values(CueArbitraryFilenames);
+export const CUES_ARBITRARY_FILE_PATHS: CueArbitraryFilenames[] = Object.values(CueArbitraryFilenames);
 
 export enum CueNonArbitrary {
   same = 'SAME',

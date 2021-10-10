@@ -1,0 +1,10 @@
+<button
+  *ngIf="show"
+  [@enter]="{ value: '', params: { duration: 500, delay: delay } }"
+  [@leave]="{ value: '', params: { duration: 250 } }"
+  class="cue-svg" [style.backgroundImage]="backgroundImage"
+>
+  <strong>{{cue}}</strong>
+</button>
+
+
