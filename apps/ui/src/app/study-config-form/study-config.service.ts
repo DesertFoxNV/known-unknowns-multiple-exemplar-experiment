@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { SnackBarService } from '@known-unknowns-multiple-exemplar-experiment/ng/mat-snack-bar';
 import { FormBuilder, FormGroup } from '@ngneat/reactive-forms';
 import { Observable } from 'rxjs';
 import { catchError, first, map, tap } from 'rxjs/operators';
-import { SnackBarService } from '../../../../../libs/ng/mat-snack-bar/src/lib/snack-bar.service';
+import { CueType } from '../study-conditions/cue';
 import { studyConfigFromParams } from '../study/study-config-from-params';
 import { BalanceConfig, StudyConfig } from './study-config.interfaces';
 
@@ -19,6 +20,17 @@ export class StudyConfigService {
     private snackBarSvc: SnackBarService
   ) { }
 
+  config$(): Observable<StudyConfig> {
+    return this.activatedRoute.queryParams.pipe(
+      first(),
+      map(studyConfigFromParams),
+      tap((config) => this.isConfigValid(config)),
+      catchError((err) => {
+        this.snackBarSvc.error(err.message);
+        return [err];
+      }));
+  }
+
   createForm(idKBalanceDisabled = true): FormGroup<StudyConfig> {
     const numericValidators1To100 = [Validators.required, Validators.min(1), Validators.max(100)];
     return this.fb.group({
@@ -29,21 +41,11 @@ export class StudyConfigService {
         idk: [{ value: 1, disabled: idKBalanceDisabled }, numericValidators1To100]
       }),
       contextualControl: [false, Validators.required],
+      cueType: [CueType.nonArbitrary, Validators.required],
       idk: [false, Validators.required],
       participantId: ['', [Validators.required, Validators.minLength(3)]],
       trialTimeout: [1, [Validators.required, Validators.min(1), Validators.max(1000)]]
     });
-  }
-
-  config$(): Observable<StudyConfig> {
-    return this.activatedRoute.queryParams.pipe(
-      first(),
-      map(studyConfigFromParams),
-      tap((config) => this.isConfigValid(config)),
-      catchError((err) => {
-        this.snackBarSvc.error(err.message);
-        return [err];
-      }));
   }
 
   isConfigValid(config: StudyConfig): void {

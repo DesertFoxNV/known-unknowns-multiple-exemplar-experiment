@@ -15,6 +15,7 @@ export function studyConfigFromParams(params: Params): StudyConfig {
     'balance.idk': idk ? paramToNum : undefined,
     'balance.lessThan': paramToNum,
     contextualControl: paramToBool,
+    cueType: paramToStr,
     idk: paramToBool,
     participantId: paramToStr,
     trialTimeout: paramToNum

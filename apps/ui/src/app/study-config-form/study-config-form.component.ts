@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { flatten } from 'flat';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { CUE_TYPES_OPTIONS } from '../study-conditions/cue';
 import { StudyConfig, StudyConfigFlattened } from './study-config.interfaces';
 import { StudyConfigService } from './study-config.service';
 
@@ -16,6 +17,7 @@ import { StudyConfigService } from './study-config.service';
   styleUrls: ['./study-config-form.component.scss']
 })
 export class StudyConfigFormComponent implements OnInit {
+  cueTypeOptions = CUE_TYPES_OPTIONS;
   form: FormGroup<StudyConfig>;
 
   constructor(
@@ -27,7 +29,7 @@ export class StudyConfigFormComponent implements OnInit {
   }
 
   copyLink() {
-    this.clipboard.copy(`${environment.baseUrl}/study?${this.getQueryParamStr()}`);
+    this.clipboard.copy(`${environment.baseUrl}/known-unknowns-multiple-exemplar-experiment/study?${this.getQueryParamStr()}`);
   }
 
   getQueryParamObj(): StudyConfigFlattened {

@@ -20,6 +20,15 @@
 
       <mat-checkbox formControlName="contextualControl">Contextual control</mat-checkbox>
 
+      <mat-form-field>
+        <mat-label>Cue Type</mat-label>
+        <mat-select formControlName="cueType">
+          <mat-option *ngFor="let cueType of cueTypeOptions " [value]="cueType.value">
+            {{cueType.viewValue}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
       <mat-form-field *ngIf="form.get('trialTimeout') as trialTimeoutCtrl" appearance="outline">
         <mat-label>Trial timeout</mat-label>
         <input matInput min="1" max="1000" type="number" formControlName="trialTimeout">

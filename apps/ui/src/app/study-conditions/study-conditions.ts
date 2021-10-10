@@ -18,7 +18,7 @@ export class StudyConditions {
 
   constructor(config: StudyConfig) {
     const cueCase = randomTrigramCase();
-    const cueType = randomCueType();
+    const cueType = config.cueType;
     const buttonCues = shuffle(config.idk ? CUES_NON_ARBITRARY_W_IDK : CUES_NON_ARBITRARY_WO_IDK);
     const arbitraryFileNames = shuffle(CUES_ARBITRARY_FILE_PATHS);
 

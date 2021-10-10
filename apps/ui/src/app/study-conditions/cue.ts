@@ -7,6 +7,13 @@ export enum CueType {
 
 export const CUE_TYPES: CueType[] = Object.values(CueType);
 
+export interface CueTypeOption {
+  value: string;
+  viewValue: string;
+}
+
+export const CUE_TYPES_OPTIONS: CueTypeOption[] = Object.values(CueType).map(ct => ({ value: ct, viewValue: ct }));
+
 export function randomCueType(): CueType {
   const cueType = sample(CUE_TYPES);
   if (cueType === undefined) throw Error('Random cue type returned "undefined"!');
@@ -30,11 +37,12 @@ export enum CueNonArbitrary {
   different = 'DIFFERENT',
   greaterThan = 'GREATER THAN',
   lessThan = 'LESS THAN',
-  idk = 'IDK',
+  idk = `I DON'T KNOW`,
 }
 
-export const CUES_NON_ARBITRARY_W_IDK: CueNonArbitrary[] = Object.values(CueNonArbitrary);
+export const CUES_NON_ARBITRARY_W_IDK: CueNonArbitrary[] = Object.values(CueNonArbitrary).filter(
+  rc => rc !== CueNonArbitrary.different);
 export const CUES_NON_ARBITRARY_WO_IDK: CueNonArbitrary[] = Object.values(CueNonArbitrary).filter(
-  rc => rc !== CueNonArbitrary.idk);
+  rc => rc !== CueNonArbitrary.idk && rc !== CueNonArbitrary.different);
 
 
