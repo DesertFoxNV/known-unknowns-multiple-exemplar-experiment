@@ -37,12 +37,12 @@ export enum CueNonArbitrary {
   different = 'DIFFERENT',
   greaterThan = 'GREATER THAN',
   lessThan = 'LESS THAN',
-  idk = `I DON'T KNOW`,
+  unknown = `UNKNOWN`,
 }
 
 export const CUES_NON_ARBITRARY_W_IDK: CueNonArbitrary[] = Object.values(CueNonArbitrary).filter(
   rc => rc !== CueNonArbitrary.different);
 export const CUES_NON_ARBITRARY_WO_IDK: CueNonArbitrary[] = Object.values(CueNonArbitrary).filter(
-  rc => rc !== CueNonArbitrary.idk && rc !== CueNonArbitrary.different);
+  rc => rc !== CueNonArbitrary.unknown && rc !== CueNonArbitrary.different);
 
 
