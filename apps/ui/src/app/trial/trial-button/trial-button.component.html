@@ -1,11 +1,10 @@
-<div
-  *ngIf="show"
-  (click)="cueClicked.emit(config)"
+<button
+  [@fadeIn]="{value: animate === 'fade-in',  params: { delay: animationDelay}}"
+  [@fadeOut]="animate === 'fade-out'"
   class="button-svg"
-  mat-ripple
-  [@enter]="{ value: '', params: { duration: 500, delay: delay } }"
-  [@leave]="{ value: '', params: { duration: 250 } }"
+  (click)="selected.emit(config)"
+  matRipple
   [style.backgroundImage]="backgroundImage"
 >
-  <strong>{{type === cueType.nonArbitrary ? cue : '&nbsp;'}}</strong>
-</div>
+  <strong>{{config?.isArbitrary ? '&nbsp;' : config?.cue || ''}}</strong>
+</button>

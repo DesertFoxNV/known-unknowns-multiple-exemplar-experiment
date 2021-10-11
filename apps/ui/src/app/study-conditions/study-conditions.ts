@@ -25,7 +25,8 @@ export class StudyConditions {
     this.cues = {
       buttons: buttonCues.map((cue, i) => ({
         cue,
-        fileName: cueType === CueType.nonArbitrary ? BUTTON_TEXT_FILE_PATH : arbitraryFileNames[i]
+        fileName: cueType === CueType.nonArbitrary ? BUTTON_TEXT_FILE_PATH : arbitraryFileNames[i],
+        isArbitrary: config.cueType === CueType.arbitrary
       })),
       case: cueCase,
       type: cueType,

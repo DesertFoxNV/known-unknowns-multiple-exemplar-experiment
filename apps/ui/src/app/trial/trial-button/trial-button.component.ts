@@ -1,38 +1,40 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { fadeInOnEnterAnimation, fadeOutOnLeaveAnimation } from 'angular-animations';
-import { CueType } from '../../study-conditions/cue';
+import { fadeIn } from '../../animations/fade-in.animation';
+import { fadeOut } from '../../animations/fade-out.animation';
+import { BUTTON_TEXT_FILE_PATH } from '../../study-conditions/cue';
 import { TrialButtonConfig } from '../../study-conditions/cue-case';
 
 @Component({
-  selector: 'kumee-trial-button',
+  selector: 'trial-button',
   templateUrl: './trial-button.component.html',
   styleUrls: ['./trial-button.component.scss'],
   animations: [
-    fadeInOnEnterAnimation({ anchor: 'enter' }),
-    fadeOutOnLeaveAnimation({ anchor: 'leave' })
+    fadeIn(),
+    fadeOut({ duration: 250 })
   ]
 })
 export class TrialButtonComponent {
+  animate: 'fade-in'|'fade-out' = 'fade-out';
+  @Input() animationDelay = 0;
   backgroundImage = '';
   config: TrialButtonConfig|undefined;
-  cue = '';
-  @Output() cueClicked = new EventEmitter<TrialButtonConfig>();
-  cueType = CueType;
-  @Input() delay = 0;
-  show = false;
-  @Input() type: CueType|undefined = CueType.arbitrary;
+  @Output() selected = new EventEmitter<TrialButtonConfig|undefined>();
 
-  set(config: TrialButtonConfig) {
-    this.config = config;
-    this.show = false;
-    setTimeout(() => {
-      this.cue = config.cue;
-      this.setBackgroundImage(config.fileName);
-      this.show = true;
-    }, 0);
+  constructor() {
+    this.bgImage = BUTTON_TEXT_FILE_PATH;
   }
 
-  setBackgroundImage(fileName: string) {
+  set bgImage(fileName: string) {
     this.backgroundImage = 'url(' + fileName + ')';
+  }
+
+  set(config: TrialButtonConfig) {
+    this.animate = 'fade-out';
+
+    setTimeout(() => {
+      this.config = config;
+      this.bgImage = config.fileName;
+      this.animate = 'fade-in';
+    }, 0);
   }
 }

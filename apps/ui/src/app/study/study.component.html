@@ -1,6 +1,6 @@
 <kumee-trial
   *ngIf="studyConditions"
-  (cueSelected)="logButtonClicked($event)"
+  (selected)="logButtonClicked($event)"
   (timedOut)="logButtonClicked($event)"
   [studyConditions]="studyConditions"
 ></kumee-trial>

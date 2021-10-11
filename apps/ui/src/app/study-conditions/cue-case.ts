@@ -3,6 +3,7 @@ import { sample } from 'lodash-es';
 export interface TrialButtonConfig {
   cue: string,
   fileName: string,
+  isArbitrary: boolean,
 }
 
 export enum CueCase {

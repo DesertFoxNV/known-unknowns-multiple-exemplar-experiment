@@ -8,11 +8,7 @@
     class="d-flex justify-content-around mt-5 flex-wrap"
   >
     <ng-container *ngFor="let config of buttonConfigs; let i = index">
-      <kumee-trial-button
-        (cueClicked)="cueSelected.emit({ cue: $event, position: i})"
-        [delay]="2000"
-        [type]="studyConditions.cues.type"
-      ></kumee-trial-button>
+      <trial-button [animationDelay]="2000" (selected)="selected.emit({ cue: $event, position: i})"></trial-button>
     </ng-container>
 
   </div>

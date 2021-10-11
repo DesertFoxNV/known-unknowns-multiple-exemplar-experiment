@@ -1,9 +1,7 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { MatRippleModule } from '@angular/material/core';
 import { TrialButtonComponent } from './trial-button.component';
-
-
 
 @NgModule({
   declarations: [
@@ -17,4 +15,4 @@ import { TrialButtonComponent } from './trial-button.component';
     MatRippleModule
   ]
 })
-export class TrialButtonModule { }
+export class TrialButtonModule {}

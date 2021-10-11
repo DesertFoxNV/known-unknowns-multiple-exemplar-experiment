@@ -21,7 +21,7 @@ import { TrialCueComponent } from './trial-cue/trial-cue.component';
 })
 export class TrialComponent implements AfterViewInit {
   buttonConfigs: TrialButtonConfig[] = [];
-  @Output() cueSelected = new EventEmitter<{ cue: TrialButtonConfig, position: number }|undefined>();
+  @Output() selected = new EventEmitter<{ cue: TrialButtonConfig|undefined, position: number }|undefined>();
   secondsInTrial = 0;
   showTrial = true;
   @Input() studyConditions!: StudyConditions;
