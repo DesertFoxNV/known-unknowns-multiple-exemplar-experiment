@@ -3,7 +3,6 @@ import { sample } from 'lodash-es';
 import { delay, tap } from 'rxjs/operators';
 import { getRandomStimuli } from '../study-conditions/get-random-stimuli';
 import { StudyConditions } from '../study-conditions/study-conditions';
-import { TrialCueComponentConfig } from '../study-conditions/trial-cue-component-config';
 import { StudyConfig } from '../study-config-form/study-config.interfaces';
 import { StudyConfigService } from '../study-config-form/study-config.service';
 import { Trial } from '../trial/trial';
@@ -26,7 +25,7 @@ export class StudyComponent implements OnInit {
   }
 
   logButtonClicked($event: unknown) {
-    console.log($event)
+    console.log($event);
     this.nextTrial();
   }
 
@@ -39,10 +38,10 @@ export class StudyComponent implements OnInit {
       tap(config => {
         this.studyConditions = new StudyConditions(config);
 
-        const options = getRandomStimuli(50, this.studyConditions.stimulusCase)
+        const options = getRandomStimuli(50, this.studyConditions.stimulusCase);
         while (options.length >= 2) {
           this.trials.push({
-            cues: [
+            stimuli: [
               options.pop() as string,
               options.pop() as string
             ]

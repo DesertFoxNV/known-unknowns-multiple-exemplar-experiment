@@ -1,3 +1,3 @@
 export interface Trial {
-  cues: string[],
+  stimuli: string[],
 }

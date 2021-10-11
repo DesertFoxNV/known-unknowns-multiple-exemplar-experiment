@@ -6,7 +6,7 @@
   </div>
 
   <div class="trial-buttons">
-    <ng-container *ngFor="let config of buttonConfigs; let i = index">
+    <ng-container *ngFor="let config of cueComponentConfigs; let i = index">
       <trial-cue
         [animationDelay]="1500"
         (selected)="selected.emit({ cue: $event, position: i})"

@@ -5,6 +5,7 @@ import { interval, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { StudyConditions } from '../study-conditions/study-conditions';
 import { TrialCueComponentConfig } from '../study-conditions/trial-cue-component-config';
+import { nextTick } from './next-tick';
 import { Trial } from './trial';
 import { TrialCueComponent } from './trial-cue/trial-cue.component';
 import { TrialStimulusComponent } from './trial-stimulus/trial-stimulus.component';
@@ -16,22 +17,34 @@ import { TrialStimulusComponent } from './trial-stimulus/trial-stimulus.componen
   styleUrls: ['./trial.component.scss']
 })
 export class TrialComponent implements AfterViewInit {
-  buttonConfigs: TrialCueComponentConfig[] = [];
+  cueComponentConfigs: TrialCueComponentConfig[] = [];
   secondsInTrial = 0;
   @Output() selected = new EventEmitter<{ cue: TrialCueComponentConfig, position: number }|undefined>();
   showTrial = true;
   @Input() studyConditions!: StudyConditions;
   @Output() timedOut = new EventEmitter();
   timerSub: Subscription|undefined;
-  @ViewChildren(TrialCueComponent) trialButtonComponents!: QueryList<TrialCueComponent>;
-  @ViewChildren(TrialStimulusComponent) trialCueComponents!: QueryList<TrialStimulusComponent>;
+  @ViewChildren(TrialCueComponent) trialCueComponents!: QueryList<TrialCueComponent>;
+  @ViewChildren(TrialStimulusComponent) trialStimulusComponents!: QueryList<TrialStimulusComponent>;
 
-  next(trial: Trial) {
-    const started = new Date();
-    const ended = new Date();
+  async next(trial: Trial) {
+    this.cueComponentConfigs = [...this.studyConditions.cueComponentConfigs];
 
-    this.buttonConfigs = [...this.studyConditions.cueComponentConfigs];
+    this.setTimer();
 
+    await nextTick();
+
+    for (const [i, value] of trial.stimuli.entries()) this.trialStimulusComponents.get(i)?.set(value);
+    const shuffledCueConfigs = shuffle(this.studyConditions.cueComponentConfigs);
+    for (let i = 0; i < this.trialCueComponents.length; i++) this.trialCueComponents.get(i)?.set(shuffledCueConfigs[i]);
+  };
+
+  ngAfterViewInit(): void {
+    this.trialCueComponents.changes.pipe(untilDestroyed(this)).subscribe();
+    this.trialStimulusComponents.changes.pipe(untilDestroyed(this)).subscribe();
+  }
+
+  setTimer() {
     if (this.timerSub) this.timerSub.unsubscribe();
     this.secondsInTrial = 0;
     this.timerSub = interval(1000).pipe(tap(() => {
@@ -40,17 +53,5 @@ export class TrialComponent implements AfterViewInit {
         this.timedOut.emit();
       }
     })).subscribe();
-
-    setTimeout(() => {
-      for (const [i, value] of trial.cues.entries()) this.trialCueComponents.get(i)?.set(value);
-      const buttonConfigs = shuffle(this.studyConditions.cueComponentConfigs);
-      for (let i = 0; i < this.trialButtonComponents.length; i++) this.trialButtonComponents.get(i)?.set(
-        buttonConfigs[i]);
-    }, 0);
-  };
-
-  ngAfterViewInit(): void {
-    this.trialButtonComponents.changes.pipe(untilDestroyed(this)).subscribe();
-    this.trialCueComponents.changes.pipe(untilDestroyed(this)).subscribe();
   }
 }
