@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { fadeIn } from '../../animations/fade-in.animation';
 import { fadeOut } from '../../animations/fade-out.animation';
 import { BUTTON_TEXT_FILE_PATH } from '../../study-conditions/cue';
-import { TrialButtonConfig } from '../../study-conditions/cue-case';
+import { TrialCueComponentConfig } from '../../study-conditions/trial-cue-component-config';
 
 @Component({
   selector: 'trial-cue',
@@ -17,8 +17,8 @@ export class TrialCueComponent {
   animate: 'fade-in'|'fade-out' = 'fade-out';
   @Input() animationDelay = 0;
   backgroundImage = '';
-  config: TrialButtonConfig|undefined;
-  @Output() selected = new EventEmitter<TrialButtonConfig>();
+  config: TrialCueComponentConfig|undefined;
+  @Output() selected = new EventEmitter<TrialCueComponentConfig>();
 
   constructor() {
     this.bgImage = BUTTON_TEXT_FILE_PATH;
@@ -28,7 +28,7 @@ export class TrialCueComponent {
     this.backgroundImage = 'url(' + fileName + ')';
   }
 
-  set(config: TrialButtonConfig) {
+  set(config: TrialCueComponentConfig) {
     this.animate = 'fade-out';
 
     setTimeout(() => {

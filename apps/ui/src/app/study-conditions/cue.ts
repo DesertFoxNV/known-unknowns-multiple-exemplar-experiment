@@ -16,7 +16,7 @@ export const CUE_TYPES_OPTIONS: CueTypeOption[] = Object.values(CueType).map(ct 
 
 export function randomCueType(): CueType {
   const cueType = sample(CUE_TYPES);
-  if (cueType === undefined) throw Error('Random cue type returned "undefined"!');
+  if (cueType === undefined) throw Error('Random value type returned "undefined"!');
   return cueType;
 }
 

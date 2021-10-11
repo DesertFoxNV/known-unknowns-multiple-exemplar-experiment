@@ -1,15 +1,16 @@
 import { sample } from 'lodash-es';
-import { CueCase } from './cue-case';
+import { StimulusCase } from './stimulus-case';
 
 // Assumes num is integer
-export function getRandomCues(num: number, cueCase: CueCase): string[] {
-  const cues: string[] = [];
-  while (cues.length < num) {
-    const cue: string|undefined = sample(ONE_HUNDRED_NON_WORD_TRIGRAMS_FILTERED_BY_FREQUENCY);
-    if (cue === undefined) throw Error('Random cue returned "undefined"!');
-    if (!cues.includes(cue)) cues.push(cueCase === CueCase.lower ? cue.toLowerCase() : cue.toUpperCase());
+export function getRandomStimuli(num: number, stimulusCase: StimulusCase): string[] {
+  const stimuli: string[] = [];
+  while (stimuli.length < num) {
+    const stimulus: string|undefined = sample(ONE_HUNDRED_NON_WORD_TRIGRAMS_FILTERED_BY_FREQUENCY);
+    if (stimulus === undefined) throw Error('Random value returned "undefined"!');
+    if (!stimuli.includes(stimulus)) stimuli.push(
+      stimulusCase === StimulusCase.lower ? stimulus.toLowerCase() : stimulus.toUpperCase());
   }
-  return cues;
+  return stimuli;
 }
 
 // http://practicalcryptography.com/cryptanalysis/letter-frequencies-various-languages/english-letter-frequencies/#trigram-frequencies

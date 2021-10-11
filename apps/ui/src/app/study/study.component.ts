@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { sample } from 'lodash-es';
 import { delay, tap } from 'rxjs/operators';
-import { TrialButtonConfig } from '../study-conditions/cue-case';
+import { getRandomStimuli } from '../study-conditions/get-random-stimuli';
 import { StudyConditions } from '../study-conditions/study-conditions';
+import { TrialCueComponentConfig } from '../study-conditions/trial-cue-component-config';
 import { StudyConfig } from '../study-config-form/study-config.interfaces';
 import { StudyConfigService } from '../study-config-form/study-config.service';
 import { Trial } from '../trial/trial';
@@ -38,7 +39,7 @@ export class StudyComponent implements OnInit {
       tap(config => {
         this.studyConditions = new StudyConditions(config);
 
-        const options = [...this.studyConditions.cues.options];
+        const options = getRandomStimuli(50, this.studyConditions.stimulusCase)
         while (options.length >= 2) {
           this.trials.push({
             cues: [
