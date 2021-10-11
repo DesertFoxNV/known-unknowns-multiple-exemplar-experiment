@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { TrialCueComponent } from './trial-cue.component';
+import { TrialStimulusComponent } from './trial-stimulus.component';
 
 @NgModule({
   declarations: [
-    TrialCueComponent
+    TrialStimulusComponent
   ],
   exports: [
-    TrialCueComponent
+    TrialStimulusComponent
   ],
   imports: [
     CommonModule
   ]
 })
-export class TrialCueModule {}
+export class TrialStimulusModule {}

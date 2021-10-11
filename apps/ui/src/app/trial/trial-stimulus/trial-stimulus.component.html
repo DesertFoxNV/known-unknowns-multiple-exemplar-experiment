@@ -1,10 +1,10 @@
-<button
+<div
   [@fadeIn]="{value: animate === 'fade-in',  params: { delay: animationDelay}}"
   [@fadeOut]="animate === 'fade-out'"
-  class="button-svg"
-  (click)="selected.emit(config)"
-  matRipple
+  class="trial-item"
   [style.backgroundImage]="backgroundImage"
 >
-  <strong>{{config?.isArbitrary ? '&nbsp;' : config?.cue || ''}}</strong>
-</button>
+  <strong>{{cue}}</strong>
+</div>
+
+

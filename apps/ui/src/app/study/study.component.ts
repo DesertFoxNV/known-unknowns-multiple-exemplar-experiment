@@ -9,7 +9,7 @@ import { Trial } from '../trial/trial';
 import { TrialComponent } from '../trial/trial.component';
 
 @Component({
-  selector: 'kumee-study',
+  selector: 'study',
   templateUrl: './study.component.html',
   styleUrls: ['./study.component.scss']
 })

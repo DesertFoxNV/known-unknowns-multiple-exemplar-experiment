@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatRippleModule } from '@angular/material/core';
-import { TrialButtonComponent } from './trial-button.component';
+import { TrialCueComponent } from './trial-cue.component';
 
 @NgModule({
   declarations: [
-    TrialButtonComponent
+    TrialCueComponent
   ],
   exports: [
-    TrialButtonComponent
+    TrialCueComponent
   ],
   imports: [
     CommonModule,

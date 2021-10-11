@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
-import { TrialButtonModule } from './trial-button/trial-button.module';
-import { TrialCueModule } from './trial-cue/trial-cue.module';
+import { TrialButtonModule } from './trial-cue/trial-button.module';
+import { TrialStimulusModule } from './trial-stimulus/trial-stimulus.module';
 import { TrialComponent } from './trial.component';
 
 @NgModule({
@@ -16,7 +16,7 @@ import { TrialComponent } from './trial.component';
   imports: [
     CommonModule,
     MatCardModule,
-    TrialCueModule,
+    TrialStimulusModule,
     TrialButtonModule,
     FlexLayoutModule
   ]

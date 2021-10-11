@@ -1,34 +1,30 @@
 import { AfterViewInit, Component, EventEmitter, Input, Output, QueryList, ViewChildren } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { fadeInOnEnterAnimation } from 'angular-animations';
 import { shuffle } from 'lodash-es';
 import { interval, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { TrialButtonConfig } from '../study-conditions/cue-case';
 import { StudyConditions } from '../study-conditions/study-conditions';
 import { Trial } from './trial';
-import { TrialButtonComponent } from './trial-button/trial-button.component';
 import { TrialCueComponent } from './trial-cue/trial-cue.component';
+import { TrialStimulusComponent } from './trial-stimulus/trial-stimulus.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'kumee-trial',
+  selector: 'trial',
   templateUrl: './trial.component.html',
-  styleUrls: ['./trial.component.scss'],
-  animations: [
-    fadeInOnEnterAnimation({ anchor: 'enter' })
-  ]
+  styleUrls: ['./trial.component.scss']
 })
 export class TrialComponent implements AfterViewInit {
   buttonConfigs: TrialButtonConfig[] = [];
-  @Output() selected = new EventEmitter<{ cue: TrialButtonConfig|undefined, position: number }|undefined>();
   secondsInTrial = 0;
+  @Output() selected = new EventEmitter<{ cue: TrialButtonConfig, position: number }|undefined>();
   showTrial = true;
   @Input() studyConditions!: StudyConditions;
   @Output() timedOut = new EventEmitter();
   timerSub: Subscription|undefined;
-  @ViewChildren(TrialButtonComponent) trialButtonComponents!: QueryList<TrialButtonComponent>;
-  @ViewChildren(TrialCueComponent) trialCueComponents!: QueryList<TrialCueComponent>;
+  @ViewChildren(TrialCueComponent) trialButtonComponents!: QueryList<TrialCueComponent>;
+  @ViewChildren(TrialStimulusComponent) trialCueComponents!: QueryList<TrialStimulusComponent>;
 
   next(trial: Trial) {
     const started = new Date();
