@@ -24,7 +24,7 @@ export class StudyComponent implements OnInit {
   ) {
   }
 
-  logButtonClicked($event: { cue: TrialButtonConfig, position: number }) {
+  logButtonClicked($event: unknown) {
     console.log($event)
     this.nextTrial();
   }

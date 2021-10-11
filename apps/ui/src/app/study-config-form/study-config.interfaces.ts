@@ -3,7 +3,7 @@ import { CueType } from '../study-conditions/cue';
 export interface BalanceConfig {
   equalTo: number;
   greaterThan: number;
-  idk?: number;
+  iCannotKnow?: number;
   lessThan: number;
 }
 
@@ -11,7 +11,7 @@ export interface StudyConfig {
   balance: BalanceConfig;
   contextualControl: boolean;
   cueType: CueType;
-  idk: boolean;
+  iCannotKnow: boolean;
   participantId: string;
   trialTimeout: number; // in seconds
 }
@@ -19,11 +19,11 @@ export interface StudyConfig {
 export interface StudyConfigFlattened {
   'balance.equalTo': number;
   'balance.greaterThan': number;
-  'balance.idk'?: number;
+  'balance.iCannotKnow'?: number;
   'balance.lessThan': number;
   cueType: CueType;
   contextualControl: boolean;
-  idk: boolean;
+  iCannotKnow: boolean;
   participantId: string;
   trialTimeout: number; // in seconds
 }

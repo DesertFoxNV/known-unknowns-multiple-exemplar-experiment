@@ -1,7 +1,7 @@
 import { sample } from 'lodash-es';
 
 export enum CueType {
-  nonArbitrary = 'non-arbitrary', // SAME, DIFFERENT, GREATER THAN, LESS THAN, IDK
+  nonArbitrary = 'non-arbitrary', // SAME, DIFFERENT, GREATER THAN, LESS THAN, I CANNOT KNOW
   arbitrary = 'arbitrary' // NONSENSE CUES
 }
 
@@ -37,12 +37,12 @@ export enum CueNonArbitrary {
   different = 'DIFFERENT',
   greaterThan = 'GREATER THAN',
   lessThan = 'LESS THAN',
-  unknown = `UNKNOWN`,
+  iCannotKnow = `I CANNOT KNOW`,
 }
 
-export const CUES_NON_ARBITRARY_W_IDK: CueNonArbitrary[] = Object.values(CueNonArbitrary).filter(
+export const CUES_NON_ARBITRARY_W_ICK: CueNonArbitrary[] = Object.values(CueNonArbitrary).filter(
   rc => rc !== CueNonArbitrary.different);
-export const CUES_NON_ARBITRARY_WO_IDK: CueNonArbitrary[] = Object.values(CueNonArbitrary).filter(
-  rc => rc !== CueNonArbitrary.unknown && rc !== CueNonArbitrary.different);
+export const CUES_NON_ARBITRARY_WO_ICK: CueNonArbitrary[] = Object.values(CueNonArbitrary).filter(
+  rc => rc !== CueNonArbitrary.iCannotKnow && rc !== CueNonArbitrary.different);
 
 

@@ -29,7 +29,8 @@ export class StudyConfigFormComponent implements OnInit {
   }
 
   copyLink() {
-    this.clipboard.copy(`${environment.baseUrl}/known-unknowns-multiple-exemplar-experiment/study?${this.getQueryParamStr()}`);
+    this.clipboard.copy(
+      `${environment.baseUrl}/known-unknowns-multiple-exemplar-experiment/study?${this.getQueryParamStr()}`);
   }
 
   getQueryParamObj(): StudyConfigFlattened {
@@ -41,8 +42,8 @@ export class StudyConfigFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form.get('idk').valueChanges.pipe(
-      tap((idk) => this.form.get('balance.idk')[idk ? 'enable' : 'disable']()),
+    this.form.get('iCannotKnow').valueChanges.pipe(
+      tap((iCannotKnow) => this.form.get('balance.iCannotKnow')[iCannotKnow ? 'enable' : 'disable']()),
       untilDestroyed(this)
     ).subscribe();
   }

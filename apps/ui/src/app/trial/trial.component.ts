@@ -2,6 +2,8 @@ import { AfterViewInit, Component, EventEmitter, Input, Output, QueryList, ViewC
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { fadeInOnEnterAnimation } from 'angular-animations';
 import { shuffle } from 'lodash-es';
+import { interval, Subscription } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { TrialButtonConfig } from '../study-conditions/cue-case';
 import { StudyConditions } from '../study-conditions/study-conditions';
 import { Trial } from './trial';
@@ -19,14 +21,30 @@ import { TrialCueComponent } from './trial-cue/trial-cue.component';
 })
 export class TrialComponent implements AfterViewInit {
   buttonConfigs: TrialButtonConfig[] = [];
-  @Output() cueSelected = new EventEmitter<{ cue: TrialButtonConfig, position: number }>();
+  @Output() cueSelected = new EventEmitter<{ cue: TrialButtonConfig, position: number }|undefined>();
+  secondsInTrial = 0;
   showTrial = true;
   @Input() studyConditions!: StudyConditions;
+  @Output() timedOut = new EventEmitter();
+  timerSub: Subscription|undefined;
   @ViewChildren(TrialButtonComponent) trialButtonComponents!: QueryList<TrialButtonComponent>;
   @ViewChildren(TrialCueComponent) trialCueComponents!: QueryList<TrialCueComponent>;
 
   next(trial: Trial) {
+    const started = new Date();
+    const ended = new Date();
+
     this.buttonConfigs = [...this.studyConditions.cues.buttons];
+
+    if (this.timerSub) this.timerSub.unsubscribe();
+    this.secondsInTrial = 0;
+    this.timerSub = interval(1000).pipe(tap(() => {
+      this.secondsInTrial++;
+      if (this.secondsInTrial >= this.studyConditions.config.trialTimeout) {
+        this.timedOut.emit();
+      }
+    })).subscribe();
+
     setTimeout(() => {
       for (const [i, value] of trial.cues.entries()) this.trialCueComponents.get(i)?.set(value);
       const buttonConfigs = shuffle(this.studyConditions.cues.buttons);

@@ -18,15 +18,16 @@ export class TrialButtonComponent {
   cue = '';
   @Output() cueClicked = new EventEmitter<TrialButtonConfig>();
   cueType = CueType;
+  @Input() delay = 0;
   show = false;
   @Input() type: CueType|undefined = CueType.arbitrary;
 
   set(config: TrialButtonConfig) {
     this.config = config;
     this.show = false;
-    this.cue = config.cue;
-    this.setBackgroundImage(config.fileName);
     setTimeout(() => {
+      this.cue = config.cue;
+      this.setBackgroundImage(config.fileName);
       this.show = true;
     }, 0);
   }

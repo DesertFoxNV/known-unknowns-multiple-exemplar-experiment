@@ -14,13 +14,13 @@ import { BUTTON_TEXT_FILE_PATH } from '../../study-conditions/cue';
 export class TrialCueComponent {
   backgroundImage = `url('${BUTTON_TEXT_FILE_PATH}')`;
   cue = '';
-  @Input() delay = 1000;
+  @Input() delay = 0;
   show = false;
 
   set(cue: string) {
     this.show = false;
-    this.cue = cue;
     setTimeout(() => {
+      this.cue = cue;
       this.show = true;
     }, 0);
   }

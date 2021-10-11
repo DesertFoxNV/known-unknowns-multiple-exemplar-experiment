@@ -1,6 +1,6 @@
 <mat-card class="container" [ngStyle.lt-sm]="{'box-shadow': 'unset'}" *ngIf="showTrial">
   <div class="d-flex justify-content-center align-items-center flex-column">
-    <kumee-trial-cue></kumee-trial-cue>
+    <kumee-trial-cue [delay]="1000"></kumee-trial-cue>
     <div class="mt-3 flex-basis"></div>
     <kumee-trial-cue [delay]="1500"></kumee-trial-cue>
   </div>
@@ -10,6 +10,7 @@
     <ng-container *ngFor="let config of buttonConfigs; let i = index">
       <kumee-trial-button
         (cueClicked)="cueSelected.emit({ cue: $event, position: i})"
+        [delay]="2000"
         [type]="studyConditions.cues.type"
       ></kumee-trial-button>
     </ng-container>

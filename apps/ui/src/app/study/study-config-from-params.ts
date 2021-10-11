@@ -4,7 +4,7 @@ import { StudyConfig, StudyConfigFlattened } from '../study-config-form/study-co
 import { paramToBool, paramToNum, paramToStr } from './param-conversion-functions';
 
 export function studyConfigFromParams(params: Params): StudyConfig {
-  const idk = paramToBool('idk', params);
+  const iCannotKnow = paramToBool('iCannotKnow', params);
 
   const paramsToConfigFnDict: Record<keyof StudyConfigFlattened, ((
     key: string,
@@ -12,11 +12,11 @@ export function studyConfigFromParams(params: Params): StudyConfig {
   ) => unknown)|undefined> = {
     'balance.equalTo': paramToNum,
     'balance.greaterThan': paramToNum,
-    'balance.idk': idk ? paramToNum : undefined,
+    'balance.iCannotKnow': iCannotKnow ? paramToNum : undefined,
     'balance.lessThan': paramToNum,
     contextualControl: paramToBool,
     cueType: paramToStr,
-    idk: paramToBool,
+    iCannotKnow: paramToBool,
     participantId: paramToStr,
     trialTimeout: paramToNum
   };

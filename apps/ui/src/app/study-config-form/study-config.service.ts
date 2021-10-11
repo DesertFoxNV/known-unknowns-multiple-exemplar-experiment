@@ -31,25 +31,25 @@ export class StudyConfigService {
       }));
   }
 
-  createForm(idKBalanceDisabled = true): FormGroup<StudyConfig> {
+  createForm(iCannotKnowBalanceDisabled = true): FormGroup<StudyConfig> {
     const numericValidators1To100 = [Validators.required, Validators.min(1), Validators.max(100)];
     return this.fb.group({
       balance: this.fb.group<BalanceConfig>({
         lessThan: [1, numericValidators1To100],
         equalTo: [1, numericValidators1To100],
         greaterThan: [1, numericValidators1To100],
-        idk: [{ value: 1, disabled: idKBalanceDisabled }, numericValidators1To100]
+        iCannotKnow: [{ value: 1, disabled: iCannotKnowBalanceDisabled }, numericValidators1To100]
       }),
       contextualControl: [false, Validators.required],
       cueType: [CueType.nonArbitrary, Validators.required],
-      idk: [false, Validators.required],
+      iCannotKnow: [false, Validators.required],
       participantId: ['', [Validators.required, Validators.minLength(3)]],
       trialTimeout: [1, [Validators.required, Validators.min(1), Validators.max(1000)]]
     });
   }
 
   isConfigValid(config: StudyConfig): void {
-    const form = this.createForm(config?.idk === false);
+    const form = this.createForm(config?.iCannotKnow === false);
     form.patchValue(config);
     if (form.invalid) throw Error('Study configuration params are invalid.');
   }

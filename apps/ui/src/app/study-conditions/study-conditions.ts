@@ -1,8 +1,7 @@
 import { shuffle } from 'lodash-es';
 import { StudyConfig } from '../study-config-form/study-config.interfaces';
 import {
-  BUTTON_TEXT_FILE_PATH, CUES_ARBITRARY_FILE_PATHS, CUES_NON_ARBITRARY_W_IDK, CUES_NON_ARBITRARY_WO_IDK, CueType,
-  randomCueType
+  BUTTON_TEXT_FILE_PATH, CUES_ARBITRARY_FILE_PATHS, CUES_NON_ARBITRARY_W_ICK, CUES_NON_ARBITRARY_WO_ICK, CueType
 } from './cue';
 import { CueCase, randomTrigramCase, TrialButtonConfig } from './cue-case';
 import { getRandomCues } from './get-random-cue';
@@ -19,7 +18,7 @@ export class StudyConditions {
   constructor(config: StudyConfig) {
     const cueCase = randomTrigramCase();
     const cueType = config.cueType;
-    const buttonCues = shuffle(config.idk ? CUES_NON_ARBITRARY_W_IDK : CUES_NON_ARBITRARY_WO_IDK);
+    const buttonCues = shuffle(config.iCannotKnow ? CUES_NON_ARBITRARY_W_ICK : CUES_NON_ARBITRARY_WO_ICK);
     const arbitraryFileNames = shuffle(CUES_ARBITRARY_FILE_PATHS);
 
     this.config = config;
