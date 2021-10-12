@@ -7,6 +7,9 @@ export function getRandomStimuli(num: number, stimulusCase: StimulusCase): strin
   while (stimuli.length < num) {
     const stimulus: string|undefined = sample(ONE_HUNDRED_NON_WORD_TRIGRAMS_FILTERED_BY_FREQUENCY);
     if (stimulus === undefined) throw Error('Random value returned "undefined"!');
+    const index = ONE_HUNDRED_NON_WORD_TRIGRAMS_FILTERED_BY_FREQUENCY.indexOf(stimulus);
+    // It is important to remove each stimulus from list, so that it cannot be reused.
+    if (index > -1) ONE_HUNDRED_NON_WORD_TRIGRAMS_FILTERED_BY_FREQUENCY.splice(index, 1);
     if (!stimuli.includes(stimulus)) stimuli.push(
       stimulusCase === StimulusCase.lower ? stimulus.toLowerCase() : stimulus.toUpperCase());
   }

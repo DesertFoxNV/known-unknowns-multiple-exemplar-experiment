@@ -49,9 +49,7 @@ export class TrialComponent implements AfterViewInit {
     this.secondsInTrial = 0;
     this.timerSub = interval(1000).pipe(tap(() => {
       this.secondsInTrial++;
-      if (this.secondsInTrial >= this.studyConditions.config.trialTimeout) {
-        this.timedOut.emit();
-      }
+      if (this.secondsInTrial >= this.studyConditions.config.trialTimeout) this.timedOut.emit();
     })).subscribe();
   }
 }

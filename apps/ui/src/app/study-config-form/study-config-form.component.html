@@ -16,12 +16,12 @@
         </mat-error>
       </mat-form-field>
 
-      <mat-checkbox formControlName="iCannotKnow">I Cannot Know</mat-checkbox>
+      <mat-checkbox formControlName="iCannotKnow">I cannot know</mat-checkbox>
 
       <mat-checkbox formControlName="contextualControl">Contextual control</mat-checkbox>
 
       <mat-form-field>
-        <mat-label>Cue Type</mat-label>
+        <mat-label>Cue type</mat-label>
         <mat-select formControlName="cueType">
           <mat-option *ngFor="let cueType of cueTypeOptions " [value]="cueType.value">
             {{cueType.viewValue}}

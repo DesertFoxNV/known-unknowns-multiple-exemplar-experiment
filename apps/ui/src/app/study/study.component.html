@@ -1,13 +1,9 @@
-<trial
-  *ngIf="studyConditions"
-  (selected)="logButtonClicked($event)"
-  (timedOut)="logButtonClicked($event)"
-  [studyConditions]="studyConditions"
-></trial>
-<button
-  class="mt-3"
-  mat-button
-  color="primary"
-  (click)="reload()"
->Randomize
-</button>
+<mat-card [ngStyle.lt-sm]="{'box-shadow': 'unset'}">
+  <trial
+    *ngIf="studyConditions"
+    (selected)="logButtonClicked($event)"
+    (timedOut)="logButtonClicked($event)"
+    [studyConditions]="studyConditions"
+  ></trial>
+</mat-card>
+
