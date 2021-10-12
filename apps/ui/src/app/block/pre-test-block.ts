@@ -4,7 +4,7 @@ import { Trial } from '../trial/trial';
 import { Block } from './block';
 
 export class PreTestBlock extends Block {
-  completed: Date|undefined;
+  completed?: Date;
   index = 0;
   network1: Network;
   network2: Network;

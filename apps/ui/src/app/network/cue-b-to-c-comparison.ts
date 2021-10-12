@@ -25,7 +25,5 @@ export const CUE_B_TO_C_COMPARISON: LessThanSameGreaterThanRecord<LessThanSameGr
 
 export function getBToCComparisonCue(stimuli: CueTuple): CueNonArbitrary {
   const [B, C] = stimuli;
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   return CUE_B_TO_C_COMPARISON[B][C];
 }

@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { fadeIn } from '../../animations/fade-in.animation';
 import { fadeOut } from '../../animations/fade-out.animation';
 import { BUTTON_TEXT_FILE_PATH } from '../../study-conditions/cue.constants';
+import { nextTick } from '../next-tick';
 
 @Component({
   selector: 'trial-stimulus',
@@ -15,15 +16,15 @@ import { BUTTON_TEXT_FILE_PATH } from '../../study-conditions/cue.constants';
 export class TrialStimulusComponent {
   animate: 'fade-in'|'fade-out' = 'fade-out';
   @Input() animationDelay = 0;
-  backgroundImage = `url('${BUTTON_TEXT_FILE_PATH}')`;
+  backgroundImage = BUTTON_TEXT_FILE_PATH;
   cue = '';
 
-  set(cue: string) {
+  async set(cue: string) {
     this.animate = 'fade-out';
 
-    setTimeout(() => {
-      this.cue = cue;
-      this.animate = 'fade-in';
-    }, 0);
+    await nextTick();
+
+    this.cue = cue;
+    this.animate = 'fade-in';
   }
 }

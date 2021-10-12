@@ -1,5 +1,5 @@
 <button
-  [@fadeIn]="{value: animate === 'fade-in',  params: { delay: animationDelay}}"
+  [@fadeIn]="{value: animate === 'fade-in',  params: { delay: animationDelay }}"
   [@fadeOut]="animate === 'fade-out'"
   class="trial-item"
   (click)="selected.emit(config)"
