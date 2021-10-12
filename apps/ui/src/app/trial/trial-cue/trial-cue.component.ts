@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { fadeIn } from '../../animations/fade-in.animation';
 import { fadeOut } from '../../animations/fade-out.animation';
-import { BUTTON_TEXT_FILE_PATH } from '../../study-conditions/cue';
+import { BUTTON_TEXT_FILE_PATH } from '../../study-conditions/cue.constants';
 import { TrialCueComponentConfig } from '../../study-conditions/trial-cue-component-config';
 
 @Component({

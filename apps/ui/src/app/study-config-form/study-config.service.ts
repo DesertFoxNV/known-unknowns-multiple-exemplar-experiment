@@ -5,8 +5,9 @@ import { SnackBarService } from '@known-unknowns-multiple-exemplar-experiment/ng
 import { FormBuilder, FormGroup } from '@ngneat/reactive-forms';
 import { Observable } from 'rxjs';
 import { catchError, first, map, tap } from 'rxjs/operators';
-import { CueType } from '../study-conditions/cue';
-import { studyConfigFromParams } from '../study/study-config-from-params';
+import { studyConfigFromParams } from '../param-conversions/study-config-from-params';
+import { CueType } from '../study-conditions/cue.constants';
+import { StudyConditions } from '../study-conditions/study-conditions';
 import { BalanceConfig, StudyConfig } from './study-config.interfaces';
 
 @Injectable({
@@ -18,7 +19,8 @@ export class StudyConfigService {
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
     private snackBarSvc: SnackBarService
-  ) { }
+  ) {
+  }
 
   config$(): Observable<StudyConfig> {
     return this.activatedRoute.queryParams.pipe(

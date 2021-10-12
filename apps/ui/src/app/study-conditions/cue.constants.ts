@@ -40,6 +40,8 @@ export enum CueNonArbitrary {
   iCannotKnow = `I CANNOT KNOW`,
 }
 
+export type CueTuple = [CueNonArbitrary, CueNonArbitrary];
+
 export const CUES_NON_ARBITRARY_W_ICK: CueNonArbitrary[] = Object.values(CueNonArbitrary).filter(
   rc => rc !== CueNonArbitrary.different);
 export const CUES_NON_ARBITRARY_WO_ICK: CueNonArbitrary[] = Object.values(CueNonArbitrary).filter(

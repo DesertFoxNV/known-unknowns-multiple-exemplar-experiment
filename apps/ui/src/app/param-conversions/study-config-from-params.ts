@@ -1,7 +1,9 @@
 import { Params } from '@angular/router';
 import { unflatten } from 'flat';
 import { StudyConfig, StudyConfigFlattened } from '../study-config-form/study-config.interfaces';
-import { paramToBool, paramToNum, paramToStr } from './param-conversion-functions';
+import { paramToBool } from './param-to-bool';
+import { paramToNum } from './param-to-num';
+import { paramToStr } from './param-to-str';
 
 export function studyConfigFromParams(params: Params): StudyConfig {
   const iCannotKnow = paramToBool('iCannotKnow', params);

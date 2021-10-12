@@ -1,12 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { sample } from 'lodash-es';
-import { delay, tap } from 'rxjs/operators';
-import { getRandomStimuli } from '../study-conditions/get-random-stimuli';
-import { StudyConditions } from '../study-conditions/study-conditions';
+import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { Block } from '../block/block';
+import { BlockComponent } from '../block/block.component';
+import { StudyConditionService } from '../study-conditions/study-condition.service';
 import { StudyConfig } from '../study-config-form/study-config.interfaces';
-import { StudyConfigService } from '../study-config-form/study-config.service';
-import { Trial } from '../trial/trial';
-import { TrialComponent } from '../trial/trial.component';
 
 @Component({
   selector: 'study',
@@ -14,47 +10,28 @@ import { TrialComponent } from '../trial/trial.component';
   styleUrls: ['./study.component.scss']
 })
 export class StudyComponent implements OnInit {
+
+  @ViewChild(BlockComponent, { static: false }) blockComponent: BlockComponent|undefined;
+  blocks: Block[] = [];
+  completed = new EventEmitter();
   config: StudyConfig|undefined;
-  studyConditions: StudyConditions|undefined;
-  @ViewChild(TrialComponent, { static: false }) trialComponent: TrialComponent|undefined;
-  trials: Trial[] = [];
 
   constructor(
-    readonly studyConfigSvc: StudyConfigService
+    readonly conditionsSvc: StudyConditionService
   ) {
   }
 
-  logButtonClicked($event: unknown) {
-    console.log($event);
-    this.nextTrial();
+  nextBlock() {
+    if (this.blocks.length > 0) {
+      this.blockComponent?.next(this.blocks.shift() as Block);
+    } else {
+      this.completed.emit();
+    }
   }
 
-  nextTrial() {
-    this?.trialComponent?.next(sample(this.trials) as Trial);
-  }
-
-  ngOnInit(): void {
-    this.studyConfigSvc.config$().pipe(
-      tap(config => {
-        this.studyConditions = new StudyConditions(config);
-
-        const options = getRandomStimuli(50, this.studyConditions.stimulusCase);
-        while (options.length >= 2) {
-          this.trials.push({
-            stimuli: [
-              options.pop() as string,
-              options.pop() as string
-            ]
-          });
-        }
-      }),
-      delay(0),
-      tap(() => this.nextTrial())
-    ).subscribe();
-  }
-
-  reload() {
-    location.reload();
+  async ngOnInit(): Promise<void> {
+    this.blocks = await this.conditionsSvc.blocks$().toPromise();
+    this.nextBlock();
   }
 
 }

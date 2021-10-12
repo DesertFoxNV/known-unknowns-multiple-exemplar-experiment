@@ -1,121 +1,24 @@
 import { sample } from 'lodash-es';
+import { OneHundredNonWordTrigramsFilteredByFrequency } from './one-hundred-non-word-trigrams-filtered-by-frequency';
 import { StimulusCase } from './stimulus-case';
 
-// Assumes num is integer
+/***
+ * Generates random stimuli and removes them from list to prevent duplicates
+ * @param {number} num is integer
+ * @param {StimulusCase} stimulusCase
+ * @returns {string[]}
+ */
 export function getRandomStimuli(num: number, stimulusCase: StimulusCase): string[] {
   const stimuli: string[] = [];
   while (stimuli.length < num) {
-    const stimulus: string|undefined = sample(ONE_HUNDRED_NON_WORD_TRIGRAMS_FILTERED_BY_FREQUENCY);
+    const stimulus: string|undefined = sample(OneHundredNonWordTrigramsFilteredByFrequency);
     if (stimulus === undefined) throw Error('Random value returned "undefined"!');
-    const index = ONE_HUNDRED_NON_WORD_TRIGRAMS_FILTERED_BY_FREQUENCY.indexOf(stimulus);
+    const index = OneHundredNonWordTrigramsFilteredByFrequency.indexOf(stimulus);
     // It is important to remove each stimulus from list, so that it cannot be reused.
-    if (index > -1) ONE_HUNDRED_NON_WORD_TRIGRAMS_FILTERED_BY_FREQUENCY.splice(index, 1);
+    if (index > -1) OneHundredNonWordTrigramsFilteredByFrequency.splice(index, 1);
     if (!stimuli.includes(stimulus)) stimuli.push(
       stimulusCase === StimulusCase.lower ? stimulus.toLowerCase() : stimulus.toUpperCase());
   }
   return stimuli;
 }
 
-// http://practicalcryptography.com/cryptanalysis/letter-frequencies-various-languages/english-letter-frequencies/#trigram-frequencies
-const ONE_HUNDRED_NON_WORD_TRIGRAMS_FILTERED_BY_FREQUENCY: string[] = [
-  'RWK',
-  'PGZ',
-  'QGK',
-  'FNK',
-  'ZVB',
-  'PWU',
-  'PLJ',
-  'KNF',
-  'GVW',
-  'KXL',
-  'GRQ',
-  'WPQ',
-  'BQP',
-  'FXX',
-  'ZTF',
-  'SGG',
-  'GQF',
-  'VXO',
-  'DZF',
-  'ZHD',
-  'JHH',
-  'VQP',
-  'JXY',
-  'ZVS',
-  'HGD',
-  'FJX',
-  'VHK',
-  'JTP',
-  'JTS',
-  'UHJ',
-  'WTZ',
-  'CXF',
-  'XFH',
-  'LWK',
-  'NWK',
-  'ZRG',
-  'FDG',
-  'NQC',
-  'WPW',
-  'YVR',
-  'HLJ',
-  'WBX',
-  'VGH',
-  'KXW',
-  'XAQ',
-  'WQG',
-  'DGJ',
-  'QUZ',
-  'QZX',
-  'HWL',
-  'DKX',
-  'ZDW',
-  'RZJ',
-  'VGJ',
-  'VWL',
-  'MKP',
-  'JFJ',
-  'GQY',
-  'BRX',
-  'IHG',
-  'YVP',
-  'SXG',
-  'FJC',
-  'QKU',
-  'WZY',
-  'QHJ',
-  'YTZ',
-  'RHF',
-  'YYB',
-  'QFH',
-  'ZUX',
-  'TQT',
-  'VZZ',
-  'BTQ',
-  'DHQ',
-  'XLW',
-  'VLW',
-  'VZJ',
-  'GGK',
-  'SWK',
-  'UFH',
-  'GPN',
-  'JSX',
-  'IQP',
-  'QUP',
-  'XDG',
-  'QWN',
-  'CBK',
-  'JVH',
-  'VXG',
-  'YBF',
-  'BVY',
-  'QZW',
-  'UPZ',
-  'WMX',
-  'XVN',
-  'RRX',
-  'QTX',
-  'DZN',
-  'WXP'
-];

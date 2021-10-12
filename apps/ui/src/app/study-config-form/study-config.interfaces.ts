@@ -1,4 +1,4 @@
-import { CueType } from '../study-conditions/cue';
+import { CueType } from '../study-conditions/cue.constants';
 
 export interface BalanceConfig {
   equalTo: number;

@@ -6,13 +6,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { flatten } from 'flat';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { CUE_TYPES_OPTIONS } from '../study-conditions/cue';
+import { CUE_TYPES_OPTIONS } from '../study-conditions/cue.constants';
 import { StudyConfig, StudyConfigFlattened } from './study-config.interfaces';
 import { StudyConfigService } from './study-config.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'kumee-study-config-form',
+  selector: 'study-config-form',
   templateUrl: './study-config-form.component.html',
   styleUrls: ['./study-config-form.component.scss']
 })

@@ -9,7 +9,7 @@
     <ng-container *ngFor="let config of cueComponentConfigs; let i = index">
       <trial-cue
         [animationDelay]="1500"
-        (selected)="selected.emit({ cue: $event, position: i})"
+        (selected)="completed.emit({ cue: $event, position: i})"
       ></trial-cue>
     </ng-container>
   </div>
