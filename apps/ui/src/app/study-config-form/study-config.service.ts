@@ -8,7 +8,8 @@ import { catchError, first, map, tap } from 'rxjs/operators';
 import { studyConfigFromParams } from '../param-conversions/study-config-from-params';
 import { CueType } from '../study-conditions/cue.constants';
 import { StudyConditions } from '../study-conditions/study-conditions';
-import { BalanceConfig, StudyConfig } from './study-config.interfaces';
+import { BalanceConfig } from './balance-config';
+import { StudyConfig } from './study-config';
 
 @Injectable({
   providedIn: 'root'

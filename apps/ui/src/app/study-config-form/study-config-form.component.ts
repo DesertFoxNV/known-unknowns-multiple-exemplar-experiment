@@ -7,7 +7,8 @@ import { flatten } from 'flat';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { CUE_TYPES_OPTIONS } from '../study-conditions/cue.constants';
-import { StudyConfig, StudyConfigFlattened } from './study-config.interfaces';
+import { StudyConfigFlattened } from './study-config-flattened';
+import { StudyConfig} from './study-config';
 import { StudyConfigService } from './study-config.service';
 
 @UntilDestroy()

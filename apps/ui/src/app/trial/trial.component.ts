@@ -7,9 +7,9 @@ import { StudyConditionService } from '../study-conditions/study-condition.servi
 import { StudyConditions } from '../study-conditions/study-conditions';
 import { TrialCueComponentConfig } from '../study-conditions/trial-cue-component-config';
 import { nextTick } from './next-tick';
-import { Trial } from './trial';
 import { TrialCueComponent } from './trial-cue/trial-cue.component';
 import { TrialStimulusComponent } from './trial-stimulus/trial-stimulus.component';
+import { TrialType } from './trial.type';
 
 @UntilDestroy()
 @Component({
@@ -31,7 +31,7 @@ export class TrialComponent implements AfterViewInit {
     this.conditions = this.conditionSvc.conditions as StudyConditions;
   }
 
-  async next(trial: Trial) {
+  async next(trial: TrialType) {
     this.cueComponentConfigs = [...this.conditions.cueComponentConfigs];
 
     this.setTimer();

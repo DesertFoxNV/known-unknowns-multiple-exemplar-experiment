@@ -15,4 +15,4 @@ import { TrialCueComponent } from './trial-cue.component';
     MatRippleModule
   ]
 })
-export class TrialButtonModule {}
+export class TrialCueModule {}

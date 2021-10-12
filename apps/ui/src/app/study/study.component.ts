@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { Block } from '../block/block';
 import { BlockComponent } from '../block/block.component';
 import { StudyConditionService } from '../study-conditions/study-condition.service';
-import { StudyConfig } from '../study-config-form/study-config.interfaces';
+import { StudyConfig } from '../study-config-form/study-config';
 
 @Component({
   selector: 'study',

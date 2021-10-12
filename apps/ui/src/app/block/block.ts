@@ -1,4 +1,4 @@
-import { Trial } from '../trial/trial';
+import { TrialType } from '../trial/trial.type';
 
 export abstract class Block {
   name: string;
@@ -7,5 +7,5 @@ export abstract class Block {
     this.name = name;
   }
 
-  abstract nextTrial(): Trial|undefined
+  abstract nextTrial(): TrialType|undefined
 }

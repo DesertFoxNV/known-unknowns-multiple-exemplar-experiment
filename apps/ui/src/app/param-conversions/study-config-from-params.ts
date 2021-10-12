@@ -1,6 +1,7 @@
 import { Params } from '@angular/router';
 import { unflatten } from 'flat';
-import { StudyConfig, StudyConfigFlattened } from '../study-config-form/study-config.interfaces';
+import { StudyConfigFlattened } from '../study-config-form/study-config-flattened';
+import { StudyConfig} from '../study-config-form/study-config';
 import { paramToBool } from './param-to-bool';
 import { paramToNum } from './param-to-num';
 import { paramToStr } from './param-to-str';

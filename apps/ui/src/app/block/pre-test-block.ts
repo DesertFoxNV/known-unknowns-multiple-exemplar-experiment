@@ -1,6 +1,6 @@
 import { shuffle } from 'lodash-es';
 import { Network } from '../network/network';
-import { Trial } from '../trial/trial';
+import { TrialType } from '../trial/trial.type';
 import { Block } from './block';
 
 export class PreTestBlock extends Block {
@@ -9,7 +9,7 @@ export class PreTestBlock extends Block {
   network1: Network;
   network2: Network;
   started: Date|undefined;
-  trials: Trial[] = []; // 32 trials = (4 combinations x 2 networks) x 4 duplicates
+  trials: TrialType[] = []; // 32 trials = (4 combinations x 2 networks) x 4 duplicates
 
   constructor(network1: Network, network2: Network) {
     super('Pre-Test');
@@ -24,7 +24,7 @@ export class PreTestBlock extends Block {
     this.trials = shuffle(this.trials);
   }
 
-  nextTrial(): Trial|undefined {
+  nextTrial(): TrialType|undefined {
     if (this.index === 0) this.started = new Date();
     if (this.index > this.trials.length) this.completed = new Date;
     this.index++;

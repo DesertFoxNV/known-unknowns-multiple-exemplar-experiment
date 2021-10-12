@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { StudyConditionService } from '../study-conditions/study-condition.service';
 import { StudyConditions } from '../study-conditions/study-conditions';
+import { CueSelected } from '../trial/cue-selected';
 import { nextTick } from '../trial/next-tick';
-import { CueSelected } from '../trial/trial';
 import { TrialComponent } from '../trial/trial.component';
 import { Block } from './block';
 
