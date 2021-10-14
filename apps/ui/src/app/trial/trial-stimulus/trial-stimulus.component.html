@@ -1,10 +1,10 @@
 <div
-  [@fadeIn]="{value: animate === 'fade-in',  params: { delay: animationDelay}}"
+  [@fadeIn]="{value: animate === 'fade-in',  params: { delay: animationDelay }}"
   [@fadeOut]="animate === 'fade-out'"
   class="trial-item"
   [style.backgroundImage]="backgroundImage"
 >
-  <strong>{{cue}}</strong>
+  <strong class="dynamic-text">{{cue}}</strong>
 </div>
 
 

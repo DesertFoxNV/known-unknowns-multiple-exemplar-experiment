@@ -1,5 +1,5 @@
 import { clone, sample } from 'lodash-es';
-import { CueNonArbitrary, CueTuple } from '../study-conditions/cue.constants';
+import { CUE_NON_ARBITRARY, CueNonArbitrary, CueTuple } from '../study-conditions/cue.constants';
 import { getRandomStimuli } from '../study-conditions/get-random-stimuli';
 import { StimuliComparisonTuple, StimuliNetworkTuple } from '../study-conditions/stimuli.interfaces';
 import { StimulusCase } from '../study-conditions/stimulus-case';
@@ -44,7 +44,7 @@ export abstract class Network {
   get identities(): StimuliComparison[] {
     return this.stimuli.map(stimulus => {
       return {
-        cue: CueNonArbitrary.same,
+        cue: CUE_NON_ARBITRARY.same,
         stimuli: [stimulus, stimulus]
       };
     });

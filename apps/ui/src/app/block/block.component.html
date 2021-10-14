@@ -1,20 +1,12 @@
-<mat-card [ngStyle.lt-sm]="{'box-shadow': 'unset'}">
-  <ng-container *ngIf="show === 'instructions'">
-    <mat-card-content>
-      When you are ready click start
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-button (click)="start()">Start</button>
-    </mat-card-actions>
-  </ng-container>
-  <ng-container *ngIf="show === 'completed'">
-    <mat-card-content>
-      Completed!
-    </mat-card-content>
-  </ng-container>
-  <trial
-    *ngIf="show === 'trial'"
-    (completed)="selected($event)"
-    (timedOut)="selected($event)"
-  ></trial>
-</mat-card>
+<trial *ngIf="show"
+  (completed)="selected($event)"
+  (timedOut)="selected($event)"
+></trial>
+
+
+
+
+
+
+
+

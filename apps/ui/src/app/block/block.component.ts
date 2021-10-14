@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { OverlayService } from '../overlay/overlay.service';
 import { StudyConditionService } from '../study-conditions/study-condition.service';
 import { StudyConditions } from '../study-conditions/study-conditions';
 import { CueSelected } from '../trial/cue-selected';
@@ -9,17 +10,19 @@ import { Block } from './block';
 @Component({
   selector: 'block',
   templateUrl: './block.component.html',
-  styleUrls: ['./block.component.css']
+  styleUrls: ['./block.component.scss'],
+  animations: []
 })
 export class BlockComponent {
   block: Block|undefined;
   @Output() completed = new EventEmitter();
   conditions: StudyConditions;
-  show: 'instructions'|'trial'|'completed' = 'instructions';
+  show = false;
   @ViewChild(TrialComponent, { static: false }) trialComponent: TrialComponent|undefined;
 
   constructor(
-    readonly conditionSvc: StudyConditionService
+    readonly conditionSvc: StudyConditionService,
+    private overlaySvc: OverlayService
   ) {
     this.conditions = this.conditionSvc.conditions as StudyConditions;
   }
@@ -27,6 +30,7 @@ export class BlockComponent {
   next(block: Block) {
     this.block = block;
     console.log(this.block);
+    this.overlaySvc.show('CLICK TO START').close.subscribe(() => this.start());
   }
 
   nextTrial() {
@@ -34,7 +38,8 @@ export class BlockComponent {
     if (trial) {
       this.trialComponent?.next(trial);
     } else {
-      this.show = 'completed';
+      this.overlaySvc.show('COMPLETE').close.subscribe(() => location.reload());
+      this.show = false;
       this.completed.emit();
     }
   }
@@ -45,7 +50,7 @@ export class BlockComponent {
   }
 
   async start() {
-    this.show = 'trial';
+    this.show = true;
     await nextTick();
     this.nextTrial();
   }

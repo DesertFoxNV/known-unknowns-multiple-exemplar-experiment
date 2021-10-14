@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { TrialStimulusComponent } from './trial-stimulus.component';
 
 @NgModule({
@@ -10,7 +11,8 @@ import { TrialStimulusComponent } from './trial-stimulus.component';
     TrialStimulusComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    FlexLayoutModule
   ]
 })
 export class TrialStimulusModule {}

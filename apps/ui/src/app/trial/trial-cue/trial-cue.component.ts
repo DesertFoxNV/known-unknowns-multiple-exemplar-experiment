@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { fadeIn } from '../../animations/fade-in.animation';
 import { fadeOut } from '../../animations/fade-out.animation';
-import { BUTTON_TEXT_FILE_PATH } from '../../study-conditions/cue.constants';
 import { TrialCueComponentConfig } from '../../study-conditions/trial-cue-component-config';
-import { nextTick } from '../next-tick';
+import { FADE_OUT_DURATION } from '../cue-and-stimulus-fade-out-duration';
+import { delay } from '../delay';
 
 @Component({
   selector: 'trial-cue',
@@ -11,21 +11,19 @@ import { nextTick } from '../next-tick';
   styleUrls: ['../trial.component.scss', './trial-cue.component.scss'],
   animations: [
     fadeIn(),
-    fadeOut({ duration: 250 })
+    fadeOut({ duration: FADE_OUT_DURATION })
   ]
 })
 export class TrialCueComponent {
-  animate: 'fade-in'|'fade-out' = 'fade-out';
+  animate?: 'fade-in'|'fade-out';
   @Input() animationDelay = 0;
-  backgroundImage = BUTTON_TEXT_FILE_PATH;
+  backgroundImage?: string;
   config?: TrialCueComponentConfig;
   @Output() selected = new EventEmitter<TrialCueComponentConfig>();
 
   async set(config: TrialCueComponentConfig) {
     this.animate = 'fade-out';
-
-    await nextTick();
-
+    await delay(FADE_OUT_DURATION);
     this.config = config;
     this.backgroundImage = config.fileName;
     this.animate = 'fade-in';

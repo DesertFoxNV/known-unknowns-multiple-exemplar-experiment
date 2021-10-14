@@ -1,0 +1,15 @@
+<div
+  class="position-absolute"
+  *ngIf="overlaySvc.show$ | async"
+  [@fade]
+>
+  <div class="position-relative">
+    <div
+      class="vw-100 vh-100 d-flex justify-content-center align-items-center bg-white"
+      mat-ripple
+      (click)="overlaySvc.hide()"
+    >
+      <strong class="overlay-dynamic-text">{{overlaySvc.value$ | async}}</strong>
+    </div>
+  </div>
+</div>
