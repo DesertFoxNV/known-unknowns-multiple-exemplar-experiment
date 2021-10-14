@@ -6,11 +6,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
-import { OverlayModule } from './overlay/overlay.module';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [AppRoutingModule, BrowserModule, BrowserAnimationsModule, MatSnackBarModule, MatRippleModule, OverlayModule],
+  imports: [
+    AppRoutingModule,
+    BrowserModule,
+    BrowserAnimationsModule,
+    MatSnackBarModule,
+    MatRippleModule
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })

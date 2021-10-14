@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { fadeIn } from '../../animations/fade-in.animation';
 import { fadeOut } from '../../animations/fade-out.animation';
 import { TrialCueComponentConfig } from '../../study-conditions/trial-cue-component-config';
-import { FADE_OUT_DURATION } from '../cue-and-stimulus-fade-out-duration';
+import { FADE_OUT_DURATION } from '../fade-out-duration';
 import { delay } from '../delay';
 
 @Component({

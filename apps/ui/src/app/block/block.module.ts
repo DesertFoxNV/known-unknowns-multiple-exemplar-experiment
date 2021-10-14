@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatRippleModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
 import { TrialModule } from '../trial/trial.module';
+import { BlockButtonDialogModule } from './block-button-dialog/block-button-dialog.module';
 import { BlockComponent } from './block.component';
 
 @NgModule({
@@ -15,12 +14,11 @@ import { BlockComponent } from './block.component';
     BlockComponent
   ],
   imports: [
+    BlockButtonDialogModule,
     CommonModule,
-    MatCardModule,
-    TrialModule,
     FlexLayoutModule,
-    MatButtonModule,
-    MatRippleModule
+    MatDialogModule,
+    TrialModule
   ]
 })
 export class BlockModule {}

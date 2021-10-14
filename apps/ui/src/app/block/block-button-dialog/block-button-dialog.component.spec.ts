@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OverlayComponent } from './overlay.component';
+import { BlockButtonDialogComponent } from './block-button-dialog.component';
 
-describe('OverlayComponent', () => {
-  let component: OverlayComponent;
-  let fixture: ComponentFixture<OverlayComponent>;
+describe('BlockStartDialogComponent', () => {
+  let component: BlockButtonDialogComponent;
+  let fixture: ComponentFixture<BlockButtonDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ OverlayComponent ]
+      declarations: [ BlockButtonDialogComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(OverlayComponent);
+    fixture = TestBed.createComponent(BlockButtonDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -9,6 +9,11 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+.fullscreen-dialog-container .mat-dialog-container {
+  border-radius:0;
+  padding: 0;
+}
+
 @import "styles/variables";
 
 @import "~bootstrap/scss/functions";
@@ -24,3 +29,4 @@ body {
 @import "~bootstrap/scss/containers";
 
 @import "styles/reset";
+@import "styles/animate";

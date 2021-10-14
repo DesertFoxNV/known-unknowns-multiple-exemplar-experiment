@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
-import { OverlayService } from '../overlay/overlay.service';
+import { MatDialog } from '@angular/material/dialog';
 import { StudyConditionService } from '../study-conditions/study-condition.service';
-import { StudyConditions } from '../study-conditions/study-conditions';
 import { CueSelected } from '../trial/cue-selected';
 import { nextTick } from '../trial/next-tick';
 import { TrialComponent } from '../trial/trial.component';
 import { Block } from './block';
+import { BlockButtonDialogComponent } from './block-button-dialog/block-button-dialog.component';
+import { fullScreenDialogWithData } from './full-screen-dialog-with-data';
 
 @Component({
   selector: 'block',
@@ -16,21 +17,21 @@ import { Block } from './block';
 export class BlockComponent {
   block: Block|undefined;
   @Output() completed = new EventEmitter();
-  conditions: StudyConditions;
+  conditions = this.conditionSvc.conditions;
   show = false;
   @ViewChild(TrialComponent, { static: false }) trialComponent: TrialComponent|undefined;
 
   constructor(
     readonly conditionSvc: StudyConditionService,
-    private overlaySvc: OverlayService
+    private dialog: MatDialog
   ) {
-    this.conditions = this.conditionSvc.conditions as StudyConditions;
   }
 
   next(block: Block) {
     this.block = block;
     console.log(this.block);
-    this.overlaySvc.show('CLICK TO START').close.subscribe(() => this.start());
+    this.dialog.open(BlockButtonDialogComponent, fullScreenDialogWithData('CLICK TO START')
+    ).afterClosed().subscribe(() => this.start());
   }
 
   nextTrial() {
@@ -38,7 +39,8 @@ export class BlockComponent {
     if (trial) {
       this.trialComponent?.next(trial);
     } else {
-      this.overlaySvc.show('COMPLETE').close.subscribe(() => location.reload());
+      this.dialog.open(BlockButtonDialogComponent, fullScreenDialogWithData('TRIAL COMPLETE')).afterClosed().subscribe(
+        () => location.reload());
       this.show = false;
       this.completed.emit();
     }
