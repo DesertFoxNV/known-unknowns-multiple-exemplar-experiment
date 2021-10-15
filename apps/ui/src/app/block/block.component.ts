@@ -30,12 +30,13 @@ export class BlockComponent {
   next(block: Block) {
     this.block = block;
     console.log(this.block);
-    this.dialog.open(BlockButtonDialogComponent, fullScreenDialogWithData('CLICK TO START')
+    this.dialog.open(BlockButtonDialogComponent, fullScreenDialogWithData(`CLICK TO START`)
     ).afterClosed().subscribe(() => this.start());
   }
 
   nextTrial() {
     const trial = this.block?.nextTrial();
+    console.log(trial);
     if (trial) {
       this.trialComponent?.next(trial);
     } else {

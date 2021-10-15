@@ -1,8 +1,8 @@
-import { CUE_NON_ARBITRARY, CueNonArbitrary } from '../study-conditions/cue.constants';
+import { CUE_NON_ARBITRARY } from '../study-conditions/cue.constants';
 import { StimulusCase } from '../study-conditions/stimulus-case';
-import { Network } from './network';
+import { FullySpecifiedNetwork } from './fully-specified-network';
 
-export class KnownUnknownNetwork extends Network {
+export class KnownUnknownNetwork extends FullySpecifiedNetwork {
 
   constructor(num: number, stimulusCase: StimulusCase) {
     super(num, stimulusCase, [

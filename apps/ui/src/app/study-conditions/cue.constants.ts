@@ -36,17 +36,9 @@ export const CUE_NON_ARBITRARY = {
   iCannotKnow: `I CANNOT KNOW`
 } as const;
 
-export const CUE_NON_ARBITRARY_EXACT = {
-  same: 'SAME',
-  greaterThan: 'GREATER THAN',
-  lessThan: 'LESS THAN'
-} as const;
-
 export type CueNonArbitrary = typeof CUE_NON_ARBITRARY[keyof typeof CUE_NON_ARBITRARY];
 
-export type CueNonArbitraryExact = typeof CUE_NON_ARBITRARY_EXACT[keyof typeof CUE_NON_ARBITRARY_EXACT];
-
-export type CueTuple = [CueNonArbitraryExact, CueNonArbitraryExact];
+export type CueTuple<T> = [T, T];
 
 export const CUES_NON_ARBITRARY_W_ICK: CueNonArbitrary[] = Object.values(CUE_NON_ARBITRARY).filter(
   rc => rc !== CUE_NON_ARBITRARY.different);
