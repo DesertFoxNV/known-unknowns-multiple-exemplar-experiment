@@ -22,7 +22,6 @@ export class TrialComponent implements AfterViewInit {
   conditions: StudyConditions;
   cueComponentConfigs: TrialCueComponentConfig[] = [];
   secondsInTrial = 0;
-  @Output() timedOut = new EventEmitter();
   timerSub: Subscription|undefined;
   @ViewChildren(TrialCueComponent) trialCueComponents!: QueryList<TrialCueComponent>;
   @ViewChildren(TrialStimulusComponent) trialStimulusComponents!: QueryList<TrialStimulusComponent>;
@@ -48,13 +47,21 @@ export class TrialComponent implements AfterViewInit {
     this.trialStimulusComponents.changes.pipe(untilDestroyed(this)).subscribe();
   }
 
+  selected(cue: TrialCueComponentConfig, position: number) {
+    this.timerSub?.unsubscribe();
+    this.completed.emit({ cue, position });
+  }
+
   setTimer() {
     if (this.timerSub) this.timerSub.unsubscribe();
     this.secondsInTrial = 0;
     this.timerSub = interval(1000).pipe(
       tap(() => {
         this.secondsInTrial++;
-        if (this.secondsInTrial >= this.conditions.config.trialTimeout) this.timedOut.emit();
+        if (this.secondsInTrial >= this.conditions.config.trialTimeout) {
+          this.completed.emit();
+          this.timerSub?.unsubscribe();
+        }
       }),
       untilDestroyed(this)
     ).subscribe();

@@ -7,6 +7,7 @@ export abstract class Block {
   name: string;
   started: Date|undefined;
   trials: Trial[] = [];
+  showFeedback = false;
 
   protected constructor(name: string) {
     this.name = name;

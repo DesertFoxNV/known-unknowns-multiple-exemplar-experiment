@@ -1,5 +1,3 @@
-<ng-content></ng-content>
-
 <div class="trial-sample-stimuli">
   <trial-stimulus [animationDelay]="500"></trial-stimulus>
   <trial-stimulus [animationDelay]="1000"></trial-stimulus>
@@ -9,7 +7,7 @@
   <ng-container *ngFor="let config of cueComponentConfigs; let i = index">
     <trial-cue
       [animationDelay]="1500"
-      (selected)="completed.emit({ cue: $event, position: i})"
+      (selected)="selected($event, i)"
     ></trial-cue>
   </ng-container>
 </div>

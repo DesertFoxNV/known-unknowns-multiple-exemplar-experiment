@@ -9,12 +9,14 @@ import { Block } from './block';
 // 12 trials = 6 identities (A:A x 2, B:B x 2, C:C x 2) x 6 different (A:B, B:C, C:A, B:A, C:B, A:C)
 export class ForcedChoiceBlock extends Block {
   network: BinaryNetwork;
+  showFeedback = true;
 
   constructor(
     network: BinaryNetwork,
     config: StudyConfig
   ) {
     super('Forced choice block');
+    console.log(this.showFeedback);
     this.network = network;
     this.createTrials(config);
   }
@@ -23,7 +25,7 @@ export class ForcedChoiceBlock extends Block {
     const arbitraryFileNames = shuffle(CUES_ARBITRARY_FILE_PATHS);
     const sameCueComponentConfigs = new Array(4).fill({
       isArbitrary: config.cueType === CUE_TYPE.arbitrary,
-      fileName: config.cueType === CUE_TYPE.nonArbitrary ? BUTTON_TEXT_FILE_PATH : arbitraryFileNames[1],
+      fileName: config.cueType === CUE_TYPE.nonArbitrary ? BUTTON_TEXT_FILE_PATH : arbitraryFileNames[0],
       value: CUE_NON_ARBITRARY.same
     });
 
