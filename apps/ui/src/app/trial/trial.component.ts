@@ -6,7 +6,6 @@ import {tap} from 'rxjs/operators';
 import {StudyConditionService} from '../study-conditions/study-condition.service';
 import {StudyConditions} from '../study-conditions/study-conditions';
 import {TrialCueComponentConfig} from '../study-conditions/trial-cue-component-config';
-import {nextTick} from './next-tick';
 import {Trial} from './trial';
 import {TrialCueComponent} from './trial-cue/trial-cue.component';
 import {TrialStimulusComponent} from './trial-stimulus/trial-stimulus.component';
@@ -20,7 +19,6 @@ import {TrialStimulusComponent} from './trial-stimulus/trial-stimulus.component'
 export class TrialComponent implements AfterViewInit {
   @Output() completed = new EventEmitter<{ cue: TrialCueComponentConfig, position: number } | undefined>();
   conditions: StudyConditions;
-  cueComponentConfigs: TrialCueComponentConfig[] = [];
   secondsInTrial = 0;
   timerSub: Subscription | undefined;
   @ViewChildren(TrialCueComponent) trialCueComponents!: QueryList<TrialCueComponent>;
@@ -30,12 +28,8 @@ export class TrialComponent implements AfterViewInit {
     this.conditions = this.conditionSvc.conditions as StudyConditions;
   }
 
-  async next(trial: Trial) {
-    this.cueComponentConfigs = [...trial.cueComponentConfigs];
-
+  next(trial: Trial) {
     this.setTimer();
-
-    await nextTick();
 
     for (const [i, value] of trial.stimuli.entries()) this.trialStimulusComponents.get(i)?.set(value);
     const shuffledCueConfigs = shuffle(trial.cueComponentConfigs);

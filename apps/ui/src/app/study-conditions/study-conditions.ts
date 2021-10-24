@@ -20,8 +20,8 @@ export class StudyConditions {
     const network4 = new BinaryNetwork(3, this.stimulusCase);
     this.blocks = [
       // new PreTestBlock(new KnownNetwork(1, this.stimulusCase), new KnownUnknownNetwork(2, this.stimulusCase),
-      // new ForcedChoiceBlock(network3, config),
-      new DifferentIdkBlock(network3, network4, config)
+      new ForcedChoiceBlock(network3, config),
+      // new DifferentIdkBlock(network3, network4, config)
     ];
   }
 }

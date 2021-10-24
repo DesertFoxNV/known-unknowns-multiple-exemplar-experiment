@@ -2,14 +2,13 @@ import {Component, EventEmitter, Output, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {StudyConditionService} from '../study-conditions/study-condition.service';
 import {CueSelected} from '../trial/cue-selected';
-import {delay} from '../trial/delay';
-import {FADE_OUT_DURATION} from '../trial/fade-out-duration';
-import {nextTick} from '../trial/next-tick';
 import {TrialFeedbackDialogComponent} from '../trial/trial-correct/trial-feedback-dialog.component';
 import {TrialComponent} from '../trial/trial.component';
 import {Block} from './block';
 import {BlockButtonDialogComponent} from './block-button-dialog/block-button-dialog.component';
 import {fullScreenDialogWithData} from './full-screen-dialog-with-data';
+import {FeedBackDialogData} from "../trial/trial-correct/feed-back-dialog.data";
+import {delay as Delay} from 'utils-decorators';
 
 @Component({
   selector: 'block',
@@ -37,35 +36,39 @@ export class BlockComponent {
     ).afterClosed().subscribe(() => this.start());
   }
 
-  async nextTrial() {
+
+  @Delay(0)
+  nextTrial() {
     const trial = this.block?.nextTrial();
     console.log(trial);
     if (trial) {
       this.trialComponent?.next(trial);
     } else {
       this.show = false;
-      await delay(1500);
+      // await delay(1500);
       this.dialog.open(BlockButtonDialogComponent, fullScreenDialogWithData('TRIAL COMPLETE')).afterClosed().subscribe(
         () => this.completed.emit());
     }
   }
 
   async selected($event: CueSelected | undefined) {
+    console.log($event);
     if (this.block?.showFeedback) {
-      this.dialog.open(TrialFeedbackDialogComponent, fullScreenDialogWithData($event ? 'CORRECT' : 'TIME EXPIRED')).afterClosed().subscribe();
-      setTimeout(() => {
-        this.nextTrial();
-      }, 3000 - (FADE_OUT_DURATION * 2));
+      this.dialog.open(
+        TrialFeedbackDialogComponent,
+        fullScreenDialogWithData<FeedBackDialogData>(
+          {
+            feedback: $event ? 'CORRECT' : 'TIME EXPIRED',
+            next: () => this.nextTrial()
+          }
+        ));
     } else {
-      setTimeout(() => {
-        this.nextTrial();
-      }, 3000 - (FADE_OUT_DURATION * 2));
+      this.nextTrial();
     }
   }
 
-  async start() {
+  start() {
     this.show = true;
-    await nextTick();
-    this.nextTrial().then();
+    this.nextTrial();
   }
 }

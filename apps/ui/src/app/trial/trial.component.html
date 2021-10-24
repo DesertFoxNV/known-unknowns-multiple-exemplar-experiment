@@ -4,10 +4,10 @@
 </div>
 
 <div class="trial-buttons">
-  <ng-container *ngFor="let config of cueComponentConfigs; let i = index">
+  <ng-container *ngFor="let _ of [].constructor(5); let i = index">
     <trial-cue
       [animationDelay]="1500"
-      (selected)="selected($event, i)"
+      (selected)="selected($event, i + 1)"
     ></trial-cue>
   </ng-container>
 </div>
