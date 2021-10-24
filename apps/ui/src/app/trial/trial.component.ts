@@ -1,15 +1,15 @@
-import { AfterViewInit, Component, EventEmitter, Output, QueryList, ViewChildren } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { shuffle } from 'lodash-es';
-import { interval, Subscription } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { StudyConditionService } from '../study-conditions/study-condition.service';
-import { StudyConditions } from '../study-conditions/study-conditions';
-import { TrialCueComponentConfig } from '../study-conditions/trial-cue-component-config';
-import { nextTick } from './next-tick';
-import { Trial } from './trial';
-import { TrialCueComponent } from './trial-cue/trial-cue.component';
-import { TrialStimulusComponent } from './trial-stimulus/trial-stimulus.component';
+import {AfterViewInit, Component, EventEmitter, Output, QueryList, ViewChildren} from '@angular/core';
+import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
+import {shuffle} from 'lodash-es';
+import {interval, Subscription} from 'rxjs';
+import {tap} from 'rxjs/operators';
+import {StudyConditionService} from '../study-conditions/study-condition.service';
+import {StudyConditions} from '../study-conditions/study-conditions';
+import {TrialCueComponentConfig} from '../study-conditions/trial-cue-component-config';
+import {nextTick} from './next-tick';
+import {Trial} from './trial';
+import {TrialCueComponent} from './trial-cue/trial-cue.component';
+import {TrialStimulusComponent} from './trial-stimulus/trial-stimulus.component';
 
 @UntilDestroy()
 @Component({
@@ -18,11 +18,11 @@ import { TrialStimulusComponent } from './trial-stimulus/trial-stimulus.componen
   styleUrls: ['./trial.component.scss']
 })
 export class TrialComponent implements AfterViewInit {
-  @Output() completed = new EventEmitter<{ cue: TrialCueComponentConfig, position: number }|undefined>();
+  @Output() completed = new EventEmitter<{ cue: TrialCueComponentConfig, position: number } | undefined>();
   conditions: StudyConditions;
   cueComponentConfigs: TrialCueComponentConfig[] = [];
   secondsInTrial = 0;
-  timerSub: Subscription|undefined;
+  timerSub: Subscription | undefined;
   @ViewChildren(TrialCueComponent) trialCueComponents!: QueryList<TrialCueComponent>;
   @ViewChildren(TrialStimulusComponent) trialStimulusComponents!: QueryList<TrialStimulusComponent>;
 
@@ -49,7 +49,7 @@ export class TrialComponent implements AfterViewInit {
 
   selected(cue: TrialCueComponentConfig, position: number) {
     this.timerSub?.unsubscribe();
-    this.completed.emit({ cue, position });
+    this.completed.emit({cue, position});
   }
 
   setTimer() {

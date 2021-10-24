@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatRippleModule } from '@angular/material/core';
-import { TrialCorrectDialogComponent } from './trial-correct-dialog.component';
+import { TrialFeedbackDialogComponent } from './trial-feedback-dialog.component';
 
 @NgModule({
-  declarations: [TrialCorrectDialogComponent],
-  exports: [TrialCorrectDialogComponent],
+  declarations: [TrialFeedbackDialogComponent],
+  exports: [TrialFeedbackDialogComponent],
   imports: [
     CommonModule,
     MatRippleModule

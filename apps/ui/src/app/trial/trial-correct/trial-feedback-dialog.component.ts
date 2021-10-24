@@ -6,18 +6,18 @@ import { FADE_OUT_DURATION } from '../../trial/fade-out-duration';
 
 @Component({
   selector: 'trial-correct-dialog',
-  templateUrl: './trial-correct-dialog.component.html',
-  styleUrls: ['./trial-correct-dialog.component.css'],
+  templateUrl: './trial-feedback-dialog.component.html',
+  styleUrls: ['./trial-feedback-dialog.component.css'],
   animations: [
     fadeOut({ duration: FADE_OUT_DURATION })
   ]
 })
-export class TrialCorrectDialogComponent implements OnInit {
+export class TrialFeedbackDialogComponent implements OnInit {
   animated = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: string,
-    readonly ref: MatDialogRef<TrialCorrectDialogComponent>
+    readonly ref: MatDialogRef<TrialFeedbackDialogComponent>
   ) { }
 
   async close() {
