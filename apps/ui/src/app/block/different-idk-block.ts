@@ -3,13 +3,13 @@ import {BinaryNetwork} from '../network/binary-network';
 import {CUE_NON_ARBITRARY} from '../study-conditions/cue.constants';
 import {StudyConfig} from '../study-config-form/study-config';
 import {Block} from './block';
-import {createComponentConfig} from './create-component-config';
+import {twoChoiceCueComponentConfig} from './one-choice-cue-component-config';
 import {StimuliComparison} from "../network/stimuli-comparison";
 
-// 12 trials ? = 6 different (A:B, B:C, C:A, B:A, C:B, A:C) x 6 ICK ??
+// 12 trials ? = 5 different (A:B, B:C, C:A, B:A, C:B, A:C) x 5 ICK
 export class DifferentIdkBlock extends Block {
   network: BinaryNetwork;
-  showFeedback = true;
+  showFeedback = false;
   unknownNetwork: BinaryNetwork;
 
   constructor(
@@ -31,7 +31,7 @@ export class DifferentIdkBlock extends Block {
     ].flat().map(
       stimuliComparison => ({
         ...stimuliComparison,
-        cueComponentConfigs: createComponentConfig(config, CUE_NON_ARBITRARY.different)
+        cueComponentConfigs: twoChoiceCueComponentConfig(config, CUE_NON_ARBITRARY.different, CUE_NON_ARBITRARY.iCannotKnow)
       })
     ));
 
@@ -51,7 +51,7 @@ export class DifferentIdkBlock extends Block {
       ickStimuliComparisons
     ).map(stimuliComparison => ({
       ...stimuliComparison,
-      cueComponentConfigs: createComponentConfig(config, CUE_NON_ARBITRARY.iCannotKnow)
+      cueComponentConfigs: twoChoiceCueComponentConfig(config, CUE_NON_ARBITRARY.different, CUE_NON_ARBITRARY.iCannotKnow)
     }));
 
     this.trials = differentTrials.concat(idkTrials);

@@ -3,7 +3,7 @@ import {BinaryNetwork} from '../network/binary-network';
 import {CUE_NON_ARBITRARY} from '../study-conditions/cue.constants';
 import {StudyConfig} from '../study-config-form/study-config';
 import {Block} from './block';
-import {createComponentConfig} from './create-component-config';
+import {oneChoiceCueComponentConfig} from './one-choice-cue-component-config';
 
 // 12 trials = 6 identities (A:A x 2, B:B x 2, C:C x 2) x 6 different (A:B, B:C, C:A, B:A, C:B, A:C)
 export class ForcedChoiceBlock extends Block {
@@ -21,8 +21,8 @@ export class ForcedChoiceBlock extends Block {
   }
 
   createTrials(config: StudyConfig) {
-    const sameCueComponentConfigs = createComponentConfig(config, CUE_NON_ARBITRARY.same);
-    const differentCueComponentConfig = createComponentConfig(config, CUE_NON_ARBITRARY.different);
+    const sameCueComponentConfigs = oneChoiceCueComponentConfig(config, CUE_NON_ARBITRARY.same);
+    const differentCueComponentConfig = oneChoiceCueComponentConfig(config, CUE_NON_ARBITRARY.different);
 
     const sameTrials = shuffle([
       this.network.identities,
