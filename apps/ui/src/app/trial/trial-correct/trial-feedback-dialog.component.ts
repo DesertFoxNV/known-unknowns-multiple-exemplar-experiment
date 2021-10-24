@@ -1,9 +1,9 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {fadeOut} from '../../animations/fade-out.animation';
 import {FADE_OUT_DURATION_MS} from '../../trial/fade-out-duration';
 import {FeedBackDialogData} from "./feed-back-dialog.data";
-import {timer} from "rxjs";
+import {delay as Delay} from 'utils-decorators';
 
 export const FEEDBACK_TIME_MS = 3000;
 export const FEEDBACK_DELAY_MS = FEEDBACK_TIME_MS - FADE_OUT_DURATION_MS;
@@ -16,27 +16,36 @@ export const FEEDBACK_DELAY_MS = FEEDBACK_TIME_MS - FADE_OUT_DURATION_MS;
     fadeOut({duration: FADE_OUT_DURATION_MS, delay: FEEDBACK_DELAY_MS})
   ]
 })
-export class TrialFeedbackDialogComponent implements OnInit {
+export class TrialFeedbackDialogComponent {
   animated = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: FeedBackDialogData,
     readonly ref: MatDialogRef<TrialFeedbackDialogComponent>
   ) {
+    this.animate()
+    this.next()
+    this.close()
   }
 
-  async ngOnInit(): Promise<void> {
-    // This delay prevents the a change error by animated changing from true to false
-    await timer(0).toPromise()
-    this.animated = true;
-    /***
-     * This delay is used to start the fadeout animation in the trial cue components.
-     * Without the delay the transition between feedback and the next trial is sudden.
-     ***/
-    await timer(FEEDBACK_DELAY_MS).toPromise()
+  // This delay prevents a change detection error
+  @Delay(0)
+  animate() {
+    this.animated = true
+  }
+
+  /***
+   * This delay allows the next trial fadeOut animation to be started before the dialog fadeOut finishes.
+   * Without this delay, the old trial cues are shown again before fading out.
+   */
+  @Delay(FEEDBACK_DELAY_MS)
+  next() {
     this.data.next();
-    // This delay is for closing the feedback dialog component.
-    await timer(FADE_OUT_DURATION_MS).toPromise()
-    this.ref.close();
+  }
+
+  // This delay allows the feedback fadeOut animation to finish before closing the dialog component.
+  @Delay(FEEDBACK_TIME_MS)
+  close() {
+    this.ref.close()
   }
 }

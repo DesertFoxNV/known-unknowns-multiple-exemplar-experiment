@@ -10223,6 +10223,11 @@ timsort@^0.3.0:
   resolved "https://registry.yarnpkg.com/timsort/-/timsort-0.3.0.tgz#405411a8e7e6339fe64db9a234de11dc31e02bd4"
   integrity sha1-QFQRqOfmM5/mTbmiNN4R3DHgK9Q=
 
+tinyqueue@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/tinyqueue/-/tinyqueue-2.0.3.tgz#64d8492ebf39e7801d7bd34062e29b45b2035f08"
+  integrity sha512-ppJZNDuKGgxzkHihX8v9v9G5f+18gzaTfrukGrq6ueg0lmH4nqVnA2IPG0AEH3jKEk2GRJCUhDoqpoiw3PHLBA==
+
 tmp@^0.0.33:
   version "0.0.33"
   resolved "https://registry.yarnpkg.com/tmp/-/tmp-0.0.33.tgz#6d34335889768d21b2bcda0aa277ced3b1bfadf9"
@@ -10617,6 +10622,13 @@ util-deprecate@^1.0.1, util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=
+
+utils-decorators@^1.10.4:
+  version "1.10.4"
+  resolved "https://registry.yarnpkg.com/utils-decorators/-/utils-decorators-1.10.4.tgz#df3482fdddf127ca6db7ac58e0d3a19c99678bf1"
+  integrity sha512-f/GnLD+TA6DOW53v+3frv8kehx3q9UBtsB47yU2ie8A0rTd0w2fW0FLeYUEEgmqhTk3xHt9uihSish/nD3aQeg==
+  dependencies:
+    tinyqueue "^2.0.3"
 
 utils-merge@1.0.1:
   version "1.0.1"
