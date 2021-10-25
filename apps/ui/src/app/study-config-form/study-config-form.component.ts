@@ -1,15 +1,15 @@
-import { Clipboard } from '@angular/cdk/clipboard';
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { FormGroup } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { flatten } from 'flat';
-import { tap } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
-import { CUE_TYPES_OPTIONS } from '../study-conditions/cue.constants';
-import { StudyConfigFlattened } from './study-config-flattened';
-import { StudyConfig} from './study-config';
-import { StudyConfigService } from './study-config.service';
+import {Clipboard} from '@angular/cdk/clipboard';
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {FormGroup} from '@ngneat/reactive-forms';
+import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
+import {flatten} from 'flat';
+import {tap} from 'rxjs/operators';
+import {environment} from '../../environments/environment';
+import {CUE_TYPES_OPTIONS} from '../study-conditions/cue.constants';
+import {StudyConfigFlattened} from './study-config-flattened';
+import {StudyConfig} from './study-config';
+import {StudyConfigService} from './study-config.service';
 
 @UntilDestroy()
 @Component({
@@ -50,7 +50,7 @@ export class StudyConfigFormComponent implements OnInit {
   }
 
   start() {
-    this.router.navigate([`./study`], { queryParams: this.getQueryParamObj() }).then();
+    this.router.navigate([`./study`], {queryParams: this.getQueryParamObj()}).then();
   }
 
 }

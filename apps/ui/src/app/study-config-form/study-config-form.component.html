@@ -29,9 +29,9 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field *ngIf="form.get('trialTimeout') as trialTimeoutCtrl" appearance="outline">
+      <mat-form-field *ngIf="form.get('trialTimeoutSeconds') as trialTimeoutCtrl" appearance="outline">
         <mat-label>Trial timeout</mat-label>
-        <input matInput min="1" max="1000" type="number" formControlName="trialTimeout">
+        <input matInput min="1" max="1000" type="number" formControlName="trialTimeoutSeconds">
         <span matSuffix>seconds</span>
         <mat-error *ngIf="trialTimeoutCtrl.hasError('required')">
           Trial timeout is <strong>required</strong>

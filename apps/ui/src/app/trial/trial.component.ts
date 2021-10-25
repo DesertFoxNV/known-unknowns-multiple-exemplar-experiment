@@ -2,9 +2,8 @@ import {AfterViewInit, Component, EventEmitter, Output, QueryList, ViewChildren}
 import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
 import {shuffle} from 'lodash-es';
 import {interval, Subscription} from 'rxjs';
-import {tap} from 'rxjs/operators';
+import {takeWhile, tap} from 'rxjs/operators';
 import {StudyConditionService} from '../study-conditions/study-condition.service';
-import {StudyConditions} from '../study-conditions/study-conditions';
 import {TrialCueComponentConfig} from '../study-conditions/trial-cue-component-config';
 import {Trial} from './trial';
 import {TrialCueComponent} from './trial-cue/trial-cue.component';
@@ -18,14 +17,12 @@ import {TrialStimulusComponent} from './trial-stimulus/trial-stimulus.component'
 })
 export class TrialComponent implements AfterViewInit {
   @Output() completed = new EventEmitter<{ cue: TrialCueComponentConfig, position: number } | undefined>();
-  conditions: StudyConditions;
   secondsInTrial = 0;
   timerSub: Subscription | undefined;
   @ViewChildren(TrialCueComponent) trialCueComponents!: QueryList<TrialCueComponent>;
   @ViewChildren(TrialStimulusComponent) trialStimulusComponents!: QueryList<TrialStimulusComponent>;
 
   constructor(private conditionSvc: StudyConditionService) {
-    this.conditions = this.conditionSvc.conditions as StudyConditions;
   }
 
   next(trial: Trial) {
@@ -50,12 +47,10 @@ export class TrialComponent implements AfterViewInit {
     if (this.timerSub) this.timerSub.unsubscribe();
     this.secondsInTrial = 0;
     this.timerSub = interval(1000).pipe(
+      takeWhile(() => this.secondsInTrial < this.conditionSvc.trialTimeoutSeconds),
       tap(() => {
         this.secondsInTrial++;
-        if (this.secondsInTrial >= this.conditions.config.trialTimeout) {
-          this.completed.emit();
-          this.timerSub?.unsubscribe();
-        }
+        if (this.secondsInTrial == this.conditionSvc.trialTimeoutSeconds) this.completed.emit();
       }),
       untilDestroyed(this)
     ).subscribe();

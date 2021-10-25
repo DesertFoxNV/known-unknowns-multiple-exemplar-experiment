@@ -7,6 +7,6 @@ export interface StudyConfig {
   cueType: CueType;
   iCannotKnow: boolean;
   participantId: string;
-  trialTimeout: number; // in seconds
+  trialTimeoutSeconds: number;
 }
 
