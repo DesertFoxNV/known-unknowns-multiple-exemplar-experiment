@@ -1,4 +1,5 @@
 <button
+  [ngClass]="{'d-none': config === undefined}"
   [ngStyle]="{'pointer-events': config?.value ? 'all' : 'none' }"
   [@fadeIn]="{ value: animate === 'fade-in',  params: { delay: animationDelay } }"
   [@fadeOut]="animate === 'fade-out'"

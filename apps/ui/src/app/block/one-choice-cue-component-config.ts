@@ -7,7 +7,7 @@ import {
 import {StudyConfig} from '../study-config-form/study-config';
 
 export function oneChoiceCueComponentConfig(config: StudyConfig, cue: CueNonArbitrary) {
-  return new Array(4).fill(undefined).map(() => ({
+  return new Array(config.iCannotKnow ? 4 : 3).fill(undefined).map(() => ({
     isArbitrary: config.cueType === CUE_TYPE.arbitrary,
     fileName: config.cueType === CUE_TYPE.nonArbitrary ? BUTTON_TEXT_FILE_PATH : CUE_NON_ARBITRARY_TO_FILENAME[cue],
     value: cue
