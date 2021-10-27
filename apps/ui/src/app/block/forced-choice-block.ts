@@ -6,7 +6,6 @@ import { StudyConfig } from '../study-config-form/study-config';
 import { Block } from './block';
 import { oneChoiceCueComponentConfig } from './one-choice-cue-component-config';
 
-//
 /***
  * WO-IDK: 12 trials
  *  6 identities (A:A x 2, B:B x 2, C:C x 2)
@@ -40,7 +39,6 @@ export class ForcedChoiceBlock extends Block {
     const sameTrials = shuffle([
       this.network1.identities,
       this.network1.identities,
-      this.network1.identities
     ].flat().map(stimuliComparison => ({ ...stimuliComparison, cueComponentConfigs: sameCueComponentConfigs })));
 
     const differentTrials = shuffle([
