@@ -1,13 +1,13 @@
-import {AfterViewInit, Component, EventEmitter, Output, QueryList, ViewChildren} from '@angular/core';
-import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
-import {shuffle} from 'lodash-es';
-import {interval, Subscription} from 'rxjs';
-import {takeWhile, tap} from 'rxjs/operators';
-import {StudyConditionService} from '../study-conditions/study-condition.service';
-import {TrialCueComponentConfig} from '../study-conditions/trial-cue-component-config';
-import {Trial} from './trial';
-import {TrialCueComponent} from './trial-cue/trial-cue.component';
-import {TrialStimulusComponent} from './trial-stimulus/trial-stimulus.component';
+import { AfterViewInit, Component, EventEmitter, Output, QueryList, ViewChildren } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { shuffle } from 'lodash-es';
+import { interval, Subscription } from 'rxjs';
+import { takeWhile, tap } from 'rxjs/operators';
+import { StudyConditionService } from '../study-conditions/study-condition.service';
+import { TrialCueComponentConfig } from '../study-conditions/trial-cue-component-config';
+import { Trial } from './trial';
+import { TrialCueComponent } from './trial-cue/trial-cue.component';
+import { TrialStimulusComponent } from './trial-stimulus/trial-stimulus.component';
 
 @UntilDestroy()
 @Component({
@@ -16,18 +16,21 @@ import {TrialStimulusComponent} from './trial-stimulus/trial-stimulus.component'
   styleUrls: ['./trial.component.scss']
 })
 export class TrialComponent implements AfterViewInit {
-  @Output() completed = new EventEmitter<{ cue: TrialCueComponentConfig, position: number } | undefined>();
+  @Output() completed = new EventEmitter<{ cue: TrialCueComponentConfig, position: number }|undefined>();
+  isLast = false;
+  isVisible = true;
   secondsInTrial = 0;
-  timerSub: Subscription | undefined;
+  timerSub: Subscription|undefined;
   @ViewChildren(TrialCueComponent) trialCueComponents!: QueryList<TrialCueComponent>;
   @ViewChildren(TrialStimulusComponent) trialStimulusComponents!: QueryList<TrialStimulusComponent>;
 
   constructor(private conditionSvc: StudyConditionService) {
   }
 
-  next(trial: Trial) {
+  next(trial: Trial, isLast: boolean) {
+    this.isVisible = !this.isLast ? true : this.isVisible;
+    this.isLast = isLast;
     this.setTimer();
-
     for (const [i, value] of trial.stimuli.entries()) this.trialStimulusComponents.get(i)?.set(value);
     const shuffledCueConfigs = shuffle(trial.cueComponentConfigs);
     for (let i = 0; i < this.trialCueComponents.length; i++) this.trialCueComponents.get(i)?.set(shuffledCueConfigs[i]);
@@ -39,8 +42,9 @@ export class TrialComponent implements AfterViewInit {
   }
 
   selected(cue: TrialCueComponentConfig, position: number) {
+    this.isVisible = false;
     this.timerSub?.unsubscribe();
-    this.completed.emit({cue, position});
+    this.completed.emit({ cue, position });
   }
 
   setTimer() {

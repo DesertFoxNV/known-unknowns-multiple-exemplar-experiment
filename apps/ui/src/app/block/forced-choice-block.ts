@@ -64,6 +64,8 @@ export class ForcedChoiceBlock extends Block {
     const ickTrials = sampleSize(ickStimuliComparisons.map(
       (stimuliComparison) => ({ ...stimuliComparison, cueComponentConfigs: ickCueComponentConfig })), 6);
 
-    this.trials = config.iCannotKnow ? sameAndDifferentTrials.concat(ickTrials) : sameAndDifferentTrials;
+    // this.trials = config.iCannotKnow ? sameAndDifferentTrials.concat(ickTrials) : sameAndDifferentTrials;
+    this.trials = [sameTrials[0], sameTrials[1]];
   }
+
 }

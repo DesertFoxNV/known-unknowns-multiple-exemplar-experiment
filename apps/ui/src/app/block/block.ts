@@ -21,4 +21,8 @@ export abstract class Block {
     this.index++;
     return this.trials?.[this.index - 1];
   }
+
+  get isLastTrial() {
+    return this.index === this.trials.length;
+  }
 }

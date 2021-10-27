@@ -1,8 +1,13 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { fadeOut } from '../../animations/fade-out.animation';
-import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
 import { delay } from '../../trial/delay';
+import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
+
+export interface BlockButtonDialogData {
+  disabled?: boolean;
+  text: string;
+}
 
 @Component({
   selector: 'block-start-dialog',
@@ -14,16 +19,19 @@ import { delay } from '../../trial/delay';
 })
 export class BlockButtonDialogComponent {
   animated = false;
+  disabled = Boolean(this.data.disabled);
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: string,
+    @Inject(MAT_DIALOG_DATA) public data: BlockButtonDialogData,
     readonly ref: MatDialogRef<BlockButtonDialogComponent>
   ) { }
 
   async close() {
-    this.animated = true;
-    await delay(FADE_OUT_DURATION_MS);
-    this.ref.close();
+    if (!this.data.disabled) {
+      this.animated = true;
+      await delay(FADE_OUT_DURATION_MS);
+      this.ref.close();
+    }
   }
 
 }
