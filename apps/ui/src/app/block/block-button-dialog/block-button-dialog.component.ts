@@ -5,7 +5,7 @@ import { delay } from '../../trial/delay';
 import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
 
 export interface BlockButtonDialogData {
-  disabled?: boolean;
+  disableClose?: boolean;
   text: string;
 }
 
@@ -19,7 +19,7 @@ export interface BlockButtonDialogData {
 })
 export class BlockButtonDialogComponent {
   animated = false;
-  disabled = Boolean(this.data.disabled);
+  disableClose = Boolean(this.data.disableClose);
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: BlockButtonDialogData,
@@ -27,11 +27,9 @@ export class BlockButtonDialogComponent {
   ) { }
 
   async close() {
-    if (!this.data.disabled) {
-      this.animated = true;
-      await delay(FADE_OUT_DURATION_MS);
-      this.ref.close();
-    }
+    this.animated = true;
+    await delay(FADE_OUT_DURATION_MS);
+    this.ref.close();
   }
 
 }

@@ -1,1 +1,2 @@
-<trial (completed)="cueSelected($event)"></trial>
+<trial *ngIf="isVisible"
+       (completed)="block.cueSelected($event)"></trial>

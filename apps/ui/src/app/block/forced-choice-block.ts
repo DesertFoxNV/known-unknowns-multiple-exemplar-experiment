@@ -1,10 +1,11 @@
-import { sampleSize, shuffle } from 'lodash-es';
+import { cloneDeep, sampleSize, shuffle } from 'lodash-es';
 import { BinaryNetwork } from '../network/binary-network';
 import { StimuliComparison } from '../network/stimuli-comparison';
 import { CUE_NON_ARBITRARY } from '../study-conditions/cue.constants';
 import { StudyConfig } from '../study-config-form/study-config';
+import { Trial } from '../trial/trial';
 import { Block } from './block';
-import { oneChoiceCueComponentConfig } from './one-choice-cue-component-config';
+import { oneChoiceCueComponentConfig, twoChoiceCueComponentConfig } from './one-choice-cue-component-config';
 
 /***
  * WO-IDK: 12 trials
@@ -16,29 +17,45 @@ import { oneChoiceCueComponentConfig } from './one-choice-cue-component-config';
  *  6 ick (A:D, B:E, C:F, A:F, B:D, C:E ... select 6 of 18 combinations)
  ***/
 export class ForcedChoiceBlock extends Block {
+  attempts = 0;
   network1: BinaryNetwork; // (A, B, C)
   network2: BinaryNetwork; // (D, E, F)
-  showFeedback = true;
 
   constructor(
     network1: BinaryNetwork,
     network2: BinaryNetwork,
     config: StudyConfig
   ) {
-    super('Forced choice block');
+    super('Forced choice block', config);
     this.network1 = network1;
     this.network2 = network2;
-    this.createTrials(config);
   }
 
-  createTrials(config: StudyConfig) {
-    const sameCueComponentConfigs = oneChoiceCueComponentConfig(config, CUE_NON_ARBITRARY.same);
-    const differentCueComponentConfig = oneChoiceCueComponentConfig(config, CUE_NON_ARBITRARY.different);
-    const ickCueComponentConfig = oneChoiceCueComponentConfig(config, CUE_NON_ARBITRARY.iCannotKnow);
+  complete() {
+    this.attempts++;
+    console.log('attempts', this.attempts);
+    /**
+     * Trial should be repeated if there are any incorrect answers
+     *
+     */
+    if (this.trials.length - this.correctCount === 0) {
+      this.completed = new Date();
+      this.component?.showMessage('BLOCK COMPLETE', true);
+    } else {
+      this.reset();
+      this.component?.showMessage('REPEAT BLOCK');
+      this.component?.setVisibility(true);
+    }
+  }
+
+  createTrials() {
+    const sameCueComponentConfigs = oneChoiceCueComponentConfig(this.config, CUE_NON_ARBITRARY.same);
+    const differentCueComponentConfig = oneChoiceCueComponentConfig(this.config, CUE_NON_ARBITRARY.different);
+    const ickCueComponentConfig = oneChoiceCueComponentConfig(this.config, CUE_NON_ARBITRARY.iCannotKnow);
 
     const sameTrials = shuffle([
       this.network1.identities,
-      this.network1.identities,
+      this.network1.identities
     ].flat().map(stimuliComparison => ({ ...stimuliComparison, cueComponentConfigs: sameCueComponentConfigs })));
 
     const differentTrials = shuffle([
@@ -61,11 +78,23 @@ export class ForcedChoiceBlock extends Block {
 
     const sameAndDifferentTrials = sameTrials.concat(differentTrials);
 
-    const ickTrials = sampleSize(ickStimuliComparisons.map(
-      (stimuliComparison) => ({ ...stimuliComparison, cueComponentConfigs: ickCueComponentConfig })), 6);
+    const ickTrials = ickStimuliComparisons.map(
+      (stimuliComparison) => ({ ...stimuliComparison, cueComponentConfigs: ickCueComponentConfig }));
 
-    // this.trials = config.iCannotKnow ? sameAndDifferentTrials.concat(ickTrials) : sameAndDifferentTrials;
-    this.trials = [sameTrials[0], sameTrials[1]];
+    const probeTrials: Trial[] = shuffle(cloneDeep(sampleSize(differentTrials, 5))
+      .concat(cloneDeep(sampleSize(ickTrials, 5)))
+      .map(trial => {
+        trial.cueComponentConfigs = twoChoiceCueComponentConfig(this.config, CUE_NON_ARBITRARY.different,
+          CUE_NON_ARBITRARY.iCannotKnow);
+        return trial;
+      }));
+
+    this.trials = this.config.iCannotKnow ? sameAndDifferentTrials.concat(sampleSize(ickTrials, 6), probeTrials) :
+      sameAndDifferentTrials;
+
   }
 
+  feedbackEnabled(): boolean {
+    return this.index < 18;
+  }
 }

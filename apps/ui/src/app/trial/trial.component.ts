@@ -17,8 +17,6 @@ import { TrialStimulusComponent } from './trial-stimulus/trial-stimulus.componen
 })
 export class TrialComponent implements AfterViewInit {
   @Output() completed = new EventEmitter<{ cue: TrialCueComponentConfig, position: number }|undefined>();
-  isLast = false;
-  isVisible = true;
   secondsInTrial = 0;
   timerSub: Subscription|undefined;
   @ViewChildren(TrialCueComponent) trialCueComponents!: QueryList<TrialCueComponent>;
@@ -27,22 +25,12 @@ export class TrialComponent implements AfterViewInit {
   constructor(private conditionSvc: StudyConditionService) {
   }
 
-  next(trial: Trial, isLast: boolean) {
-    this.isVisible = !this.isLast ? true : this.isVisible;
-    this.isLast = isLast;
-    this.setTimer();
-    for (const [i, value] of trial.stimuli.entries()) this.trialStimulusComponents.get(i)?.set(value);
-    const shuffledCueConfigs = shuffle(trial.cueComponentConfigs);
-    for (let i = 0; i < this.trialCueComponents.length; i++) this.trialCueComponents.get(i)?.set(shuffledCueConfigs[i]);
-  };
-
   ngAfterViewInit(): void {
     this.trialCueComponents.changes.pipe(untilDestroyed(this)).subscribe();
     this.trialStimulusComponents.changes.pipe(untilDestroyed(this)).subscribe();
   }
 
   selected(cue: TrialCueComponentConfig, position: number) {
-    this.isVisible = false;
     this.timerSub?.unsubscribe();
     this.completed.emit({ cue, position });
   }
@@ -59,4 +47,12 @@ export class TrialComponent implements AfterViewInit {
       untilDestroyed(this)
     ).subscribe();
   }
+
+  show(trial: Trial) {
+    console.log(trial);
+    this.setTimer();
+    for (const [i, value] of trial.stimuli.entries()) this.trialStimulusComponents.get(i)?.set(value);
+    const shuffledCueConfigs = shuffle(trial.cueComponentConfigs);
+    for (let i = 0; i < this.trialCueComponents.length; i++) this.trialCueComponents.get(i)?.set(shuffledCueConfigs[i]);
+  };
 }

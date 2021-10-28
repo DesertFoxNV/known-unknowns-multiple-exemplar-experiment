@@ -1,9 +1,9 @@
-<div class="trial-sample-stimuli" [ngClass]="{'d-none': isVisible === false}">
+<div class="trial-sample-stimuli">
   <trial-stimulus [animationDelay]="500"></trial-stimulus>
   <trial-stimulus [animationDelay]="1000"></trial-stimulus>
 </div>
 
-<div class="trial-buttons" [ngClass]="{'d-none': isVisible === false}">
+<div class="trial-buttons">
   <ng-container *ngFor="let _ of [].constructor(5); let i = index">
     <trial-cue
       [animationDelay]="1500"
