@@ -1,7 +1,9 @@
 import { first } from 'rxjs/operators';
 import { StudyConfig } from '../study-config-form/study-config';
 import { CueSelected } from '../trial/cue-selected';
+import { FADE_OUT_DURATION_MS } from '../trial/fade-out-duration';
 import { CompletedTrial, Trial } from '../trial/trial';
+import { FEEDBACK_FADE_OUT_DELAY_MS } from '../trial/trial-correct/feedback-duration';
 import { BlockComponent } from './block.component';
 
 export abstract class Block {
@@ -33,6 +35,10 @@ export abstract class Block {
     return this.trials[this.index];
   }
 
+  get trialNum() {
+    return this.index + 1;
+  }
+
   complete() {
     this.completed = new Date();
     this.component?.prompt('BLOCK COMPLETE', true).subscribe();
@@ -53,7 +59,14 @@ export abstract class Block {
       this.component?.showFeedback(this.grade(selected));
     }
 
-    this.nextTrial();
+    this.nextTrial(this.feedbackEnabled() ? undefined : 0);
+  }
+
+  failed() {
+    console.log('failed');
+    this.component?.setVisibility(false);
+    this.component?.prompt('THANKS FOR PARTICIPATING', true,
+      this.feedbackEnabled() ? FEEDBACK_FADE_OUT_DELAY_MS + FADE_OUT_DURATION_MS * 4 : 0).subscribe();
   }
 
   feedbackEnabled() {
@@ -103,6 +116,7 @@ export abstract class Block {
   /***
    * Resets block index, binds to the view, and shows a message.
    * @param {BlockComponent} component
+   * @param prompt
    */
   start(component: BlockComponent) {
     this.component = component;

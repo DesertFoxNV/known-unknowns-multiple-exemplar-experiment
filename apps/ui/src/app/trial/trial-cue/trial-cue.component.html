@@ -4,7 +4,8 @@
   [@fadeIn]="{ value: animate === 'fade-in',  params: { delay: animationDelay } }"
   [@fadeOut]="animate === 'fade-out'"
   class="trial-item"
-  (click)="selected.emit(config)"
+  (click)="select()"
+  [disabled]="disabled"
   matRipple
   [style.backgroundImage]="config?.fileName"
 >

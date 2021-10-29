@@ -3,7 +3,9 @@ import { BinaryNetwork } from '../network/binary-network';
 import { StimuliComparison } from '../network/stimuli-comparison';
 import { CUE_NON_ARBITRARY } from '../study-conditions/cue.constants';
 import { StudyConfig } from '../study-config-form/study-config';
+import { FADE_OUT_DURATION_MS } from '../trial/fade-out-duration';
 import { Trial } from '../trial/trial';
+import { FEEDBACK_FADE_OUT_DELAY_MS } from '../trial/trial-correct/feedback-duration';
 import { Block } from './block';
 import { oneChoiceCueComponentConfig, twoChoiceCueComponentConfig } from './one-choice-cue-component-config';
 
@@ -18,10 +20,16 @@ import { oneChoiceCueComponentConfig, twoChoiceCueComponentConfig } from './one-
  ***/
 export class ForcedChoiceBlock extends Block {
   attempts = 0;
-  maxAttemptsPerPhase = 2;
   network1: BinaryNetwork; // (A, B, C)
   network2: BinaryNetwork; // (D, E, F)
+  numDifferentProbeTrials = 5;
+  numIdkProbeTrials = 5;
+  numIdkTrainingTrials = 6;
+  numProbeTrials = 10;
+  numTrainingTrials = this.config.iCannotKnow ? 18 : 12;
+  probeFailuresAllotted = 2;
   probesFailed = 0;
+  trainingFailuresAllotted = 2;
   trainingsFailed = 0;
 
   constructor(
@@ -35,20 +43,9 @@ export class ForcedChoiceBlock extends Block {
   }
 
   complete() {
-    this.probesFailed++;
-    console.log('probesFailed', this.probesFailed);
-    /**
-     * Block should be retried if there are any incorrect answers
-     *
-     */
-    if (this.attempts === 0) {
-      this.component?.prompt('MAX ATTEMPTS EXCEEDED', true).subscribe();
-    } else if (this.trials.length - this.correct === 0) {
-      this.completed = new Date();
-      this.component?.prompt('BLOCK COMPLETE', true).subscribe();
-    } else {
-      this.retry();
-    }
+    this.attempts++;
+    this.completed = new Date();
+    this.component?.prompt('BLOCK COMPLETE', true, FEEDBACK_FADE_OUT_DELAY_MS + FADE_OUT_DURATION_MS * 4).subscribe();
   }
 
   createTrials() {
@@ -79,31 +76,74 @@ export class ForcedChoiceBlock extends Block {
       }
     }
 
-    const sameAndDifferentTrials = sameTrials.concat(differentTrials);
-
     const ickTrials = ickStimuliComparisons.map(
       (stimuliComparison) => ({ ...stimuliComparison, cueComponentConfigs: ickCueComponentConfig }));
 
-    const probeTrials: Trial[] = shuffle(cloneDeep(sampleSize(differentTrials, 5))
-      .concat(cloneDeep(sampleSize(ickTrials, 5)))
+    const trainingTrials = this.config.iCannotKnow ?
+      sameTrials.concat(differentTrials, sampleSize(ickTrials, this.numIdkTrainingTrials)) :
+      sameTrials.concat(differentTrials);
+
+    if (trainingTrials.length > this.numTrainingTrials) throw Error(
+      `Training trials length "${trainingTrials.length}" is greater than specified length "${this.numTrainingTrials}"`);
+
+    const probeTrials: Trial[] = shuffle(cloneDeep(sampleSize(differentTrials, this.numDifferentProbeTrials))
+      .concat(cloneDeep(sampleSize(ickTrials, this.numIdkProbeTrials)))
       .map(trial => {
         trial.cueComponentConfigs = twoChoiceCueComponentConfig(this.config, CUE_NON_ARBITRARY.different,
           CUE_NON_ARBITRARY.iCannotKnow);
         return trial;
       }));
 
-    this.trials = this.config.iCannotKnow ? sameAndDifferentTrials.concat(sampleSize(ickTrials, 6), probeTrials) :
-      sameAndDifferentTrials;
+    if (probeTrials.length > this.numProbeTrials) throw Error(
+      `Probe trials length "${probeTrials.length}" is greater than specified length "${this.numIdkProbeTrials}"`);
+
+    this.trials = this.config.iCannotKnow ? trainingTrials.concat(probeTrials) : trainingTrials;
 
   }
 
   feedbackEnabled(): boolean {
-    return this.index < 18;
+    return this.index < this.numTrainingTrials;
+  }
+
+  nextTrial(delayMs?: number): void {
+    // If training failed
+    if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100) {
+      this.trainingsFailed++;
+      console.log('training failed', this.trialNum);
+      console.log('trainingsFailed', this.trainingsFailed);
+
+      // If trainings failed equal the max training failures allowed, the block completes.
+      if (this.trainingsFailed === this.trainingFailuresAllotted) {
+        this.failed();
+      } else {
+        this.retry();
+      }
+
+    } else if (this.trialNum === this.numProbeTrials + this.numTrainingTrials && this.percentCorrect !== 100) {
+      this.probesFailed++;
+      console.log('training failed', this.trialNum);
+      console.log('probesFailed', this.probesFailed);
+
+      // If probes failed equal the max probe failures allowed, the block completes.
+      if (this.probesFailed === this.probeFailuresAllotted) {
+        this.failed();
+      } else {
+        this.retry();
+      }
+    } else {
+      super.nextTrial(delayMs);
+    }
   }
 
   retry() {
+    this.attempts++;
+    this.component?.setVisibility(false);
+    this.component?.prompt('TRY AGAIN', false,
+      this.feedbackEnabled() ? FEEDBACK_FADE_OUT_DELAY_MS + FADE_OUT_DURATION_MS * 4 : 0).subscribe(
+      () => {
+        this.component?.setVisibility(true, 0);
+        this.nextTrial(0);
+      });
     this.reset();
-    this.component?.prompt('REPEAT BLOCK').subscribe();
-    this.component?.setVisibility(true);
   }
 }
