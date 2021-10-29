@@ -18,8 +18,11 @@ import { oneChoiceCueComponentConfig, twoChoiceCueComponentConfig } from './one-
  ***/
 export class ForcedChoiceBlock extends Block {
   attempts = 0;
+  maxAttemptsPerPhase = 2;
   network1: BinaryNetwork; // (A, B, C)
   network2: BinaryNetwork; // (D, E, F)
+  probesFailed = 0;
+  trainingsFailed = 0;
 
   constructor(
     network1: BinaryNetwork,
@@ -32,19 +35,19 @@ export class ForcedChoiceBlock extends Block {
   }
 
   complete() {
-    this.attempts++;
-    console.log('attempts', this.attempts);
+    this.probesFailed++;
+    console.log('probesFailed', this.probesFailed);
     /**
-     * Trial should be repeated if there are any incorrect answers
+     * Block should be retried if there are any incorrect answers
      *
      */
-    if (this.trials.length - this.correctCount === 0) {
+    if (this.attempts === 0) {
+      this.component?.prompt('MAX ATTEMPTS EXCEEDED', true).subscribe();
+    } else if (this.trials.length - this.correct === 0) {
       this.completed = new Date();
-      this.component?.showMessage('BLOCK COMPLETE', true);
+      this.component?.prompt('BLOCK COMPLETE', true).subscribe();
     } else {
-      this.reset();
-      this.component?.showMessage('REPEAT BLOCK');
-      this.component?.setVisibility(true);
+      this.retry();
     }
   }
 
@@ -96,5 +99,11 @@ export class ForcedChoiceBlock extends Block {
 
   feedbackEnabled(): boolean {
     return this.index < 18;
+  }
+
+  retry() {
+    this.reset();
+    this.component?.prompt('REPEAT BLOCK').subscribe();
+    this.component?.setVisibility(true);
   }
 }

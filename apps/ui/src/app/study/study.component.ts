@@ -11,7 +11,7 @@ import { StudyConfig } from '../study-config-form/study-config';
 })
 export class StudyComponent implements OnInit {
 
-  @ViewChild(BlockComponent, { static: false }) blockComponent: BlockComponent|undefined;
+  @ViewChild(BlockComponent, { static: true }) blockComponent!: BlockComponent;
   blocks: Block[] = [];
   completed = new EventEmitter();
   config: StudyConfig|undefined;
@@ -23,7 +23,7 @@ export class StudyComponent implements OnInit {
 
   nextBlock() {
     if (this.blocks.length > 0) {
-      this.blockComponent?.next(this.blocks.shift() as Block);
+      this.blocks.shift()?.start(this.blockComponent);
     } else {
       this.completed.emit();
     }

@@ -1,4 +1,8 @@
 export interface FeedBackDialogData {
-    feedback: string,
-    next: () => unknown
+  animationParams: {
+    delay: number
+    duration: number
+  }
+  durationMs: number;
+  feedback: string;
 }

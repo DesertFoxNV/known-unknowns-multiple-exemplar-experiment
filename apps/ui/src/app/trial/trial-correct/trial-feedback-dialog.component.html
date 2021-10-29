@@ -1,5 +1,5 @@
 <div
-  [@fadeOut]="animated"
+  [@fadeOut]="{value: animated, params: data.animationParams}"
   class='vw-100 vh-100 d-flex justify-content-center align-items-center bg-white'
 >
   <strong class='overlay-dynamic-text user-select-none'>{{ data.feedback }}</strong>
