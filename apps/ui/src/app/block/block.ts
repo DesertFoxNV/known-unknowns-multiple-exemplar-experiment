@@ -1,16 +1,19 @@
 import { first } from 'rxjs/operators';
 import { StudyConfig } from '../study-config-form/study-config';
 import { CueSelected } from '../trial/cue-selected';
+import { FADE_OUT_DURATION_MS } from '../trial/fade-out-duration';
 import { CompletedTrial, Trial } from '../trial/trial';
 import { FEEDBACK_FADE_OUT_DELAY_MS } from '../trial/trial-correct/feedback-duration';
 import { BlockComponent } from './block.component';
 import { TRIAL_DELAY_INTERVAL_MS } from './trial-animation-delay';
 
 export abstract class Block {
+  attempts = 0;
   completed?: Date;
   component?: BlockComponent;
   config: StudyConfig;
   correct = 0;
+  feedBackShown = false;
   history: CompletedTrial[] = [];
   incorrect = 0;
   index = -1;
@@ -23,30 +26,63 @@ export abstract class Block {
     this.config = config;
   }
 
+  /**
+   * Returns true if it is the last trial and false if is is not.
+   * @returns {boolean}
+   */
   get isLastTrial(): boolean {
     return this.index === this.trials.length - 1;
   }
 
+  /**
+   * Calculates the percent correct in the current trial attempt by
+   * dividing the correct count by the trial number and multiplying by 100
+   * @returns {number}
+   */
   get percentCorrect(): number {
-    return this.correct / (this.index + 1) * 100;
+    return this.correct / this.trialNum * 100;
   }
 
+  /**
+   * Returns the current trial based on the current index.
+   * @returns {Trial}
+   */
   get trial(): Trial {
     return this.trials[this.index];
   }
 
+  /**
+   * Converts index (zero-based) to trial number
+   * @returns {number}
+   */
   get trialNum() {
     return this.index + 1;
   }
 
+  /**
+   * Increases the number of attempts, sets the completed at date, then emits the completed event.
+   */
   complete() {
+    this.attempts++;
     this.completed = new Date();
-    this.component?.prompt('BLOCK COMPLETE', true).subscribe();
+    this.component?.prompt(
+      'BLOCK COMPLETE',
+      true,
+      TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe();
     this.component?.completed.emit();
   }
 
-  abstract createTrials(): void
+  /**
+   * Creates trials for the block
+   */
+  abstract createTrials(): Trial[]
 
+  /**
+   * When a cue is selected. The associated trial and cue selected data
+   * is stored. Feedback is shown if an item is not selected or feedback
+   * is enabled. Then the block is advanced to the next trial.
+   * @param {CueSelected | undefined} selected
+   */
   cueSelected(selected: CueSelected|undefined) {
     this.history.push({ ...this.trial, selected });
 
@@ -55,24 +91,50 @@ export abstract class Block {
 
     if (!selected) {
       this.component?.showFeedback('TIME EXPIRED');
+      this.feedBackShown = true;
     } else if (this.feedbackEnabled()) {
       this.component?.showFeedback(this.grade(selected));
+      this.feedBackShown = true;
+    } else {
+      this.feedBackShown = false;
     }
 
-    this.nextTrial(this.feedbackEnabled() ? undefined : 0);
+    /**
+     * If feedback is not enabled but the "TIME EXPIRED" feedback is shown a
+     * delay must be added so that the participant will see the trial stimuli
+     * and cue animations.
+     */
+    this.nextTrial();
+
   }
 
+  /**
+   * Participants that fail the block criterion are thanked for their participation and the study is completed.
+   */
   failed() {
-    console.log('failed');
     this.component?.setVisibility(false);
-    this.component?.prompt('THANKS FOR PARTICIPATING', true,
-      this.feedbackEnabled() ? FEEDBACK_FADE_OUT_DELAY_MS + TRIAL_DELAY_INTERVAL_MS : 0).subscribe();
+    this.component?.prompt('THANKS FOR PARTICIPATING', true, TRIAL_DELAY_INTERVAL_MS +
+      (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe();
   }
 
+  /**
+   * Function that determines if feedback is enabled. This can easily be overridden
+   * in block subclasses to accommodate complex feedback scenarios. Reference
+   * the forced choice block.
+   * @returns {boolean}
+   */
   feedbackEnabled() {
     return false;
   }
 
+  /**
+   * The selected cue is compared to the the trial cue. If the selected cue is
+   * correct the correct counter is increased by 1 otherwise, the incorrect counter
+   * is increased by one. If the answer was correct the feedback string "CORRECT"
+   * is returned otherwise the feedback string "WRONG" is returned.
+   * @param {CueSelected | undefined} selected
+   * @returns {"CORRECT" | "WRONG"}
+   */
   grade(selected: CueSelected|undefined): 'CORRECT'|'WRONG' {
     const isCorrect = selected?.cue.value === this.trial.cue;
 
@@ -88,15 +150,19 @@ export abstract class Block {
     return isCorrect ? 'CORRECT' : 'WRONG';
   }
 
-  nextTrial(delayMs?: number) {
-    // On the first trial store a date
+  /**
+   * Starts the next trial in the block. If the index is negative then the
+   * started date is stored. If the trials have not been completed the index is
+   * increased by 1 and then the trial is shown with the specified delay. The
+   * trial completed event is subscribe to and linked to the cue selected function
+   * in the block. If all trials have been completed the complete function is called.
+   */
+  nextTrial() {
     if (this.index === -1) this.started = new Date();
 
-    // If all trails have not been completed move to the next trial,
-    // otherwise call complete on the block.
     if (this.index !== this.trials.length - 1) {
       this.index++;
-      this.component?.showTrial(this.trial, delayMs);
+      this.component?.showTrial(this.trial, this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : 0);
       this.component?.trialCompleted.pipe(first()).subscribe(selected => this.cueSelected(selected));
     } else {
       this.complete();
@@ -104,24 +170,23 @@ export abstract class Block {
   }
 
   /***
-   * Resets block index and grades.
+   * Resets block index, correct count, incorrect count, and generates fresh trials.
    */
   reset() {
-    this.index = 26;
+    this.index = -1;
     this.correct = 0;
     this.incorrect = 0;
-    this.createTrials();
+    this.trials = this.createTrials();
   }
 
   /***
    * Resets block index, binds to the view, and shows a message.
    * @param {BlockComponent} component
-   * @param prompt
    */
   start(component: BlockComponent) {
     this.component = component;
-    this.reset();
+    if (this.trials.length === 0) this.reset();
     component.prompt('CLICK TO START', false, TRIAL_DELAY_INTERVAL_MS)
-      .subscribe(() => this.nextTrial(0));
+      .subscribe(() => this.nextTrial());
   }
 }

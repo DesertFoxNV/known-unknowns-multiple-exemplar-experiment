@@ -10,7 +10,6 @@ import { Block } from './block';
 // 32 trials = (4 combinations x 2 networks) x 4 duplicates
 export class PreTestBlock extends Block {
   knownNetwork: KnownNetwork;
-
   knownUnknownNetwork: KnownUnknownNetwork;
 
   constructor(
@@ -21,7 +20,6 @@ export class PreTestBlock extends Block {
     super('Pre-Test', config);
     this.knownNetwork = knownNetwork;
     this.knownUnknownNetwork = knownUnknownNetwork;
-    this.createTrials();
   }
 
   createTrials() {
@@ -43,6 +41,6 @@ export class PreTestBlock extends Block {
         );
       }
     }
-    this.trials = shuffle(this.trials);
+    return shuffle(this.trials);
   }
 }

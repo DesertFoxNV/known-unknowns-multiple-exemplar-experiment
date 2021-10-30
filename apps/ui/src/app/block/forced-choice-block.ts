@@ -20,7 +20,6 @@ import { TRIAL_DELAY_INTERVAL_MS } from './trial-animation-delay';
  *  6 ick (A:D, B:E, C:F, A:F, B:D, C:E ... select 6 of 18 combinations)
  ***/
 export class ForcedChoiceBlock extends Block {
-  attempts = 0;
   network1: BinaryNetwork; // (A, B, C)
   network2: BinaryNetwork; // (D, E, F)
   numDifferentProbeTrials = 5;
@@ -41,12 +40,6 @@ export class ForcedChoiceBlock extends Block {
     super('Forced choice block', config);
     this.network1 = network1;
     this.network2 = network2;
-  }
-
-  complete() {
-    this.attempts++;
-    this.completed = new Date();
-    this.component?.prompt('BLOCK COMPLETE', true, FEEDBACK_FADE_OUT_DELAY_MS + TRIAL_DELAY_INTERVAL_MS).subscribe();
   }
 
   createTrials() {
@@ -98,15 +91,14 @@ export class ForcedChoiceBlock extends Block {
     if (probeTrials.length > this.numProbeTrials) throw Error(
       `Probe trials length "${probeTrials.length}" is greater than specified length "${this.numIdkProbeTrials}"`);
 
-    this.trials = this.config.iCannotKnow ? trainingTrials.concat(probeTrials) : trainingTrials;
-
+    return this.config.iCannotKnow ? trainingTrials.concat(probeTrials) : trainingTrials;
   }
 
   feedbackEnabled(): boolean {
     return this.index < this.numTrainingTrials;
   }
 
-  nextTrial(delayMs?: number): void {
+  nextTrial(): void {
     // If training failed
     if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100) {
       this.trainingsFailed++;
@@ -132,18 +124,19 @@ export class ForcedChoiceBlock extends Block {
         this.retry();
       }
     } else {
-      super.nextTrial(delayMs);
+      super.nextTrial();
     }
   }
 
   retry() {
     this.attempts++;
     this.component?.setVisibility(false);
-    this.component?.prompt('TRY AGAIN', false,
-      this.feedbackEnabled() ? FEEDBACK_FADE_OUT_DELAY_MS + TRIAL_DELAY_INTERVAL_MS : 0).subscribe(
+    this.component?.prompt('CLICK TO TRY AGAIN', false,
+      TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe(
       () => {
+        this.feedBackShown = false;
         this.component?.setVisibility(true, 0);
-        this.nextTrial(0);
+        this.nextTrial();
       });
     this.reset();
   }

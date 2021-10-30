@@ -11,6 +11,7 @@ import { TrialFeedbackDialogComponent } from '../trial/trial-correct/trial-feedb
 import { TrialComponent } from '../trial/trial.component';
 import { BlockButtonDialogComponent, BlockButtonDialogData } from './block-button-dialog/block-button-dialog.component';
 import { fullScreenDialogWithData } from './full-screen-dialog-with-data';
+import { TRIAL_ANIMATION_DURATION_MS } from './trial-animation-delay';
 
 @Component({
   selector: 'block',
@@ -31,7 +32,7 @@ export class BlockComponent {
   ) {
   }
 
-  prompt(text: string, disableClose = false, delayMs = FEEDBACK_FADE_OUT_DELAY_MS / 2): Observable<void> {
+  prompt(text: string, disableClose = false, delayMs = TRIAL_ANIMATION_DURATION_MS): Observable<void> {
     return timer(delayMs).pipe(
       first(),
       switchMap(() => this.dialog.open(
@@ -41,7 +42,7 @@ export class BlockComponent {
     );
   }
 
-  setVisibility(isVisible: boolean, delayMs = FEEDBACK_FADE_OUT_DELAY_MS / 2) {
+  setVisibility(isVisible: boolean, delayMs = TRIAL_ANIMATION_DURATION_MS) {
     setTimeout(() => this.isVisible = isVisible, delayMs);
   }
 
