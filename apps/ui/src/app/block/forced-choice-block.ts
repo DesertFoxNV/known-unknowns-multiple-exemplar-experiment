@@ -8,6 +8,7 @@ import { Trial } from '../trial/trial';
 import { FEEDBACK_FADE_OUT_DELAY_MS } from '../trial/trial-correct/feedback-duration';
 import { Block } from './block';
 import { oneChoiceCueComponentConfig, twoChoiceCueComponentConfig } from './one-choice-cue-component-config';
+import { TRIAL_DELAY_INTERVAL_MS } from './trial-animation-delay';
 
 /***
  * WO-IDK: 12 trials
@@ -45,7 +46,7 @@ export class ForcedChoiceBlock extends Block {
   complete() {
     this.attempts++;
     this.completed = new Date();
-    this.component?.prompt('BLOCK COMPLETE', true, FEEDBACK_FADE_OUT_DELAY_MS + FADE_OUT_DURATION_MS * 4).subscribe();
+    this.component?.prompt('BLOCK COMPLETE', true, FEEDBACK_FADE_OUT_DELAY_MS + TRIAL_DELAY_INTERVAL_MS).subscribe();
   }
 
   createTrials() {
@@ -139,7 +140,7 @@ export class ForcedChoiceBlock extends Block {
     this.attempts++;
     this.component?.setVisibility(false);
     this.component?.prompt('TRY AGAIN', false,
-      this.feedbackEnabled() ? FEEDBACK_FADE_OUT_DELAY_MS + FADE_OUT_DURATION_MS * 4 : 0).subscribe(
+      this.feedbackEnabled() ? FEEDBACK_FADE_OUT_DELAY_MS + TRIAL_DELAY_INTERVAL_MS : 0).subscribe(
       () => {
         this.component?.setVisibility(true, 0);
         this.nextTrial(0);

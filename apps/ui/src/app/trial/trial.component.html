@@ -1,15 +1,16 @@
 <div class="trial-sample-stimuli">
-  <trial-stimulus [animationDelay]="500"></trial-stimulus>
-  <trial-stimulus [animationDelay]="1000"></trial-stimulus>
+  <trial-stimulus
+    *ngFor="let delay of animationDelayMs.stimuli"
+    [animationDelay]="delay"
+  ></trial-stimulus>
 </div>
 
 <div class="trial-buttons">
-  <ng-container *ngFor="let _ of [].constructor(5); let i = index">
-    <trial-cue
-      [animationDelay]="1500"
-      (selected)="selected($event, i + 1)"
-    ></trial-cue>
-  </ng-container>
+  <trial-cue
+    *ngFor="let delay of animationDelayMs.cues; let i = index"
+    [animationDelay]="delay"
+    (selected)="selected($event, i + 1)"
+  ></trial-cue>
 </div>
 
 

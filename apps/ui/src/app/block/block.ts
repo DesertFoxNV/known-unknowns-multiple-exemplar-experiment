@@ -1,10 +1,10 @@
 import { first } from 'rxjs/operators';
 import { StudyConfig } from '../study-config-form/study-config';
 import { CueSelected } from '../trial/cue-selected';
-import { FADE_OUT_DURATION_MS } from '../trial/fade-out-duration';
 import { CompletedTrial, Trial } from '../trial/trial';
 import { FEEDBACK_FADE_OUT_DELAY_MS } from '../trial/trial-correct/feedback-duration';
 import { BlockComponent } from './block.component';
+import { TRIAL_DELAY_INTERVAL_MS } from './trial-animation-delay';
 
 export abstract class Block {
   completed?: Date;
@@ -66,7 +66,7 @@ export abstract class Block {
     console.log('failed');
     this.component?.setVisibility(false);
     this.component?.prompt('THANKS FOR PARTICIPATING', true,
-      this.feedbackEnabled() ? FEEDBACK_FADE_OUT_DELAY_MS + FADE_OUT_DURATION_MS * 4 : 0).subscribe();
+      this.feedbackEnabled() ? FEEDBACK_FADE_OUT_DELAY_MS + TRIAL_DELAY_INTERVAL_MS : 0).subscribe();
   }
 
   feedbackEnabled() {
@@ -107,7 +107,7 @@ export abstract class Block {
    * Resets block index and grades.
    */
   reset() {
-    this.index = -1;
+    this.index = 26;
     this.correct = 0;
     this.incorrect = 0;
     this.createTrials();
@@ -121,6 +121,7 @@ export abstract class Block {
   start(component: BlockComponent) {
     this.component = component;
     this.reset();
-    component.prompt('CLICK TO START').subscribe(() => this.nextTrial(0));
+    component.prompt('CLICK TO START', false, TRIAL_DELAY_INTERVAL_MS)
+      .subscribe(() => this.nextTrial(0));
   }
 }

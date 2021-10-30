@@ -3,6 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { shuffle } from 'lodash-es';
 import { interval, Subscription } from 'rxjs';
 import { takeWhile, tap } from 'rxjs/operators';
+import { TRIAL_ANIMATION_DELAY_MS } from '../block/trial-animation-delay';
 import { StudyConditionService } from '../study-conditions/study-condition.service';
 import { TrialCueComponentConfig } from '../study-conditions/trial-cue-component-config';
 import { Trial } from './trial';
@@ -16,6 +17,7 @@ import { TrialStimulusComponent } from './trial-stimulus/trial-stimulus.componen
   styleUrls: ['./trial.component.scss']
 })
 export class TrialComponent implements AfterViewInit {
+  animationDelayMs = TRIAL_ANIMATION_DELAY_MS;
   @Output() completed = new EventEmitter<{ cue: TrialCueComponentConfig, position: number }|undefined>();
   secondsInTrial = 0;
   timerSub: Subscription|undefined;
