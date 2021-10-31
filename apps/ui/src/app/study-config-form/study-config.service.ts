@@ -38,7 +38,7 @@ export class StudyConfigService {
   createForm(iCannotKnowBalanceDisabled = true): FormGroup<StudyConfig> {
     const numericValidators1To100 = [Validators.required, Validators.min(1), Validators.max(100)];
     return this.fb.group({
-      balance: this.fb.group<BalanceConfig>({
+      balance: this.fb.group<StudyConfig['balance']>({
         lessThan: [1, numericValidators1To100],
         equalTo: [1, numericValidators1To100],
         greaterThan: [1, numericValidators1To100],

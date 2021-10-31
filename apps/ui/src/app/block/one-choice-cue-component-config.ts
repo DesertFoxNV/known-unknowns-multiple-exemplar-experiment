@@ -1,12 +1,16 @@
+import { shuffle } from 'lodash-es';
 import {
-  BUTTON_TEXT_FILE_PATH,
-  CUE_NON_ARBITRARY_TO_FILENAME,
-  CUE_TYPE,
-  CueNonArbitrary
+  BUTTON_TEXT_FILE_PATH, CUE_NON_ARBITRARY_TO_FILENAME, CUE_TYPE, CueNonArbitrary
 } from '../study-conditions/cue.constants';
 import { TrialCueComponentConfig } from '../study-conditions/trial-cue-component-config';
-import {StudyConfig} from '../study-config-form/study-config';
+import { StudyConfig } from '../study-config-form/study-config';
 
+/**
+ * Generates the same config for all cue placements. Can be used in ick and non ick trials.
+ * @param {StudyConfig} config
+ * @param {CueNonArbitrary} cue
+ * @returns {TrialCueComponentConfig[]}
+ */
 export function oneChoiceCueComponentConfig(config: StudyConfig, cue: CueNonArbitrary): TrialCueComponentConfig[] {
   return new Array(config.iCannotKnow ? 4 : 3).fill(undefined).map(() => ({
     isArbitrary: config.cueType === CUE_TYPE.arbitrary,
@@ -16,8 +20,19 @@ export function oneChoiceCueComponentConfig(config: StudyConfig, cue: CueNonArbi
 
 }
 
-export function twoChoiceCueComponentConfig(config: StudyConfig, cue1: CueNonArbitrary, cue2: CueNonArbitrary): TrialCueComponentConfig[] {
-  return new Array(2).fill(undefined).map(() => ({
+/**
+ * Generates two choices for all cue placements. Should only be used in ick trials.
+ * @param {StudyConfig} config
+ * @param {CueNonArbitrary} cue1
+ * @param {CueNonArbitrary} cue2
+ * @returns {TrialCueComponentConfig[]}
+ */
+export function twoChoiceCueComponentConfig(
+  config: StudyConfig,
+  cue1: CueNonArbitrary,
+  cue2: CueNonArbitrary
+): TrialCueComponentConfig[] {
+  return shuffle(new Array(2).fill(undefined).map(() => ({
     isArbitrary: config.cueType === CUE_TYPE.arbitrary,
     fileName: config.cueType === CUE_TYPE.nonArbitrary ? BUTTON_TEXT_FILE_PATH : CUE_NON_ARBITRARY_TO_FILENAME[cue1],
     value: cue1
@@ -25,5 +40,5 @@ export function twoChoiceCueComponentConfig(config: StudyConfig, cue1: CueNonArb
     isArbitrary: config.cueType === CUE_TYPE.arbitrary,
     fileName: config.cueType === CUE_TYPE.nonArbitrary ? BUTTON_TEXT_FILE_PATH : CUE_NON_ARBITRARY_TO_FILENAME[cue2],
     value: cue2
-  })));
+  }))));
 }

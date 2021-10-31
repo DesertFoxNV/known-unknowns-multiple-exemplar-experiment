@@ -32,6 +32,13 @@ export class BlockComponent {
   ) {
   }
 
+  /**
+   * Shows a clickable dialog to the user with a prompt.
+   * @param {string} text
+   * @param {boolean} disableClose
+   * @param {number} delayMs
+   * @returns {Observable<void>}
+   */
   prompt(text: string, disableClose = false, delayMs = TRIAL_ANIMATION_DURATION_MS): Observable<void> {
     return timer(delayMs).pipe(
       first(),
@@ -42,10 +49,21 @@ export class BlockComponent {
     );
   }
 
+  /**
+   * Removes trial component from the component to hide cues from user.
+   * @param {boolean} isVisible
+   * @param {number} delayMs
+   */
   setVisibility(isVisible: boolean, delayMs = TRIAL_ANIMATION_DURATION_MS) {
     setTimeout(() => this.isVisible = isVisible, delayMs);
   }
 
+  /**
+   * Shows feedback to a participant for a set duration.
+   * @param {string} feedback
+   * @param {number} durationMs
+   * @param {{duration: number, delay: number}} animationParams
+   */
   showFeedback(
     feedback: string,
     durationMs = FEEDBACK_DURATION_MS,
@@ -57,6 +75,11 @@ export class BlockComponent {
     );
   }
 
+  /**
+   * Shows the next trial
+   * @param {Trial} trial
+   * @param {number} delayMs
+   */
   showTrial(trial: Trial, delayMs = FEEDBACK_FADE_OUT_DELAY_MS) {
     setTimeout(() => this.trialComponent?.show(trial), delayMs);
   }

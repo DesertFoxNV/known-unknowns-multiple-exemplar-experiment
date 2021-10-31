@@ -21,6 +21,12 @@ export abstract class Block {
   started: Date|undefined;
   trials: Trial[] = [];
 
+  /**
+   *
+   * @param {string} name
+   * @param {StudyConfig} config
+   * @protected
+   */
   protected constructor(name: string, config: StudyConfig) {
     this.name = name;
     this.config = config;
@@ -173,7 +179,7 @@ export abstract class Block {
    * Resets block index, correct count, incorrect count, and generates fresh trials.
    */
   reset() {
-    this.index = -1;
+    this.index = 22;
     this.correct = 0;
     this.incorrect = 0;
     this.trials = this.createTrials();

@@ -57,7 +57,6 @@ export class TrialComponent implements AfterViewInit {
     console.log(trial);
     this.setTimer();
     for (const [i, value] of trial.stimuli.entries()) this.trialStimulusComponents.get(i)?.set(value);
-    const shuffledCueConfigs = shuffle(trial.cueComponentConfigs);
-    for (let i = 0; i < this.trialCueComponents.length; i++) this.trialCueComponents.get(i)?.set(shuffledCueConfigs[i]);
+    for (let i = 0; i < this.trialCueComponents.length; i++) this.trialCueComponents.get(i)?.set(trial.cueComponentConfigs[i]);
   };
 }

@@ -1,29 +1,39 @@
 import { shuffle } from 'lodash-es';
-import { KnownNetwork } from '../network/known-network';
+import { KnownEqualityNetwork } from '../network/known-equality-network';
+import { KnownGreaterThanNetwork } from '../network/known-greater-than-network';
+import { StimuliComparison } from '../network/stimuli-comparison';
 import {
-  BUTTON_TEXT_FILE_PATH, CUE_NON_ARBITRARY_TO_FILENAME, CUE_TYPE, CUES_NON_ARBITRARY_W_ICK, CUES_NON_ARBITRARY_WO_ICK
+  BUTTON_TEXT_FILE_PATH, CUE_NON_ARBITRARY, CUE_NON_ARBITRARY_TO_FILENAME, CUE_TYPE, CueNonArbitrary,
+  CUES_NON_ARBITRARY_W_ICK, CUES_NON_ARBITRARY_WO_ICK
 } from '../study-conditions/cue.constants';
 import { StudyConfig } from '../study-config-form/study-config';
+import { Trial } from '../trial/trial';
 import { Block } from './block';
 
-// 32 trials = (4 combinations x 2 networks) x 4 duplicates
 export class OperantChoiceBlock extends Block {
-  network1: KnownNetwork;
-  network2: KnownNetwork;
+  equalityNetwork: KnownEqualityNetwork;
+  greaterThanNetwork: KnownGreaterThanNetwork;
+  stimuliComparisonCopies = 2;
 
   constructor(
-    network1: KnownNetwork,
-    network2: KnownNetwork,
+    equalityNetwork: KnownEqualityNetwork,
+    greaterThanNetwork: KnownGreaterThanNetwork,
     config: StudyConfig
   ) {
     super('Operant Choice', config);
-    this.network1 = network1;
-    this.network2 = network2;
+    this.equalityNetwork = equalityNetwork;
+    this.greaterThanNetwork = greaterThanNetwork;
   }
 
+  /**
+   * Creates trials.
+   * @returns {unknown[] | Array<Trial[][keyof Trial[]]>}
+   */
   createTrials() {
+    // Cue order is randomized
     const cues = shuffle(this.config.iCannotKnow ? CUES_NON_ARBITRARY_W_ICK : CUES_NON_ARBITRARY_WO_ICK);
 
+    // Cue component configurations are mapped from cue order
     const cueComponentConfigs = cues.map((cue) => ({
       isArbitrary: this.config.cueType === CUE_TYPE.arbitrary,
       fileName: this.config.cueType === CUE_TYPE.nonArbitrary ? BUTTON_TEXT_FILE_PATH :
@@ -31,18 +41,89 @@ export class OperantChoiceBlock extends Block {
       value: cue
     }));
 
-    for (const network of [this.network1, this.network2]) {
-      for (let i = 0; i < 4; i++) {
-        this.trials.push(
-          ...network.mutuallyEntailed.map(stimuliComparison => ({ ...stimuliComparison, cueComponentConfigs })));
-        this.trials.push(
-          ...network.combinatoriallyEntailed.map(stimuliComparison => ({ ...stimuliComparison, cueComponentConfigs }))
-        );
+    // I cannot know trials are created, mapped to component configs, and shuffled.
+    const ickStimuliComparisons: StimuliComparison[] = [];
+    for (const stimuli1 of this.equalityNetwork.stimuli) {
+      for (const stimuli2 of this.greaterThanNetwork.stimuli) {
+        ickStimuliComparisons.push(
+          {
+            cue: CUE_NON_ARBITRARY.iCannotKnow,
+            stimuli: [stimuli1, stimuli2]
+          },
+          { cue: CUE_NON_ARBITRARY.iCannotKnow, stimuli: [stimuli2, stimuli1] });
       }
     }
+
+    // pool network comparisons
+    const comparisons: StimuliComparison[] = [this.equalityNetwork, this.greaterThanNetwork].map(network => {
+      return ([] as StimuliComparison[]).concat(
+        network.identities,
+        network.trained,
+        network.mutuallyEntailed,
+        network.combinatoriallyEntailed,
+        this.config.iCannotKnow ? ickStimuliComparisons : []
+      );
+    }).flat();
+
+    // create record of cue with stimuli
+    const cueByStimuli = CUES_NON_ARBITRARY_W_ICK.reduce(
+      (acc, cue) => ({ ...acc, [cue]: comparisons.filter(comparison => comparison.cue === cue) }),
+      {} as Record<CueNonArbitrary, StimuliComparison[]>);
+
+    const cueCountsByStimuli = CUES_NON_ARBITRARY_W_ICK.reduce(
+      (acc, cue) => ({ ...acc, [cue]: comparisons.filter(comparison => comparison.cue === cue).length }),
+      {} as Record<CueNonArbitrary, number>);
+
+    const gcd = (a: number, b: number): number => a ? gcd(b % a, a) : b;
+    const lcm = (a: number, b: number) => a * b / gcd(a, b);
+
+    const leastCommonMultiple = Object.values(cueCountsByStimuli).reduce(lcm);
+    console.log('LEAST COMMON MULTIPLE', leastCommonMultiple);
+
+    const cueMultiplierByStimuli = CUES_NON_ARBITRARY_W_ICK.reduce(
+      (acc, cue) => ({
+        ...acc,
+        [cue]: leastCommonMultiple / comparisons.filter(comparison => comparison.cue === cue).length
+      }),
+      {} as Record<CueNonArbitrary, number>);
+
+    console.log('CUE BY STIMULI', cueByStimuli);
+    console.log('CUE COUNT BY STIMULI', cueCountsByStimuli);
+    console.log('CUE MULTIPLIER BY STIMULI', cueMultiplierByStimuli);
+
+    const transformedConfigBalance: Record<CueNonArbitrary, number> = {
+      'DIFFERENT': 0,
+      SAME: this.config.balance.equalTo,
+      'GREATER THAN': this.config.balance.greaterThan,
+      'LESS THAN': this.config.balance.lessThan,
+      'I CANNOT KNOW': this.config.balance?.iCannotKnow || 1
+    };
+
+    const balanced = transformedConfigBalance.SAME === cueCountsByStimuli.SAME &&
+      transformedConfigBalance['LESS THAN'] === cueCountsByStimuli['LESS THAN'] &&
+      transformedConfigBalance['GREATER THAN'] === cueCountsByStimuli['GREATER THAN'] &&
+      (!this.config.iCannotKnow || transformedConfigBalance['I CANNOT KNOW'] === cueCountsByStimuli['I CANNOT KNOW']);
+
+    for (const cue of CUES_NON_ARBITRARY_W_ICK) {
+      const trialNumArray = new Array(
+        (balanced ? cueMultiplierByStimuli[cue] : cueMultiplierByStimuli[cue] * transformedConfigBalance[cue]) *
+        this.stimuliComparisonCopies).fill(
+        undefined).map((_, i) => i + 1);
+      for (const num of trialNumArray) {
+        this.trials = this.trials.concat(
+          cueByStimuli[cue].flat().map(stimuliComparison => ({ ...stimuliComparison, cueComponentConfigs })));
+      }
+    }
+
+    console.log('un-shuffled trials', this.trials);
+
     return shuffle(this.trials);
   }
 
+  /**
+   * Feedback is enabled in the operant choice block.
+   * @returns {boolean}
+   */
   feedbackEnabled(): boolean {
     return true;
   }
