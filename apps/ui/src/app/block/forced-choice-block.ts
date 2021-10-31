@@ -101,11 +101,7 @@ export class ForcedChoiceBlock extends Block {
   }
 
   nextTrial(): void {
-    // If training failed
-
-    if (this.trialNum === this.numTrainingTrials) {
-      this.trainingFailuresAllotted = 0;
-    }
+    if (this.trialNum === this.numTrainingTrials) this.trainingFailuresAllotted = 0;
 
     if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100) {
       this.trainingsFailed++;

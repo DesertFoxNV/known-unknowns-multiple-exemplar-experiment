@@ -1,9 +1,9 @@
 <div
   [@fadeOut]="animated"
   class="vw-100 vh-100 d-flex justify-content-center align-items-center bg-white"
-  mat-ripple
+  (tap)="this.disableClose === false && close()"
+  matRipple
   [matRippleDisabled]="animated || disableClose"
-  (click)="this.disableClose === false && close()"
 >
   <strong class="overlay-dynamic-text user-select-none">{{data.text}}</strong>
 </div>

@@ -112,15 +112,23 @@
     <mat-divider></mat-divider>
     <mat-card-actions align="start">
       <button
-        type="button"
-        mat-button
-        (click)="start()"
+        (tap)="start()"
         color="primary"
         [disabled]="form.invalid"
+        mat-button
+        type="button"
       >Start
       </button>
 
-      <button type="button" mat-button color="primary" [disabled]="form.invalid" (click)="copyLink()">Copy Link</button>
+      <button
+        (tap)="copyLink()"
+        color="primary"
+        [disabled]="form.invalid"
+        mat-button
+        type="button"
+      >
+        Copy Link
+      </button>
     </mat-card-actions>
   </mat-card>
 

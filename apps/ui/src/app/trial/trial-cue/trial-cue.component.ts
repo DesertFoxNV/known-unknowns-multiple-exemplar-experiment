@@ -34,4 +34,9 @@ export class TrialCueComponent {
     this.config = config;
     this.animate = 'fade-in';
   }
+
+  tap() {
+    this.disabled = true;
+    this.selected.emit(this.config);
+  }
 }

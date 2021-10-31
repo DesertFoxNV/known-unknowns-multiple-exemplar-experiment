@@ -1,13 +1,12 @@
 <button
-  [ngClass]="{'d-none': config === undefined}"
-  [ngStyle]="{'pointer-events': config?.value ? 'all' : 'none' }"
   [@fadeIn]="{ value: animate === 'fade-in',  params: { delay: animationDelay } }"
   [@fadeOut]="animate === 'fade-out'"
   class="trial-item dynamic-text"
-  (click)="!disabled && select()"
-  onclick="blur()"
-  [matRippleDisabled]="disabled"
+  (tap)="!disabled && select()"
   matRipple
+  [matRippleDisabled]="disabled"
+  [ngClass]="{'d-none': config === undefined}"
+  [ngStyle]="{'pointer-events': config?.value ? 'all' : 'none' }"
   [style.backgroundImage]="config?.fileName"
 >
   {{config?.isArbitrary ? '&nbsp;' : config?.value || ''}}
