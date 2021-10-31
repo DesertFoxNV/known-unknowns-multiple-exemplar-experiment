@@ -73,6 +73,8 @@ export class ForcedChoiceBlock extends Block {
     const ickTrials = ickStimuliComparisons.map(
       (stimuliComparison) => ({ ...stimuliComparison, cueComponentConfigs: ickCueComponentConfig }));
 
+    console.log(ickTrials.length);
+
     const trainingTrials = this.config.iCannotKnow ?
       sameTrials.concat(differentTrials, sampleSize(ickTrials, this.numIdkTrainingTrials)) :
       sameTrials.concat(differentTrials);
@@ -100,6 +102,11 @@ export class ForcedChoiceBlock extends Block {
 
   nextTrial(): void {
     // If training failed
+
+    if (this.trialNum === this.numTrainingTrials) {
+      this.trainingFailuresAllotted = 0;
+    }
+
     if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100) {
       this.trainingsFailed++;
       console.log('training failed', this.trialNum);
