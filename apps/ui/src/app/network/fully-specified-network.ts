@@ -2,7 +2,6 @@ import { clone } from 'lodash-es';
 import { CueTuple } from '../study-conditions/cue.constants';
 import { StimuliComparisonTuple } from '../study-conditions/stimuli.interfaces';
 import { StimulusCase } from '../study-conditions/stimulus-case';
-import { getCombinatorialOperatorForBToCCToB } from './combinatorially-entailed-operator-dictionary';
 import { MUTUALLY_ENTAILED_OPERATOR_DICT } from './mutually-entailed-operator-dictionary';
 import { Network } from './network';
 import { StimuliComparison } from './stimuli-comparison';
@@ -27,25 +26,7 @@ export abstract class FullySpecifiedNetwork extends Network {
    * Generates the combinatorially entailed stimulus comparisons B to C and C to B.
    * @returns {StimuliComparison[]}
    */
-  get combinatoriallyEntailed(): StimuliComparison[] {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [A, B, C] = this.stimuli;
-
-    if (B === 'I CANNOT KNOW' || B === 'DIFFERENT' || C === 'I CANNOT KNOW' || C === 'DIFFERENT')
-      throw Error(`Stimuli B and C were "${this.stimuli.join(' and ')}", they cannot be "I CANNOT KNOW OR DIFFERENT"`);
-
-    const comparisonBToC = {
-      cue: getCombinatorialOperatorForBToCCToB(this.selectedAtoBAToCOperators),
-      stimuli: [B, C] as StimuliComparisonTuple
-    };
-    return [
-      comparisonBToC,
-      {
-        cue: MUTUALLY_ENTAILED_OPERATOR_DICT[comparisonBToC.cue],
-        stimuli: clone(comparisonBToC.stimuli).reverse() as StimuliComparisonTuple
-      }
-    ];
-  }
+  abstract get combinatoriallyEntailed(): StimuliComparison[]
 
   /**
    * Generates the combinatorially entailed stimulus comparisons B to A and C to A.

@@ -1,8 +1,8 @@
 import { CUE_NON_ARBITRARY } from '../study-conditions/cue.constants';
 import { StimulusCase } from '../study-conditions/stimulus-case';
-import { FullySpecifiedNetwork } from './fully-specified-network';
+import { KnownNetwork } from './known-network';
 
-export class KnownGreaterThanNetwork extends FullySpecifiedNetwork {
+export class KnownGreaterThanNetwork extends KnownNetwork {
 
   /**
    * Creates a fully specified greater than network A > B and A > C.

@@ -46,7 +46,6 @@ export class TrialComponent implements AfterViewInit {
       takeWhile(() => this.secondsInTrial < this.conditionSvc.trialTimeoutSeconds),
       tap(() => {
         this.secondsInTrial++;
-        console.log(this.secondsInTrial);
         if (this.secondsInTrial == this.conditionSvc.trialTimeoutSeconds) this.completed.emit();
       }),
       untilDestroyed(this)

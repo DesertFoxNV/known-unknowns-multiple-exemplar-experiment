@@ -1,8 +1,8 @@
 import { CUE_NON_ARBITRARY } from '../study-conditions/cue.constants';
 import { StimulusCase } from '../study-conditions/stimulus-case';
-import { FullySpecifiedNetwork } from './fully-specified-network';
+import { KnownNetwork } from './known-network';
 
-export class KnownEqualityNetwork extends FullySpecifiedNetwork {
+export class KnownEqualityNetwork extends KnownNetwork {
 
   /**
    * Creates a fully specified equality network A = B = C.

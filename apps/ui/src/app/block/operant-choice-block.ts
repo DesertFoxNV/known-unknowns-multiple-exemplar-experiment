@@ -22,7 +22,9 @@ export class OperantChoiceBlock extends Block {
   ) {
     super('Operant Choice', config);
     this.equalityNetwork = equalityNetwork;
+    console.log(this.equalityNetwork.toString());
     this.greaterThanNetwork = greaterThanNetwork;
+    console.log(this.greaterThanNetwork.toString());
   }
 
   /**
@@ -53,17 +55,16 @@ export class OperantChoiceBlock extends Block {
           { cue: CUE_NON_ARBITRARY.iCannotKnow, stimuli: [stimuli2, stimuli1] });
       }
     }
+    console.log(ickStimuliComparisons.length);
 
     // pool network comparisons
     const comparisons: StimuliComparison[] = [this.equalityNetwork, this.greaterThanNetwork].map(network => {
       return ([] as StimuliComparison[]).concat(
-        network.identities,
         network.trained,
         network.mutuallyEntailed,
-        network.combinatoriallyEntailed,
-        this.config.iCannotKnow ? ickStimuliComparisons : []
+        network.combinatoriallyEntailed
       );
-    }).flat();
+    }).flat().concat(this.config.iCannotKnow ? ickStimuliComparisons : []);
 
     // create record of cue with stimuli
     const cueByStimuli = CUES_NON_ARBITRARY_W_ICK.reduce(
@@ -77,7 +78,8 @@ export class OperantChoiceBlock extends Block {
     const gcd = (a: number, b: number): number => a ? gcd(b % a, a) : b;
     const lcm = (a: number, b: number) => a * b / gcd(a, b);
 
-    const leastCommonMultiple = Object.values(cueCountsByStimuli).reduce(lcm);
+    const leastCommonMultiple = Object.values(cueCountsByStimuli).filter(
+      cueCountsByStimuli => cueCountsByStimuli > 0).reduce(lcm);
     console.log('LEAST COMMON MULTIPLE', leastCommonMultiple);
 
     const cueMultiplierByStimuli = CUES_NON_ARBITRARY_W_ICK.reduce(
@@ -105,6 +107,7 @@ export class OperantChoiceBlock extends Block {
       (!this.config.iCannotKnow || transformedConfigBalance['I CANNOT KNOW'] === cueCountsByStimuli['I CANNOT KNOW']);
 
     for (const cue of CUES_NON_ARBITRARY_W_ICK) {
+      if (cueCountsByStimuli[cue] === 0) continue;
       const trialNumArray = new Array(
         (balanced ? cueMultiplierByStimuli[cue] : cueMultiplierByStimuli[cue] * transformedConfigBalance[cue]) *
         this.stimuliComparisonCopies).fill(
