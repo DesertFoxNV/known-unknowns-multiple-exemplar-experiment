@@ -236,10 +236,12 @@ export class RelationalFrameGraph extends DiGraph<RelationalNode, RelationalEdge
   addTrainedAndMutualRelations(edge: RelationalEdge<RelationType.trained>) {
     const src = edge.src;
     const dest = edge.dest;
-    if (!this.hasNode(src)) throw Error(`addEdge failed source node "${src.toString()}" is not in graph.`);
-    if (!this.hasNode(dest)) throw Error(`addEdge failed destination node "${dest.toString()}" is not in graph.`);
+    if (!this.hasNode(src)) throw Error(`Add edge failed source node "${src.toString()}" is not in graph.`);
+    if (!this.hasNode(dest)) throw Error(`Add edge failed destination node "${dest.toString()}" is not in graph.`);
     if (!this.reverseDictionary?.[edge.relation]) throw Error(
       `Could not find inverse of relation ${edge.relation}`);
+    if (this.edges.get(edge.src)?.some(e => e.src === src && e.dest === dest)) throw Error(
+      `Add edge failed an edge already exists with src ${src.toString()} => dest ${dest.toString()}`);
     this.edges.set(edge.src, (this.edges.get(edge.src) as RelationalEdge<RelationType>[]).concat(edge));
     this.edges.set(edge.dest, (this.edges.get(edge.dest) as RelationalEdge<RelationType>[]).concat(
       new RelationalEdge(
