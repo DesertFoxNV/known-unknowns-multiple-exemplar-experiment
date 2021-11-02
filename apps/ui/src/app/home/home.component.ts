@@ -67,6 +67,9 @@ export class HomeComponent {
     graph.addTrainedAndMutualRelations(new RelationalEdge(nodeB2, nodeC2, 'greaterThan', RelationType.trained));
     graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA2, nodeC2, 'greaterThan', RelationType.trained));
 
+
+    graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA1, nodeA2, 'same', RelationType.trained));
+
     console.log(graph.toString());
 
     // const pathRelationSets = graph.findPathway(nodeA, nodeC)

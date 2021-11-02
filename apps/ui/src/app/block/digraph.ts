@@ -263,7 +263,7 @@ export class RelationalFrameGraph extends DiGraph<RelationalNode, RelationalEdge
     } else {
       for (const edge of this.getEdgesForNode(startNode)) {
 
-        if (!path.nodes.map(node => node.name).includes(edge.dest.name))  // Avoid cycles
+        if (!path.nodes.map(node => node.toString()).includes(edge.dest.toString()))  // Avoid cycles
         {
           const newPath = this.findPathway(edge.dest, endNode, edge, cloneDeep(path), paths);
           if (newPath) paths = paths.concat(newPath);
@@ -286,51 +286,3 @@ export class RelationalFrameGraph extends DiGraph<RelationalNode, RelationalEdge
         '\n');
   }
 }
-
-// TESTS
-
-// const graph = new DiGraph();
-// const nodeA = new Node('a');
-// const nodeB = new Node('b');
-// const nodeC = new Node('c');
-//
-// graph.addNode(nodeA);
-// graph.addNode(nodeB);
-// graph.addNode(nodeC);
-//
-// const edge1 = new WeightedEdge(nodeA, nodeB, 'GREATER THAN');
-// const edge2 = new WeightedEdge(nodeA, nodeC, 'LESS THAN');
-// const edge3 = new WeightedEdge(nodeB, nodeC, 'EQUAL TO');
-//
-// graph.addEdge(edge1);
-// graph.addEdge(edge2);
-// graph.addEdge(edge3);
-
-// console.log(`edge1.toString() === "a->b (15, 10)"`, edge1.toString() === 'a->b (15, 10)');
-// console.log(`edge2.toString() === "a->c (14, 6)"`, edge2.toString() === 'a->c (14, 6)');
-// console.log(`edge3.toString() === "b->c (3, 1)"`, edge3.toString() === 'b->c (3, 1)');
-// console.log('');
-
-// console.log(graph.toString());
-
-// const nodeNotInGraph = new Node('q');
-// const edgeNoSrc = new WeightedEdge(nodeNotInGraph, nodeB, 'SAME');
-// const edgeNoDest = new WeightedEdge(nodeA, nodeNotInGraph, 'SAME');
-//
-// try {
-//   graph.addEdge(edgeNoSrc);
-// }
-// catch (e) {
-//   console.log('graph.addEdge(edgeNoSrc)',
-//     e.message === `addEdge failed source node "${edgeNoSrc.src.name}" is not in graph.`);
-// }
-//
-// try {
-//   graph.addEdge(edgeNoDest);
-// }
-// catch (e) {
-//   console.log('graph.addEdge(edgeNoDest)',
-//     e.message === `addEdge failed destination node "${edgeNoDest.dest.name}" is not in graph.`);
-// }
-//
-// console.log(`graph.toString()`, graph.toString() === `a->b (15, 10)\na->c (14, 6)\nb->c (3, 1)`, graph.toString());
