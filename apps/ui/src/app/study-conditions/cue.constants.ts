@@ -41,7 +41,7 @@ export const CUE_NON_ARBITRARY_TO_FILENAME = zipObject<CueArbitraryFilename>(
   Object.values(CUE_NON_ARBITRARY),
   shuffle(Object.values(CUE_ARBITRARY_FILENAME))) as Record<CueNonArbitrary, CueArbitraryFilename>;
 
-console.log(CUE_NON_ARBITRARY_TO_FILENAME)
+// console.log(CUE_NON_ARBITRARY_TO_FILENAME)
 
 export type CueNonArbitrary = typeof CUE_NON_ARBITRARY[keyof typeof CUE_NON_ARBITRARY];
 

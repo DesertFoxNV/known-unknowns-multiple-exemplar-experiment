@@ -216,7 +216,7 @@ const mode = (array: number[]) => {
   // the returned result is provided as an array
   // mode of [3, 5, 4, 4, 1, 1, 2, 3] = [1, 3, 4]
   const modes = [];
-  const count: number[] = []
+  const count: number[] = [];
   let i, number, maxIndex = 0;
 
   for (i = 0; i < array.length; i += 1) {
@@ -235,4 +235,4 @@ const mode = (array: number[]) => {
     }
 
   return modes;
-}
+};
