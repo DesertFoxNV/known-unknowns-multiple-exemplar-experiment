@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-import { RelationalEdge, RelationalFrameGraph, RelationalNode, RelationType } from '../block/digraph';
+import { RelationType } from '../graph/relation-type';
+import { RelationalEdge } from '../graph/relational-edge';
+import { RelationalFrameDigraph } from '../graph/relational-frame-digraph';
+import { RelationalNode } from '../graph/relational-node';
 
 @Component({
   selector: 'home',
@@ -34,7 +37,7 @@ export class HomeComponent {
         iCannotKnow: 'iCannotKnow'
       }
     };
-    const graph = new RelationalFrameGraph(
+    const graph = new RelationalFrameDigraph(
       'same',
       'iCannotKnow',
       {
