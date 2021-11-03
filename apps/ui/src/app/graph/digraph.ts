@@ -3,7 +3,7 @@ import { Edge } from './edge';
 import { Node } from './node';
 
 /***
- * Represents a directed frame of Node and Edge objects
+ * Represents a directed graph of Node and Edge objects
  */
 export class Digraph<N extends Node, E extends Edge<N>> {
   edges: Map<N, E[]> = new Map<N, E[]>();

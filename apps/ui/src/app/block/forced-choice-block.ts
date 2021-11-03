@@ -4,7 +4,7 @@ import {
 } from '../graph/operator-dictionaries';
 import { RelationType } from '../graph/relation-type';
 import { RelationalEdge } from '../graph/relational-edge';
-import { RelationalFrame } from '../graph/relational-frame';
+import { RelationalFrameGraph } from '../graph/relational-frame-graph';
 import { RelationalNode } from '../graph/relational-node';
 import { BinaryNetwork } from '../network/binary-network';
 import { CUE_NON_ARBITRARY } from '../study-conditions/cue.constants';
@@ -18,7 +18,7 @@ import { oneChoiceCueComponentConfig, twoChoiceCueComponentConfig } from './one-
 import { TRIAL_DELAY_INTERVAL_MS } from './trial-animation-delay';
 
 export class ForcedChoiceBlock extends Block {
-  frame: RelationalFrame;
+  graph: RelationalFrameGraph;
   numDifferentProbeTrials = 5;
   numIdkProbeTrials = 5;
   numIdkTrainingTrials = 6;
@@ -46,22 +46,22 @@ export class ForcedChoiceBlock extends Block {
     config: StudyConfigWCase
   ) {
     super('Forced Choice', config);
-    this.frame = this.createGraph(config);
+    this.graph = this.createGraph(config);
   }
 
   /**
-   * Creates relational frame digraph
+   * Creates relational graph digraph
    * @param {StudyConfigWCase} config
-   * @returns {RelationalFrame}
+   * @returns {RelationalFrameGraph}
    */
   createGraph(config: StudyConfigWCase) {
-    const frame = new RelationalFrame(
+    const graph = new RelationalFrameGraph(
       'same',
       'iCannotKnow',
       MUTUALLY_ENTAILED_DICTIONARY_SAME_DIFFERENT_ICK,
       COMBINATORIALLY_ENTAILED_DICTIONARY_SAME_DIFFERENT_ICK);
 
-    frame.includeRelationsBetweenNetworks = true;
+    graph.includeRelationsBetweenNetworks = true;
 
     // Network 1 - known network
     const nodeA1 = new RelationalNode('A', 1, getRandomStimulus(config.stimulusCase));
@@ -69,17 +69,17 @@ export class ForcedChoiceBlock extends Block {
     const nodeC1 = new RelationalNode('C', 1, getRandomStimulus(config.stimulusCase));
 
     // Add nodes for network 1
-    frame.graph.addNode(nodeA1);
-    frame.graph.addNode(nodeB1);
-    frame.graph.addNode(nodeC1);
+    graph.addNode(nodeA1);
+    graph.addNode(nodeB1);
+    graph.addNode(nodeC1);
 
     // Set A1 => B1 relation
-    frame.graph.addEdge(new RelationalEdge(nodeA1, nodeB1, 'different', RelationType.trained));
-    frame.graph.addEdge(new RelationalEdge(nodeA1, nodeC1, 'different', RelationType.trained));
-    frame.graph.addEdge(new RelationalEdge(nodeB1, nodeA1, 'different', RelationType.trained));
-    frame.graph.addEdge(new RelationalEdge(nodeB1, nodeC1, 'different', RelationType.trained));
-    frame.graph.addEdge(new RelationalEdge(nodeC1, nodeA1, 'different', RelationType.trained));
-    frame.graph.addEdge(new RelationalEdge(nodeC1, nodeB1, 'different', RelationType.trained));
+    graph.addEdge(new RelationalEdge(nodeA1, nodeB1, 'different', RelationType.trained));
+    graph.addEdge(new RelationalEdge(nodeA1, nodeC1, 'different', RelationType.trained));
+    graph.addEdge(new RelationalEdge(nodeB1, nodeA1, 'different', RelationType.trained));
+    graph.addEdge(new RelationalEdge(nodeB1, nodeC1, 'different', RelationType.trained));
+    graph.addEdge(new RelationalEdge(nodeC1, nodeA1, 'different', RelationType.trained));
+    graph.addEdge(new RelationalEdge(nodeC1, nodeB1, 'different', RelationType.trained));
 
     // Network 2 - unknown network
     const nodeD = new RelationalNode('D', 2, getRandomStimulus(config.stimulusCase));
@@ -87,11 +87,11 @@ export class ForcedChoiceBlock extends Block {
     const nodeF = new RelationalNode('F', 2, getRandomStimulus(config.stimulusCase));
 
     // Add nodes for network 2
-    frame.graph.addNode(nodeD);
-    frame.graph.addNode(nodeE);
-    frame.graph.addNode(nodeF);
+    graph.addNode(nodeD);
+    graph.addNode(nodeE);
+    graph.addNode(nodeF);
 
-    return frame;
+    return graph;
   }
 
   /**
@@ -105,7 +105,7 @@ export class ForcedChoiceBlock extends Block {
     const ickCueComponentConfig = oneChoiceCueComponentConfig(this.config, CUE_NON_ARBITRARY.iCannotKnow);
 
     // Only include identities for network 1
-    const network1Identities = this.frame.identities.filter(
+    const network1Identities = this.graph.identities.filter(
       stimulusComparision => stimulusComparision.stimuli[0].network === 1);
 
     // Same trials are created in duplicate, mapped to component configs, and shuffled.
@@ -116,14 +116,14 @@ export class ForcedChoiceBlock extends Block {
 
     // Different trials are created, mapped to component configs, and shuffled.
     const differentTrials = shuffle([
-      this.frame.trained,
-      this.frame.mutuallyEntailed
+      this.graph.trained,
+      this.graph.mutuallyEntailed
     ].flat().map((stimuliComparison) => ({ ...stimuliComparison, cueComponentConfigs: differentCueComponentConfig })));
 
     // I cannot know trials are created, mapped to component configs, and shuffled.
     const ickTrials = shuffle([
       // Remove network 2 comparison with filter
-      this.frame.combinatoriallyEntailed.filter(
+      this.graph.combinatoriallyEntailed.filter(
         stimulusComparison => !(stimulusComparison.stimuli[0].network === 2 && stimulusComparison.stimuli[1].network ===
           2))
     ].flat().map((stimuliComparison) => ({ ...stimuliComparison, cueComponentConfigs: ickCueComponentConfig })));

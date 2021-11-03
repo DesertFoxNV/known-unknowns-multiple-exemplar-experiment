@@ -1,5 +1,5 @@
 /**
- * Represents a node in a frame.
+ * Represents a node in a graph.
  */
 export class Node {
 

@@ -1,17 +1,7 @@
 import { Block } from '../block/block';
 import { ForcedChoiceBlock } from '../block/forced-choice-block';
-import { TestBlock } from '../block/test-block';
-import {
-  COMBINATORIALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK, MUTUALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK
-} from '../graph/operator-dictionaries';
-import { RelationType } from '../graph/relation-type';
-import { RelationalEdge } from '../graph/relational-edge';
-import { RelationalFrame } from '../graph/relational-frame';
-import { RelationalNode } from '../graph/relational-node';
 import { BinaryNetwork } from '../network/binary-network';
-import { StudyConfig, StudyConfigWCase } from '../study-config-form/study-config';
-import { randomStimulusCase } from './random-stimulus-case';
-import { StimulusCase } from './stimulus-case';
+import { StudyConfigWCase } from '../study-config-form/study-config';
 
 export class StudyConditions {
   blocks: Block[] = [];
@@ -23,7 +13,7 @@ export class StudyConditions {
     const network4 = new BinaryNetwork(4, config.stimulusCase);
     this.blocks = [
       // new TestBlock(config)
-      new ForcedChoiceBlock(config),
+      new ForcedChoiceBlock(config)
       // new OperantChoiceBlock(new KnownEqualityNetwork(5, this.stimulusCase), new KnownGreaterThanNetwork(6, this.stimulusCase),
       // config)
     ];

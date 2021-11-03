@@ -4,7 +4,7 @@ import {
 } from '../graph/operator-dictionaries';
 import { RelationType } from '../graph/relation-type';
 import { RelationalEdge } from '../graph/relational-edge';
-import { RelationalFrame } from '../graph/relational-frame';
+import { RelationalFrameGraph } from '../graph/relational-frame-graph';
 import { RelationalNode } from '../graph/relational-node';
 
 @Component({

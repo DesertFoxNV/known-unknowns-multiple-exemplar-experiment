@@ -5,10 +5,9 @@ import { RelationalEdge } from './relational-edge';
 import { RelationalNode } from './relational-node';
 import { StimuliComparison } from './stimuli-comparison';
 
-export class RelationalFrame {
+export class RelationalFrameGraph extends Digraph<RelationalNode, RelationalEdge<RelationType>> {
 
   combinatorialDictionary: { [key: string]: { [key: string]: string }; };
-  graph: Digraph<RelationalNode, RelationalEdge<RelationType>>;
   includeRelationsBetweenNetworks = false;
   reverseDictionary: { [key: string]: string };
   selfRelation: string;
@@ -20,7 +19,7 @@ export class RelationalFrame {
     reverseDictionary: { [key: string]: string },
     combinatorialDictionary: { [key: string]: { [key: string]: string }; }
   ) {
-    this.graph = new Digraph<RelationalNode, RelationalEdge<RelationType>>();
+    super();
     this.selfRelation = selfRelation;
     this.unknownRelation = unknownRelation;
     this.reverseDictionary = reverseDictionary;
@@ -29,12 +28,12 @@ export class RelationalFrame {
 
   get combinatoriallyEntailed() {
     const comparisons: StimuliComparison<RelationalNode>[] = [];
-    const nodes = [...this.graph.nodes];
+    const nodes = [...this.nodes];
     for (const startNode of nodes) {
       for (const endNode of nodes) {
         if (startNode === endNode) continue;
         if (!this.includeRelationsBetweenNetworks && startNode.network !== endNode.network) continue;
-        if (this.graph.getEdgesForNode(startNode).find(edge => edge.dest === endNode)) continue;
+        if (this.getEdgesForNode(startNode).find(edge => edge.dest === endNode)) continue;
         const relations = this.findPathway(startNode, endNode)
           .map(path => path.edges.map(edge => edge.relation))
           .reduce((acc, relations, i) => {
@@ -72,7 +71,7 @@ export class RelationalFrame {
   }
 
   get identities(): StimuliComparison<RelationalNode>[] {
-    return [...this.graph.nodes].map(node => ({
+    return [...this.nodes].map(node => ({
       relation: this.selfRelation,
       relationType: RelationType.identity,
       stimuli: [node, node]
@@ -80,7 +79,7 @@ export class RelationalFrame {
   }
 
   get mutuallyEntailed(): StimuliComparison<RelationalNode>[] {
-    return [...this.graph.edges.values()].flat().filter(
+    return [...this.edges.values()].flat().filter(
       edge => edge.relationType === RelationType.mutuallyEntailed).map(
       edge => ({
         relation: edge.relation,
@@ -90,7 +89,7 @@ export class RelationalFrame {
   }
 
   get trained(): StimuliComparison<RelationalNode>[] {
-    return [...this.graph.edges.values()].flat().filter(edge => edge.relationType === RelationType.trained).map(
+    return [...this.edges.values()].flat().filter(edge => edge.relationType === RelationType.trained).map(
       edge => ({
         relation: edge.relation,
         relationType: edge.relationType,
@@ -105,15 +104,15 @@ export class RelationalFrame {
   addTrainedAndMutualRelations(edge: RelationalEdge<RelationType.trained>) {
     const src = edge.src;
     const dest = edge.dest;
-    if (!this.graph.hasNode(src)) throw Error(`Add edge failed source node "${src.toString()}" is not in graph.`);
-    if (!this.graph.hasNode(dest)) throw Error(
+    if (!this.hasNode(src)) throw Error(`Add edge failed source node "${src.toString()}" is not in graph.`);
+    if (!this.hasNode(dest)) throw Error(
       `Add edge failed destination node "${dest.toString()}" is not in graph.`);
     if (!this.reverseDictionary?.[edge.relation]) throw Error(
       `Could not find inverse of relation ${edge.relation}`);
-    if (this.graph.edges.get(edge.src)?.some(e => e.src === src && e.dest === dest)) throw Error(
+    if (this.edges.get(edge.src)?.some(e => e.src === src && e.dest === dest)) throw Error(
       `Add edge failed an edge already exists with src ${src.toString()} => dest ${dest.toString()}`);
-    this.graph.edges.set(edge.src, (this.graph.edges.get(edge.src) as RelationalEdge<RelationType>[]).concat(edge));
-    this.graph.edges.set(edge.dest, (this.graph.edges.get(edge.dest) as RelationalEdge<RelationType>[]).concat(
+    this.edges.set(edge.src, (this.edges.get(edge.src) as RelationalEdge<RelationType>[]).concat(edge));
+    this.edges.set(edge.dest, (this.edges.get(edge.dest) as RelationalEdge<RelationType>[]).concat(
       new RelationalEdge(
         edge.dest,
         edge.src,
@@ -133,7 +132,7 @@ export class RelationalFrame {
     if (startNode === endNode) {
       return paths.concat(path);
     } else {
-      for (const edge of this.graph.getEdgesForNode(startNode)) {
+      for (const edge of this.getEdgesForNode(startNode)) {
 
         if (!path.nodes.map(node => node.toString()).includes(edge.dest.toString()))  // Avoid cycles
         {
