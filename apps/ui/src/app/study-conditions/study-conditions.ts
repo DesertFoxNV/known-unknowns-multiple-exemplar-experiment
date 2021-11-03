@@ -6,7 +6,7 @@ import {
 } from '../graph/operator-dictionaries';
 import { RelationType } from '../graph/relation-type';
 import { RelationalEdge } from '../graph/relational-edge';
-import { RelationalFrameDigraph } from '../graph/relational-frame-digraph';
+import { RelationalFrame } from '../graph/relational-frame';
 import { RelationalNode } from '../graph/relational-node';
 import { BinaryNetwork } from '../network/binary-network';
 import { StudyConfig, StudyConfigWCase } from '../study-config-form/study-config';

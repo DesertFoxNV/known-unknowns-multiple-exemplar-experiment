@@ -8,7 +8,7 @@ import {
 } from '../graph/operator-dictionaries';
 import { RelationType } from '../graph/relation-type';
 import { RelationalEdge } from '../graph/relational-edge';
-import { RelationalFrameDigraph } from '../graph/relational-frame-digraph';
+import { RelationalFrame } from '../graph/relational-frame';
 import { RelationalNode } from '../graph/relational-node';
 import { UNKNOWN_NETWORK_CUE_OPERATORS_SAME_GT_LT } from '../graph/unknown-network-cue-operators-same-gt-lt';
 import {
@@ -20,7 +20,7 @@ import { StudyConfig, StudyConfigWCase } from '../study-config-form/study-config
 import { Block } from './block';
 
 export class TestBlock extends Block {
-  graph: RelationalFrameDigraph;
+  frame: RelationalFrame;
   numDuplicates: number;
 
   /**
@@ -37,17 +37,17 @@ export class TestBlock extends Block {
     numDuplicates = 4
   ) {
     super('Test', config);
-    this.graph = this.createGraph(config);
+    this.frame = this.createGraph(config);
     this.numDuplicates = numDuplicates;
   }
 
   /**
    * Creates relational frame digraph
    * @param {StudyConfigWCase} config
-   * @returns {RelationalFrameDigraph}
+   * @returns {RelationalFrame}
    */
   createGraph(config: StudyConfigWCase) {
-    const graph = new RelationalFrameDigraph(
+    const frame = new RelationalFrame(
       'same',
       'iCannotKnow',
       MUTUALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK,
@@ -59,9 +59,9 @@ export class TestBlock extends Block {
     const nodeC1 = new RelationalNode('C', 1, getRandomStimulus(config.stimulusCase));
 
     // Add nodes for network 1
-    graph.addNode(nodeA1);
-    graph.addNode(nodeB1);
-    graph.addNode(nodeC1);
+    frame.graph.addNode(nodeA1);
+    frame.graph.addNode(nodeB1);
+    frame.graph.addNode(nodeC1);
 
     // Get randomized known network operator combination
     const [a1ToB1Relation, a1ToC1Relation, b1ToC1Relation] = sample(
@@ -69,20 +69,20 @@ export class TestBlock extends Block {
 
     // Set A1 => B1 relation
     if (a1ToB1Relation) {
-      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA1, nodeB1, a1ToB1Relation, RelationType.trained));
+      frame.addTrainedAndMutualRelations(new RelationalEdge(nodeA1, nodeB1, a1ToB1Relation, RelationType.trained));
     }
 
     // Set A1 => C1 relation
     if (a1ToC1Relation) {
-      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA1, nodeC1, a1ToC1Relation, RelationType.trained));
+      frame.addTrainedAndMutualRelations(new RelationalEdge(nodeA1, nodeC1, a1ToC1Relation, RelationType.trained));
     }
 
     // Set B1 => C1 relation
     if (b1ToC1Relation) {
-      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeB1, nodeC1, b1ToC1Relation, RelationType.trained));
+      frame.addTrainedAndMutualRelations(new RelationalEdge(nodeB1, nodeC1, b1ToC1Relation, RelationType.trained));
     }
 
-    console.log(graph.toString());
+    console.log(frame.toString());
 
     // Network 2 - unknown network
     const nodeA2 = new RelationalNode('A', 2, getRandomStimulus(config.stimulusCase));
@@ -90,9 +90,9 @@ export class TestBlock extends Block {
     const nodeC2 = new RelationalNode('C', 2, getRandomStimulus(config.stimulusCase));
 
     // Add nodes for network 2
-    graph.addNode(nodeA2);
-    graph.addNode(nodeB2);
-    graph.addNode(nodeC2);
+    frame.graph.addNode(nodeA2);
+    frame.graph.addNode(nodeB2);
+    frame.graph.addNode(nodeC2);
 
     // Get randomized unknown network operator combination
     const [a2ToB2Relation, a2ToC2Relation, b2ToC2Relation] = sample(
@@ -100,20 +100,20 @@ export class TestBlock extends Block {
 
     // Set A2 => B2 relation
     if (a2ToB2Relation) {
-      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA2, nodeB2, a2ToB2Relation, RelationType.trained));
+      frame.addTrainedAndMutualRelations(new RelationalEdge(nodeA2, nodeB2, a2ToB2Relation, RelationType.trained));
     }
 
     // Set A2 => C2 relation
     if (a2ToC2Relation) {
-      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA2, nodeC2, a2ToC2Relation, RelationType.trained));
+      frame.addTrainedAndMutualRelations(new RelationalEdge(nodeA2, nodeC2, a2ToC2Relation, RelationType.trained));
     }
 
     // Set B2 => C2 relation
     if (b2ToC2Relation) {
-      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeB2, nodeC2, b2ToC2Relation, RelationType.trained));
+      frame.addTrainedAndMutualRelations(new RelationalEdge(nodeB2, nodeC2, b2ToC2Relation, RelationType.trained));
     }
 
-    return graph;
+    return frame;
   }
 
   /**
@@ -136,8 +136,8 @@ export class TestBlock extends Block {
     // Mutually entailed and combinatorially entailed trials are generated for each network
     for (let i = 0; i < this.numDuplicates; i++) {
       this.trials = this.trials.concat([
-          this.graph.mutuallyEntailed,
-          this.graph.combinatoriallyEntailed
+          this.frame.mutuallyEntailed,
+          this.frame.combinatoriallyEntailed
         ].flat().map(stimuliComparison => ({ ...stimuliComparison, cueComponentConfigs }))
       );
     }
