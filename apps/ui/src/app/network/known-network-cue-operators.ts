@@ -18,10 +18,10 @@ export type KnownNetworkAToBAToCOperators =
   ['GREATER THAN', 'GREATER THAN'];
 
 /**
- * All of the know network cue operator options.
+ * All of the know network relation operator options.
  * @type {(["SAME", "SAME"] | ["SAME", "GREATER THAN"] | ["SAME", "LESS THAN"] | ["LESS THAN", "SAME"] | ["LESS THAN", "GREATER THAN"] | ["GREATER THAN", "SAME"] | ["GREATER THAN", "LESS THAN"])[]}
  */
-export const KNOWN_NETWORK_CUE_OPERATORS: KnownNetworkAToBAToCOperators[] = [
+export const KNOWN_NETWORK_CUE_OPERATORS: any[] = [
   [CUE_NON_ARBITRARY.same, CUE_NON_ARBITRARY.same],
   [CUE_NON_ARBITRARY.same, CUE_NON_ARBITRARY.greaterThan],
   [CUE_NON_ARBITRARY.same, CUE_NON_ARBITRARY.lessThan],

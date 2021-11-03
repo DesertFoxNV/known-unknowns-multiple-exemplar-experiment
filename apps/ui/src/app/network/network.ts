@@ -37,7 +37,7 @@ export abstract class Network {
   get identities(): StimuliComparison[] {
     return this.stimuli.map(stimulus => {
       return {
-        cue: CUE_NON_ARBITRARY.same,
+        relation: CUE_NON_ARBITRARY.same,
         stimuli: [stimulus, stimulus]
       };
     });
@@ -51,11 +51,11 @@ export abstract class Network {
     const [A, B, C] = this.stimuli;
     return [
       {
-        cue: this.selectedAtoBAToCOperators[0],
+        relation: this.selectedAtoBAToCOperators[0],
         stimuli: [A, B]
       },
       {
-        cue: this.selectedAtoBAToCOperators[1],
+        relation: this.selectedAtoBAToCOperators[1],
         stimuli: [A, C]
       }
     ];
@@ -69,7 +69,7 @@ export abstract class Network {
    */
   comparisonToString(comparison: StimuliComparison[]): string {
     return comparison.map(
-      ({ cue, stimuli: [stimulus1, stimulus2] }) => `${stimulus1} ${cue} ${stimulus2}`).join(', ');
+      ({ relation, stimuli: [stimulus1, stimulus2] }) => `${stimulus1} ${relation} ${stimulus2}`).join(', ');
   }
 
   /**

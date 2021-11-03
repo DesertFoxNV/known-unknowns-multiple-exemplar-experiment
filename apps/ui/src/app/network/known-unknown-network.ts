@@ -41,7 +41,7 @@ export class KnownUnknownNetwork extends FullySpecifiedNetwork {
     return [
       comparisonBToC,
       {
-        cue: MUTUALLY_ENTAILED_OPERATOR_DICT[comparisonBToC.cue],
+        relation: MUTUALLY_ENTAILED_OPERATOR_DICT[comparisonBToC.cue],
         stimuli: clone(comparisonBToC.stimuli).reverse() as StimuliComparisonTuple
       }
     ];

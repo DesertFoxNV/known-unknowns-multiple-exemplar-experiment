@@ -5,7 +5,7 @@ import { CUE_NON_ARBITRARY, CueNonArbitrary, CueTuple } from '../study-condition
  * WARNING: This can only be used for known and unknown networks.
  * @type {{[p: string]: {[p: string]: "SAME" | "GREATER THAN" | "LESS THAN", '[CUE_NON_ARBITRARY.same]': "SAME", '[CUE_NON_ARBITRARY.lessThan]': "LESS THAN", '[CUE_NON_ARBITRARY.greaterThan]': "GREATER THAN"} | {[p: string]: "GREATER THAN" | "I CANNOT KNOW", '[CUE_NON_ARBITRARY.same]': "GREATER THAN", '[CUE_NON_ARBITRARY.lessThan]': "I CANNOT KNOW", '[CUE_NON_ARBITRARY.greaterThan]': "GREATER THAN"} | {[p: string]: "LESS THAN" | "I CANNOT KNOW", '[CUE_NON_ARBITRARY.same]': "LESS THAN", '[CUE_NON_ARBITRARY.lessThan]': "LESS THAN", '[CUE_NON_ARBITRARY.greaterThan]': "I CANNOT KNOW"}, '[CUE_NON_ARBITRARY.same]': {[p: string]: "SAME" | "GREATER THAN" | "LESS THAN", '[CUE_NON_ARBITRARY.same]': "SAME", '[CUE_NON_ARBITRARY.lessThan]': "LESS THAN", '[CUE_NON_ARBITRARY.greaterThan]': "GREATER THAN"}, '[CUE_NON_ARBITRARY.lessThan]': {[p: string]: "GREATER THAN" | "I CANNOT KNOW", '[CUE_NON_ARBITRARY.same]': "GREATER THAN", '[CUE_NON_ARBITRARY.lessThan]': "I CANNOT KNOW", '[CUE_NON_ARBITRARY.greaterThan]': "GREATER THAN"}, '[CUE_NON_ARBITRARY.greaterThan]': {[p: string]: "LESS THAN" | "I CANNOT KNOW", '[CUE_NON_ARBITRARY.same]': "LESS THAN", '[CUE_NON_ARBITRARY.lessThan]': "LESS THAN", '[CUE_NON_ARBITRARY.greaterThan]': "I CANNOT KNOW"}}}
  */
-export const KNOWN_COMBINATORIALLY_ENTAILED_OPERATOR_DICT: Record<'SAME'|'LESS THAN'|'GREATER THAN', Record<'SAME'|'LESS THAN'|'GREATER THAN', CueNonArbitrary>> =
+export const KNOWN_COMBINATORIALLY_ENTAILED_OPERATOR_DICT: Record<any, Record<any, CueNonArbitrary>> =
   {
     [CUE_NON_ARBITRARY.same]: {
       [CUE_NON_ARBITRARY.same]: CUE_NON_ARBITRARY.same,
@@ -29,7 +29,7 @@ export const KNOWN_COMBINATORIALLY_ENTAILED_OPERATOR_DICT: Record<'SAME'|'LESS T
  * WARNING: This can only be used for known and unknown networks.
  * @type {{[p: string]: {[p: string]: "SAME" | "GREATER THAN" | "LESS THAN", '[CUE_NON_ARBITRARY.same]': "SAME", '[CUE_NON_ARBITRARY.lessThan]': "LESS THAN", '[CUE_NON_ARBITRARY.greaterThan]': "GREATER THAN"} | {[p: string]: "GREATER THAN" | "I CANNOT KNOW", '[CUE_NON_ARBITRARY.same]': "GREATER THAN", '[CUE_NON_ARBITRARY.lessThan]': "I CANNOT KNOW", '[CUE_NON_ARBITRARY.greaterThan]': "GREATER THAN"} | {[p: string]: "LESS THAN" | "I CANNOT KNOW", '[CUE_NON_ARBITRARY.same]': "LESS THAN", '[CUE_NON_ARBITRARY.lessThan]': "LESS THAN", '[CUE_NON_ARBITRARY.greaterThan]': "I CANNOT KNOW"}, '[CUE_NON_ARBITRARY.same]': {[p: string]: "SAME" | "GREATER THAN" | "LESS THAN", '[CUE_NON_ARBITRARY.same]': "SAME", '[CUE_NON_ARBITRARY.lessThan]': "LESS THAN", '[CUE_NON_ARBITRARY.greaterThan]': "GREATER THAN"}, '[CUE_NON_ARBITRARY.lessThan]': {[p: string]: "GREATER THAN" | "I CANNOT KNOW", '[CUE_NON_ARBITRARY.same]': "GREATER THAN", '[CUE_NON_ARBITRARY.lessThan]': "I CANNOT KNOW", '[CUE_NON_ARBITRARY.greaterThan]': "GREATER THAN"}, '[CUE_NON_ARBITRARY.greaterThan]': {[p: string]: "LESS THAN" | "I CANNOT KNOW", '[CUE_NON_ARBITRARY.same]': "LESS THAN", '[CUE_NON_ARBITRARY.lessThan]': "LESS THAN", '[CUE_NON_ARBITRARY.greaterThan]': "I CANNOT KNOW"}}}
  */
-export const UNKNOWN_COMBINATORIALLY_ENTAILED_OPERATOR_DICT: Record<'SAME'|'LESS THAN'|'GREATER THAN', Record<'SAME'|'LESS THAN'|'GREATER THAN', CueNonArbitrary>> =
+export const UNKNOWN_COMBINATORIALLY_ENTAILED_OPERATOR_DICT: Record<any, Record<any, CueNonArbitrary>> =
   {
     [CUE_NON_ARBITRARY.same]: {
       [CUE_NON_ARBITRARY.same]: CUE_NON_ARBITRARY.same,
@@ -57,7 +57,7 @@ export const UNKNOWN_COMBINATORIALLY_ENTAILED_OPERATOR_DICT: Record<'SAME'|'LESS
  */
 export function getCombinatorialOperatorForBToCCToBKnown(stimuli: CueTuple<CueNonArbitrary>): CueNonArbitrary {
   const [B, C] = stimuli;
-  if (B === 'I CANNOT KNOW' || B === 'DIFFERENT' || C === 'I CANNOT KNOW' || C === 'DIFFERENT')
+  if (B === 'iCannotKnow' || B === 'different' || C === 'iCannotKnow' || C === 'different')
     throw Error(`Stimuli B and C were "${stimuli.join(' and ')}", they cannot be "I CANNOT KNOW OR DIFFERENT"`);
   return KNOWN_COMBINATORIALLY_ENTAILED_OPERATOR_DICT[B][C];
 }
@@ -71,7 +71,7 @@ export function getCombinatorialOperatorForBToCCToBKnown(stimuli: CueTuple<CueNo
  */
 export function getCombinatorialOperatorForBToCCToBUnknown(stimuli: CueTuple<CueNonArbitrary>): CueNonArbitrary {
   const [B, C] = stimuli;
-  if (B === 'I CANNOT KNOW' || B === 'DIFFERENT' || C === 'I CANNOT KNOW' || C === 'DIFFERENT')
+  if (B === 'iCannotKnow' || B === 'different' || C === 'iCannotKnow' || C === 'different')
     throw Error(`Stimuli B and C were "${stimuli.join(' and ')}", they cannot be "I CANNOT KNOW OR DIFFERENT"`);
   return UNKNOWN_COMBINATORIALLY_ENTAILED_OPERATOR_DICT[B][C];
 }

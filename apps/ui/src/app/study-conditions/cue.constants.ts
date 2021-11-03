@@ -30,11 +30,11 @@ export const CUE_ARBITRARY_FILENAME = {
 export type CueArbitraryFilename = typeof CUE_ARBITRARY_FILENAME[keyof typeof CUE_ARBITRARY_FILENAME];
 
 export const CUE_NON_ARBITRARY = {
-  same: 'SAME',
-  different: 'DIFFERENT',
-  greaterThan: 'GREATER THAN',
-  lessThan: 'LESS THAN',
-  iCannotKnow: `I CANNOT KNOW`
+  same: 'same',
+  different: 'different',
+  greaterThan: 'greaterThan',
+  lessThan: 'lessThan',
+  iCannotKnow: `iCannotKnow`
 } as const;
 
 export const CUE_NON_ARBITRARY_TO_FILENAME = zipObject<CueArbitraryFilename>(

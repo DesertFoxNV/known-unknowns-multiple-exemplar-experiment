@@ -3,11 +3,12 @@ import { Digraph } from './digraph';
 import { RelationType } from './relation-type';
 import { RelationalEdge } from './relational-edge';
 import { RelationalNode } from './relational-node';
-import { StimuliComparisonGeneric } from './stimuli-comparison-generic';
+import { StimuliComparison } from './stimuli-comparison';
 
 export class RelationalFrameDigraph extends Digraph<RelationalNode, RelationalEdge<RelationType>> {
 
   combinatorialDictionary: { [key: string]: { [key: string]: string }; };
+  includeRelationsBetweenNetworks = false;
   reverseDictionary: { [key: string]: string };
   selfRelation: string;
   unknownRelation: string;
@@ -26,11 +27,12 @@ export class RelationalFrameDigraph extends Digraph<RelationalNode, RelationalEd
   }
 
   get combinatoriallyEntailed() {
-    const comparisons: StimuliComparisonGeneric[] = [];
+    const comparisons: StimuliComparison<RelationalNode>[] = [];
     const nodes = [...this.nodes];
     for (const startNode of nodes) {
       for (const endNode of nodes) {
         if (startNode === endNode) continue;
+        if (!this.includeRelationsBetweenNetworks && startNode.network !== endNode.network) continue;
         if (this.getEdgesForNode(startNode).find(edge => edge.dest === endNode)) continue;
         const relations = this.findPathway(startNode, endNode)
           .map(path => path.edges.map(edge => edge.relation))
@@ -68,7 +70,7 @@ export class RelationalFrameDigraph extends Digraph<RelationalNode, RelationalEd
     return comparisons;
   }
 
-  get identities(): StimuliComparisonGeneric[] {
+  get identities(): StimuliComparison<RelationalNode>[] {
     return [...this.nodes].map(node => ({
       relation: this.selfRelation,
       relationType: RelationType.identity,
@@ -76,7 +78,7 @@ export class RelationalFrameDigraph extends Digraph<RelationalNode, RelationalEd
     }));
   }
 
-  get mutuallyEntailed(): StimuliComparisonGeneric[] {
+  get mutuallyEntailed(): StimuliComparison<RelationalNode>[] {
     return [...this.edges.values()].flat().filter(edge => edge.relationType === RelationType.mutuallyEntailed).map(
       edge => ({
         relation: edge.relation,
@@ -85,7 +87,7 @@ export class RelationalFrameDigraph extends Digraph<RelationalNode, RelationalEd
       }));
   }
 
-  get trained(): StimuliComparisonGeneric[] {
+  get trained(): StimuliComparison<RelationalNode>[] {
     return [...this.edges.values()].flat().filter(edge => edge.relationType === RelationType.trained).map(edge => ({
       relation: edge.relation,
       relationType: edge.relationType,
@@ -140,7 +142,7 @@ export class RelationalFrameDigraph extends Digraph<RelationalNode, RelationalEd
   }
 
   toString(): string {
-    return ([] as StimuliComparisonGeneric[]).concat(
+    return ([] as StimuliComparison<RelationalNode>[]).concat(
         this.identities,
         this.trained,
         this.mutuallyEntailed,

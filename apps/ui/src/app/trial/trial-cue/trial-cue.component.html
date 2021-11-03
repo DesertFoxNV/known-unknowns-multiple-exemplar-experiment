@@ -9,5 +9,5 @@
   [ngStyle]="{'pointer-events': config?.value ? 'all' : 'none' }"
   [style.backgroundImage]="config?.fileName"
 >
-  {{config?.isArbitrary ? '&nbsp;' : config?.value || ''}}
+  {{config?.isArbitrary ? '&nbsp;' : config?.viewValue || ''}}
 </button>

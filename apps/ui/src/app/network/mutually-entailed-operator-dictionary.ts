@@ -5,7 +5,7 @@ import { CUE_NON_ARBITRARY, CueNonArbitrary } from '../study-conditions/cue.cons
  * WARNING: This can only be used for known and unknown networks.
  * @type {{[p: string]: "SAME" | "GREATER THAN" | "LESS THAN" | "I CANNOT KNOW", '[CUE_NON_ARBITRARY.same]': "SAME", '[CUE_NON_ARBITRARY.iCannotKnow]': "I CANNOT KNOW", '[CUE_NON_ARBITRARY.different]': "SAME", '[CUE_NON_ARBITRARY.lessThan]': "GREATER THAN", '[CUE_NON_ARBITRARY.greaterThan]': "LESS THAN"}}
  */
-export const MUTUALLY_ENTAILED_OPERATOR_DICT: Record<CueNonArbitrary, CueNonArbitrary> = {
+export const MUTUALLY_ENTAILED_OPERATOR_DICT: Record<any, any> = {
   [CUE_NON_ARBITRARY.different]: CUE_NON_ARBITRARY.same,
   [CUE_NON_ARBITRARY.same]: CUE_NON_ARBITRARY.same,
   [CUE_NON_ARBITRARY.lessThan]: CUE_NON_ARBITRARY.greaterThan,

@@ -27,13 +27,13 @@ export class BinaryNetwork extends Network {
     const [A, B, C] = this.stimuli;
 
     const comparisonBToC = {
-      cue: CUE_NON_ARBITRARY.different,
+      relation: CUE_NON_ARBITRARY.different,
       stimuli: [B, C] as StimuliComparisonTuple
     };
     return [
       comparisonBToC,
       {
-        cue: CUE_NON_ARBITRARY.different,
+        relation: CUE_NON_ARBITRARY.different,
         stimuli: clone(comparisonBToC.stimuli).reverse() as StimuliComparisonTuple
       }
     ];
@@ -44,8 +44,8 @@ export class BinaryNetwork extends Network {
    * @returns {StimuliComparison[]}
    */
   get mutuallyEntailed(): StimuliComparison[] {
-    return this.trained.map(({ stimuli, cue }) => ({
-      cue: CUE_NON_ARBITRARY.different,
+    return this.trained.map(({ stimuli, relation }) => ({
+      relation: CUE_NON_ARBITRARY.different,
       stimuli: clone(stimuli).reverse() as StimuliComparisonTuple
     }));
   }

@@ -33,8 +33,8 @@ export abstract class FullySpecifiedNetwork extends Network {
    * @returns {StimuliComparison[]}
    */
   get mutuallyEntailed(): StimuliComparison[] {
-    return this.trained.map(({ stimuli, cue }) => ({
-      cue: MUTUALLY_ENTAILED_OPERATOR_DICT[cue],
+    return this.trained.map(({ stimuli, relation }) => ({
+      relation: MUTUALLY_ENTAILED_OPERATOR_DICT[relation],
       stimuli: clone(stimuli).reverse() as StimuliComparisonTuple
     }));
   }

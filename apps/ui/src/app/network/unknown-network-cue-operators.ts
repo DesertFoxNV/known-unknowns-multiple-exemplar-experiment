@@ -11,7 +11,7 @@ export type UnknownNetworkAToBAToCOperators =
   ['GREATER THAN', 'GREATER THAN'];
 
 /**
- * All of the unknown network cue operator options.
+ * All of the unknown network relation operator options.
  * @type {(["SAME", "SAME"] | ["SAME", "GREATER THAN"] | ["SAME", "LESS THAN"] | ["LESS THAN", "SAME"] | ["LESS THAN", "GREATER THAN"] | ["GREATER THAN", "SAME"] | ["GREATER THAN", "LESS THAN"])[]}
  */
 export const UNKNOWN_NETWORK_CUE_OPERATORS: UnknownNetworkAToBAToCOperators[] = [

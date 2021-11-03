@@ -55,7 +55,7 @@ export class TrialComponent implements AfterViewInit {
   show(trial: Trial) {
     console.log(trial);
     this.setTimer();
-    for (const [i, value] of trial.stimuli.entries()) this.trialStimulusComponents.get(i)?.set(value);
+    for (const [i, node] of trial.stimuli.entries()) this.trialStimulusComponents.get(i)?.set(node.value);
     for (let i = 0; i < this.trialCueComponents.length; i++) this.trialCueComponents.get(i)?.set(trial.cueComponentConfigs[i]);
   };
 }

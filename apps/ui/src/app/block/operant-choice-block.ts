@@ -38,7 +38,7 @@ export class OperantChoiceBlock extends Block {
     // Cue order is randomized
     const cues = shuffle(this.config.iCannotKnow ? CUES_NON_ARBITRARY_W_ICK : CUES_NON_ARBITRARY_WO_ICK);
 
-    // Cue component configurations are mapped from cue order
+    // Cue component configurations are mapped from relation order
     const cueComponentConfigs = cues.map((cue) => ({
       isArbitrary: this.config.cueType === CUE_TYPE.arbitrary,
       fileName: this.config.cueType === CUE_TYPE.nonArbitrary ? BUTTON_TEXT_FILE_PATH :
@@ -52,10 +52,10 @@ export class OperantChoiceBlock extends Block {
       for (const stimuli2 of this.greaterThanNetwork.stimuli) {
         ickStimuliComparisons.push(
           {
-            cue: CUE_NON_ARBITRARY.iCannotKnow,
+            relation: CUE_NON_ARBITRARY.iCannotKnow,
             stimuli: [stimuli1, stimuli2]
           },
-          { cue: CUE_NON_ARBITRARY.iCannotKnow, stimuli: [stimuli2, stimuli1] });
+          { relation: CUE_NON_ARBITRARY.iCannotKnow, stimuli: [stimuli2, stimuli1] });
       }
     }
 
@@ -68,17 +68,17 @@ export class OperantChoiceBlock extends Block {
       );
     }).flat().concat(this.config.iCannotKnow ? ickStimuliComparisons : []);
 
-    // creates a record of cue type to unique stimuli comparisons
+    // creates a record of relation type to unique stimuli comparisons
     const cueByStimuli = CUES_NON_ARBITRARY_W_ICK.reduce(
-      (acc, cue) => ({ ...acc, [cue]: comparisons.filter(comparison => comparison.cue === cue) }),
+      (acc, cue) => ({ ...acc, [cue]: comparisons.filter(comparison => comparison.relation === cue) }),
       {} as Record<CueNonArbitrary, StimuliComparison[]>);
 
-    // creates a record of cue type to cue count
+    // creates a record of relation type to relation count
     const cueCountsByStimuli = CUES_NON_ARBITRARY_W_ICK.reduce(
-      (acc, cue) => ({ ...acc, [cue]: comparisons.filter(comparison => comparison.cue === cue).length }),
+      (acc, cue) => ({ ...acc, [cue]: comparisons.filter(comparison => comparison.relation === cue).length }),
       {} as Record<CueNonArbitrary, number>);
 
-    // determines least common multiple of cue counts to create equal counts of each stimuli.
+    // determines least common multiple of relation counts to create equal counts of each stimuli.
     const cueCountsLeastCommonMultiple = Object.values(cueCountsByStimuli).filter(
       cueCountsByStimuli => cueCountsByStimuli > 0).reduce(lcm);
 
@@ -86,7 +86,7 @@ export class OperantChoiceBlock extends Block {
     const cueMultiplierByStimuli = CUES_NON_ARBITRARY_W_ICK.reduce(
       (acc, cue) => ({
         ...acc,
-        [cue]: cueCountsLeastCommonMultiple / comparisons.filter(comparison => comparison.cue === cue).length
+        [cue]: cueCountsLeastCommonMultiple / comparisons.filter(comparison => comparison.relation === cue).length
       }),
       {} as Record<CueNonArbitrary, number>);
 

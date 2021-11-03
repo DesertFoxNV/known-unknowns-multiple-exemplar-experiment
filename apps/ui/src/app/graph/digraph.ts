@@ -14,6 +14,8 @@ export class Digraph<N extends Node, E extends Edge<N>> {
     const dest = edge.dest;
     if (!this.hasNode(src)) throw Error(`addEdge failed source node "${src.toString()}" is not in graph.`);
     if (!this.hasNode(dest)) throw Error(`addEdge failed destination node "${dest.toString()}" is not in graph.`);
+    if (this.edges.get(edge.src)?.some(e => e.src === src && e.dest === dest)) throw Error(
+      `Add edge failed an edge already exists with src ${src.toString()} => dest ${dest.toString()}`);
     this.edges.set(edge.src, (this.edges.get(edge.src) as E[]).concat(edge));
   }
 

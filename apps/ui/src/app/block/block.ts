@@ -46,7 +46,7 @@ export abstract class Block {
    * @returns {number}
    */
   get percentCorrect(): number {
-    return this.correct / this.trialNum * 100;
+    return (this.correct / this.trialNum) * 100;
   }
 
   /**
@@ -84,7 +84,7 @@ export abstract class Block {
   abstract createTrials(): Trial[]
 
   /**
-   * When a cue is selected. The associated trial and cue selected data
+   * When a relation is selected. The associated trial and relation selected data
    * is stored. Feedback is shown if an item is not selected or feedback
    * is enabled. Then the block is advanced to the next trial.
    * @param {CueSelected | undefined} selected
@@ -95,11 +95,13 @@ export abstract class Block {
     // This prevents the user from seeing the last trial again, due to fadeout animation.
     if (this.isLastTrial) this.component?.setVisibility(false);
 
+    const feedback = this.grade(selected);
+
     if (!selected) {
       this.component?.showFeedback('TIME EXPIRED');
       this.feedBackShown = true;
     } else if (this.feedbackEnabled()) {
-      this.component?.showFeedback(this.grade(selected));
+      this.component?.showFeedback(feedback);
       this.feedBackShown = true;
     } else {
       this.feedBackShown = false;
@@ -108,7 +110,7 @@ export abstract class Block {
     /**
      * If feedback is not enabled but the "TIME EXPIRED" feedback is shown a
      * delay must be added so that the participant will see the trial stimuli
-     * and cue animations.
+     * and relation animations.
      */
     this.nextTrial();
 
@@ -134,7 +136,7 @@ export abstract class Block {
   }
 
   /**
-   * The selected cue is compared to the the trial cue. If the selected cue is
+   * The selected relation is compared to the the trial relation. If the selected relation is
    * correct the correct counter is increased by 1 otherwise, the incorrect counter
    * is increased by one. If the answer was correct the feedback string "CORRECT"
    * is returned otherwise the feedback string "WRONG" is returned.
@@ -142,9 +144,9 @@ export abstract class Block {
    * @returns {"CORRECT" | "WRONG"}
    */
   grade(selected: CueSelected|undefined): 'CORRECT'|'WRONG' {
-    const isCorrect = selected?.cue.value === this.trial.cue;
+    const isCorrect = selected?.cue.value === this.trial.relation;
 
-    if (selected?.cue.value === this.trial.cue) {
+    if (selected?.cue.value === this.trial.relation) {
       this.correct++;
     } else {
       this.incorrect++;
@@ -160,7 +162,7 @@ export abstract class Block {
    * Starts the next trial in the block. If the index is negative then the
    * started date is stored. If the trials have not been completed the index is
    * increased by 1 and then the trial is shown with the specified delay. The
-   * trial completed event is subscribe to and linked to the cue selected function
+   * trial completed event is subscribe to and linked to the relation selected function
    * in the block. If all trials have been completed the complete function is called.
    */
   nextTrial() {
@@ -179,7 +181,7 @@ export abstract class Block {
    * Resets block index, correct count, incorrect count, and generates fresh trials.
    */
   reset() {
-    this.index = 22;
+    this.index = -1;
     this.correct = 0;
     this.incorrect = 0;
     this.trials = this.createTrials();

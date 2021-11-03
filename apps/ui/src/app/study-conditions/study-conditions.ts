@@ -1,31 +1,31 @@
 import { Block } from '../block/block';
-import { OperantChoiceBlock } from '../block/operant-choice-block';
+import { ForcedChoiceBlock } from '../block/forced-choice-block';
+import { TestBlock } from '../block/test-block';
+import {
+  COMBINATORIALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK, MUTUALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK
+} from '../graph/operator-dictionaries';
+import { RelationType } from '../graph/relation-type';
+import { RelationalEdge } from '../graph/relational-edge';
+import { RelationalFrameDigraph } from '../graph/relational-frame-digraph';
+import { RelationalNode } from '../graph/relational-node';
 import { BinaryNetwork } from '../network/binary-network';
-import { KnownEqualityNetwork } from '../network/known-equality-network';
-import { KnownGreaterThanNetwork } from '../network/known-greater-than-network';
-import { KnownNetwork } from '../network/known-network';
-import { KnownUnknownNetwork } from '../network/known-unknown-network';
-import { StudyConfig } from '../study-config-form/study-config';
+import { StudyConfig, StudyConfigWCase } from '../study-config-form/study-config';
 import { randomStimulusCase } from './random-stimulus-case';
 import { StimulusCase } from './stimulus-case';
 
 export class StudyConditions {
   blocks: Block[] = [];
+  config: StudyConfigWCase;
 
-  config: StudyConfig;
-
-  stimulusCase: StimulusCase;
-
-  constructor(config: StudyConfig) {
-    this.stimulusCase = randomStimulusCase();
+  constructor(config: StudyConfigWCase) {
     this.config = config;
-    const network3 = new BinaryNetwork(3, this.stimulusCase);
-    const network4 = new BinaryNetwork(4, this.stimulusCase);
+    const network3 = new BinaryNetwork(3, config.stimulusCase);
+    const network4 = new BinaryNetwork(4, config.stimulusCase);
     this.blocks = [
-      // new TestBlock(new KnownNetwork(1, this.stimulusCase), new KnownUnknownNetwork(2, this.stimulusCase), config)
-      // new ForcedChoiceBlock(new BinaryNetwork(3, this.stimulusCase), new BinaryNetwork(4, this.stimulusCase), config)
-      new OperantChoiceBlock(new KnownEqualityNetwork(5, this.stimulusCase), new KnownGreaterThanNetwork(6, this.stimulusCase),
-        config)
+      // new TestBlock(config)
+      new ForcedChoiceBlock(config),
+      // new OperantChoiceBlock(new KnownEqualityNetwork(5, this.stimulusCase), new KnownGreaterThanNetwork(6, this.stimulusCase),
+      // config)
     ];
   }
 }
