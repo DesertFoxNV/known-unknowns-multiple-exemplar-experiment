@@ -1,7 +1,7 @@
 import {CueType} from '../study-conditions/cue.constants';
 
 export interface StudyConfigFlattened {
-  'balance.equalTo': number;
+  'balance.same': number;
   'balance.greaterThan': number;
   'balance.iCannotKnow': number;
   'balance.lessThan': number;

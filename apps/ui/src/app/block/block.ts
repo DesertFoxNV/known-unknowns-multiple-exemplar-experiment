@@ -1,5 +1,5 @@
 import { first } from 'rxjs/operators';
-import { StudyConfig } from '../study-config-form/study-config';
+import { StudyConfig, StudyConfigWCase } from '../study-config-form/study-config';
 import { CueSelected } from '../trial/cue-selected';
 import { FADE_OUT_DURATION_MS } from '../trial/fade-out-duration';
 import { CompletedTrial, Trial } from '../trial/trial';
@@ -11,7 +11,7 @@ export abstract class Block {
   attempts = 0;
   completed?: Date;
   component?: BlockComponent;
-  config: StudyConfig;
+  config: StudyConfigWCase;
   correct = 0;
   feedBackShown = false;
   history: CompletedTrial[] = [];
@@ -27,7 +27,7 @@ export abstract class Block {
    * @param {StudyConfig} config
    * @protected
    */
-  protected constructor(name: string, config: StudyConfig) {
+  protected constructor(name: string, config: StudyConfigWCase) {
     this.name = name;
     this.config = config;
   }
@@ -100,7 +100,7 @@ export abstract class Block {
     if (!selected) {
       this.component?.showFeedback('TIME EXPIRED');
       this.feedBackShown = true;
-    } else if (this.feedbackEnabled()) {
+    } else if (feedback && this.feedbackEnabled()) {
       this.component?.showFeedback(feedback);
       this.feedBackShown = true;
     } else {

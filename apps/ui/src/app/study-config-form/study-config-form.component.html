@@ -51,16 +51,16 @@
       <div class="form-padding-top" formGroupName="balance" *ngIf="form.get('balance') as balanceGroup">
         <div class="mat-h4">Balance</div>
 
-        <mat-form-field *ngIf="balanceGroup.get('equalTo') as equalToCtrl" appearance="outline">
+        <mat-form-field *ngIf="balanceGroup.get('same') as sameCtrl" appearance="outline">
           <mat-label>Equal to</mat-label>
-          <input matInput min="1" max="99" type="number" formControlName="equalTo">
-          <mat-error *ngIf="equalToCtrl.hasError('required')">
+          <input matInput min="1" max="99" type="number" formControlName="same">
+          <mat-error *ngIf="sameCtrl.hasError('required')">
             Equal to is <strong>required</strong>
           </mat-error>
-          <mat-error *ngIf="equalToCtrl.hasError('min')">
+          <mat-error *ngIf="sameCtrl.hasError('min')">
             Equal to must be a <strong>minimum</strong> of 1
           </mat-error>
-          <mat-error *ngIf="equalToCtrl.hasError('max')">
+          <mat-error *ngIf="sameCtrl.hasError('max')">
             Equal to must be a <strong>maximum</strong> of 99
           </mat-error>
         </mat-form-field>

@@ -1,5 +1,5 @@
 export interface BalanceConfig {
-  equalTo: number;
+  same: number;
   greaterThan: number;
   iCannotKnow?: number;
   lessThan: number;

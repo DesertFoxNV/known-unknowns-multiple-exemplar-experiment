@@ -1,4 +1,3 @@
-import * as Case from 'case';
 import { sample, shuffle } from 'lodash-es';
 import {
   KNOWN_NETWORK_CUE_OPERATORS_SAME_GT_LT, TriNodeNetworkOperatorCombination
@@ -11,13 +10,11 @@ import { RelationalEdge } from '../graph/relational-edge';
 import { RelationalFrameGraph } from '../graph/relational-frame-graph';
 import { RelationalNode } from '../graph/relational-node';
 import { UNKNOWN_NETWORK_CUE_OPERATORS_SAME_GT_LT } from '../graph/unknown-network-cue-operators-same-gt-lt';
-import {
-  BUTTON_TEXT_FILE_PATH, CUE_NON_ARBITRARY_TO_FILENAME, CUE_TYPE, CueNonArbitrary, CUES_NON_ARBITRARY_W_ICK,
-  CUES_NON_ARBITRARY_WO_ICK
-} from '../study-conditions/cue.constants';
+import { CueNonArbitrary } from '../study-conditions/cue.constants';
 import { getRandomStimulus } from '../study-conditions/get-random-stimuli';
 import { StudyConfig, StudyConfigWCase } from '../study-config-form/study-config';
 import { Block } from './block';
+import { randomizedComponentConfigs } from './cue-component-configs';
 
 export class TestBlock extends Block {
   graph: RelationalFrameGraph;
@@ -42,7 +39,7 @@ export class TestBlock extends Block {
   }
 
   /**
-   * Creates relational graph digraph
+   * Creates relational graph
    * @param {StudyConfigWCase} config
    * @returns {RelationalFrameGraph}
    */
@@ -121,24 +118,14 @@ export class TestBlock extends Block {
    * @returns {unknown[] | Array<Trial[][keyof Trial[]]>}
    */
   createTrials() {
-    // Cue order is randomized
-    const cues = shuffle(this.config.iCannotKnow ? CUES_NON_ARBITRARY_W_ICK : CUES_NON_ARBITRARY_WO_ICK);
-
-    // Cue component configurations are mapped from relation order
-    const cueComponentConfigs = cues.map((cue) => ({
-      isArbitrary: this.config.cueType === CUE_TYPE.arbitrary,
-      fileName: this.config.cueType === CUE_TYPE.nonArbitrary ? BUTTON_TEXT_FILE_PATH :
-        CUE_NON_ARBITRARY_TO_FILENAME[cue],
-      value: cue,
-      viewValue: Case.upper(cue)
-    }));
 
     // Mutually entailed and combinatorially entailed trials are generated for each network
     for (let i = 0; i < this.numDuplicates; i++) {
       this.trials = this.trials.concat([
           this.graph.mutuallyEntailed,
           this.graph.combinatoriallyEntailed
-        ].flat().map(stimuliComparison => ({ ...stimuliComparison, cueComponentConfigs }))
+        ].flat().map(
+          stimuliComparison => ({ ...stimuliComparison, cueComponentConfigs: randomizedComponentConfigs(this.config) }))
       );
     }
 

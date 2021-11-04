@@ -14,7 +14,7 @@ import { FADE_OUT_DURATION_MS } from '../trial/fade-out-duration';
 import { Trial } from '../trial/trial';
 import { FEEDBACK_FADE_OUT_DELAY_MS } from '../trial/trial-correct/feedback-duration';
 import { Block } from './block';
-import { oneChoiceCueComponentConfig, twoChoiceCueComponentConfig } from './one-choice-cue-component-config';
+import { oneChoiceCueComponentConfig, twoChoiceCueComponentConfig } from './cue-component-configs';
 import { TRIAL_DELAY_INTERVAL_MS } from './trial-animation-delay';
 
 export class ForcedChoiceBlock extends Block {
@@ -50,7 +50,7 @@ export class ForcedChoiceBlock extends Block {
   }
 
   /**
-   * Creates relational graph digraph
+   * Creates relational graph
    * @param {StudyConfigWCase} config
    * @returns {RelationalFrameGraph}
    */
