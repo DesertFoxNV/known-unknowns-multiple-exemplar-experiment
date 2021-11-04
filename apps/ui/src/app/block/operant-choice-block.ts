@@ -249,32 +249,11 @@ export class OperantChoiceBlock extends Block {
           this.retry();
         }
       }, 2 * this.trials.length * (this.config.trialTimeoutSeconds * 1000 + FEEDBACK_DURATION_MS));
+    } else if (this.isComplete) {
+      this.complete();
+    } else {
+      super.nextTrial();
     }
-
-    // if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100) {
-    //   this.trainingsFailed++;
-    //   console.log('training failed', this.trialNum);
-    //   console.log('trainingsFailed', this.trainingsFailed);
-    //
-    //   // If trainings failed equals the max training failures allowed, the block completes, otherwise the participant retries the block
-    //   if (this.trainingsFailed === this.trainingFailuresAllotted) {
-    //     this.failed();
-    //   } else {
-    //     this.retry();
-    //   }
-    //
-    // } else if (this.trialNum === this.numProbeTrials + this.numTrainingTrials && this.percentCorrect !== 100) {
-    //   this.probesFailed++;
-    //   console.log('training failed', this.trialNum);
-    //   console.log('probesFailed', this.probesFailed);
-    //
-    //   // If probes failed equals the max probe failures allowed, the block completes, otherwise the participant retries the block
-    //   if (this.probesFailed === this.probeFailuresAllotted) {
-    //     this.failed();
-    //   } else {
-    //     this.retry();
-    //   }
-    super.nextTrial();
   }
 
   /***
