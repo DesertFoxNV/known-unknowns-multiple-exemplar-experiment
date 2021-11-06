@@ -70,6 +70,7 @@ export abstract class Block {
    */
   complete() {
     this.attempts++;
+    this.component?.setVisibility(false);
     this.completed = new Date();
     this.component?.prompt(
       'BLOCK COMPLETE',

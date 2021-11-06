@@ -42,15 +42,13 @@ export class OperantChoiceBlock extends Block {
      *    a. Non ICK - 6 same, 24 (greater or lesser than), 0 (i cannot know)
      *    b. ICK - 6 same, 24(greater or lesser than), 18 ( i cannot know)
      */
-    one: {
-      // Path 1
-      sequentialCorrectTarget: 35,
-      sequentialCorrectTargetAchieved: false,
-      // Path 2
-      comparisonTarget: 24, // greater than or less than
-      iCannotKnowTarget: this.config.iCannotKnow ? 18 : 0,
-      sameTarget: 6
-    }
+    // Path 1
+    sequentialCorrectTarget: 35,
+    sequentialCorrectTargetAchieved: false,
+    // Path 2
+    comparisonTarget: 24, // greater than or less than
+    iCannotKnowTarget: this.config.iCannotKnow ? 18 : 0,
+    sameTarget: 6
   };
   maxShuffles = 2500;
   numAllottedTimeouts = 1;
@@ -67,6 +65,9 @@ export class OperantChoiceBlock extends Block {
   }
 
   get isComplete(): boolean {
+    console.log('this.sequentialCorrect >= this.trials.length * 2', this.sequentialCorrect >= this.trials.length * 2);
+    console.log('(this.meetsMasterCriterion1 && this.meetsMasterCriterion2)',
+      (this.meetsMasterCriterion1 && this.meetsMasterCriterion2));
     return this.sequentialCorrect >= this.trials.length * 2 ||
       (this.meetsMasterCriterion1 && this.meetsMasterCriterion2);
   }
@@ -78,10 +79,10 @@ export class OperantChoiceBlock extends Block {
       comparisonTarget,
       iCannotKnowTarget,
       sameTarget
-    } = this.masterCriterion.one;
+    } = this.masterCriterion;
     const { greaterThan, iCannotKnow, lessThan, same } = this.correctCount;
     if (this.sequentialCorrect ===
-      sequentialCorrectTarget) this.masterCriterion.one.sequentialCorrectTargetAchieved = true;
+      sequentialCorrectTarget) this.masterCriterion.sequentialCorrectTargetAchieved = true;
     return sequentialCorrectTargetAchieved ||
       (same >= sameTarget && (greaterThan + lessThan >= comparisonTarget) && iCannotKnow === iCannotKnowTarget);
   }
@@ -91,7 +92,7 @@ export class OperantChoiceBlock extends Block {
     return this.correctCount.same >= this.correctShownTargets.same &&
       this.correctCount.lessThan >= this.correctShownTargets.lessThan &&
       this.correctCount.greaterThan >= this.correctShownTargets.greaterThan &&
-      this.correctCount.iCannotKnow >= this.correctShownTargets.iCannotKnow
+      this.correctCount.iCannotKnow >= this.correctShownTargets.iCannotKnow;
   }
 
   complete() {
@@ -111,7 +112,7 @@ export class OperantChoiceBlock extends Block {
       MUTUALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK,
       COMBINATORIALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK);
 
-    graph.includeRelationsBetweenNetworks = true;
+    graph.includeRelationsBetweenNetworks = config.iCannotKnow;
 
     // Network 1 - known network
     const nodeA1 = new RelationalNode('A', 1, getRandomStimulus(config.stimulusCase));
@@ -182,10 +183,6 @@ export class OperantChoiceBlock extends Block {
       }),
       {} as Record<CueNonArbitrary, number>);
 
-    console.log('CUE BY STIMULI', cueByStimuli);
-    console.log('CUE COUNT BY STIMULI', cueCountsByStimuli);
-    console.log('CUE MULTIPLIER BY STIMULI', cueMultiplierByStimuli);
-
     const balanceGcd = Object.values(this.config.balance)
       .filter(b => b)
       .reduce(gcd);
@@ -197,8 +194,6 @@ export class OperantChoiceBlock extends Block {
       lessThan: this.config.balance.lessThan / balanceGcd,
       iCannotKnow: this.config.balance?.iCannotKnow ? this.config.balance.iCannotKnow / balanceGcd : 0
     };
-
-    console.log('balance', this.configBalanceDividedByGcd);
 
     const balanceTimesMultiplier: Record<CueNonArbitrary, number> = {
       different: 0,
@@ -226,8 +221,6 @@ export class OperantChoiceBlock extends Block {
       }
     }
     this.shuffleUntilNoTriplicatesInARow();
-
-    console.log(this.trials.length);
 
     return this.trials;
   }
@@ -270,10 +263,10 @@ export class OperantChoiceBlock extends Block {
         lessThan: 0,
         iCannotKnow: 0
       };
-      while (this.correctCount.same < this.correctShownTargets.same ||
-      this.correctCount.greaterThan < this.correctShownTargets.greaterThan ||
-      this.correctCount.lessThan < this.correctShownTargets.lessThan ||
-      this.correctCount.iCannotKnow < this.correctShownTargets.iCannotKnow) {
+      while (this.correctShownTargets.same < this.correctCount.same ||
+      this.correctShownTargets.greaterThan < this.correctCount.greaterThan ||
+      this.correctShownTargets.lessThan < this.correctCount.lessThan ||
+      this.correctShownTargets.iCannotKnow < this.correctCount.iCannotKnow) {
         if (this.configBalanceDividedByGcd) {
           this.correctShownTargets = {
             different: 0,
@@ -318,9 +311,11 @@ export class OperantChoiceBlock extends Block {
           this.retry();
         }
       }, 2 * this.trials.length * (this.config.trialTimeoutSeconds * 1000 + FEEDBACK_DURATION_MS));
+      super.nextTrial();
     } else if (this.isComplete) {
       this.complete();
     } else {
+      if (this.index == this.trials.length - 1) this.index = -1;
       super.nextTrial();
     }
   }
