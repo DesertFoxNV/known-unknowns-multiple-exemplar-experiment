@@ -22,6 +22,8 @@ const gcd = (a: number, b: number): number => a ? gcd(b % a, a) : b;
 const lcm = (a: number, b: number) => a * b / gcd(a, b);
 
 export class OperantChoiceBlock extends Block {
+
+  configBalanceDividedByGcd: Record<CueNonArbitrary, number>|undefined;
   containsSequentialTriplicates = false;
   correctCount: Record<CueNonArbitrary, number> = {
     different: 0,
@@ -30,13 +32,25 @@ export class OperantChoiceBlock extends Block {
     lessThan: 0,
     iCannotKnow: 0
   };
+  correctShownTargets: Record<CueNonArbitrary, number>|undefined;
   graph: RelationalFrameGraph;
-  incorrectCount: Record<CueNonArbitrary, number> = {
-    different: 0,
-    same: 0,
-    greaterThan: 0,
-    lessThan: 0,
-    iCannotKnow: 0
+  masterCriterion = {
+    /**
+     * Criteria 1
+     *  1. Sequential correct > 35
+     *  2. Comparison
+     *    a. Non ICK - 6 same, 24 (greater or lesser than), 0 (i cannot know)
+     *    b. ICK - 6 same, 24(greater or lesser than), 18 ( i cannot know)
+     */
+    one: {
+      // Path 1
+      sequentialCorrectTarget: 35,
+      sequentialCorrectTargetAchieved: false,
+      // Path 2
+      comparisonTarget: 24, // greater than or less than
+      iCannotKnowTarget: this.config.iCannotKnow ? 18 : 0,
+      sameTarget: 6
+    }
   };
   maxShuffles = 2500;
   numAllottedTimeouts = 1;
@@ -53,7 +67,31 @@ export class OperantChoiceBlock extends Block {
   }
 
   get isComplete(): boolean {
-    return this.sequentialCorrect >= this.trials.length * 2;
+    return this.sequentialCorrect >= this.trials.length * 2 ||
+      (this.meetsMasterCriterion1 && this.meetsMasterCriterion2);
+  }
+
+  get meetsMasterCriterion1(): boolean {
+    const {
+      sequentialCorrectTarget,
+      sequentialCorrectTargetAchieved,
+      comparisonTarget,
+      iCannotKnowTarget,
+      sameTarget
+    } = this.masterCriterion.one;
+    const { greaterThan, iCannotKnow, lessThan, same } = this.correctCount;
+    if (this.sequentialCorrect ===
+      sequentialCorrectTarget) this.masterCriterion.one.sequentialCorrectTargetAchieved = true;
+    return sequentialCorrectTargetAchieved ||
+      (same >= sameTarget && (greaterThan + lessThan >= comparisonTarget) && iCannotKnow === iCannotKnowTarget);
+  }
+
+  get meetsMasterCriterion2(): boolean {
+    if (!this.correctShownTargets) return false;
+    return this.correctCount.same >= this.correctShownTargets.same &&
+      this.correctCount.lessThan >= this.correctShownTargets.lessThan &&
+      this.correctCount.greaterThan >= this.correctShownTargets.greaterThan &&
+      this.correctCount.iCannotKnow >= this.correctShownTargets.iCannotKnow
   }
 
   complete() {
@@ -152,7 +190,7 @@ export class OperantChoiceBlock extends Block {
       .filter(b => b)
       .reduce(gcd);
 
-    const configBalanceDividedByGcd: Record<CueNonArbitrary, number> = {
+    this.configBalanceDividedByGcd = {
       different: 0,
       same: this.config.balance.same / balanceGcd,
       greaterThan: this.config.balance.greaterThan / balanceGcd,
@@ -160,7 +198,7 @@ export class OperantChoiceBlock extends Block {
       iCannotKnow: this.config.balance?.iCannotKnow ? this.config.balance.iCannotKnow / balanceGcd : 0
     };
 
-    console.log('balance', configBalanceDividedByGcd);
+    console.log('balance', this.configBalanceDividedByGcd);
 
     const balanceTimesMultiplier: Record<CueNonArbitrary, number> = {
       different: 0,
@@ -211,7 +249,7 @@ export class OperantChoiceBlock extends Block {
     return true;
   }
 
-  grade(selected: CueSelected|undefined): 'CORRECT'|'WRONG' {
+  grade(selected: CueSelected|undefined): 'CORRECT'|'WRONG'|null {
     const isCorrect = selected?.cue.value === this.trial.relation;
 
     if (selected?.cue.value === this.trial.relation) {
@@ -221,14 +259,45 @@ export class OperantChoiceBlock extends Block {
     } else {
       this.sequentialCorrect = 0;
       this.incorrect++;
-      if (selected?.cue.value) this.incorrectCount[selected.cue.value]++;
     }
+
+    // generate shown targets based on balance
+    if (this.meetsMasterCriterion1 && !this.correctShownTargets) {
+      this.correctShownTargets = {
+        different: 0,
+        same: 0,
+        greaterThan: 0,
+        lessThan: 0,
+        iCannotKnow: 0
+      };
+      while (this.correctCount.same < this.correctShownTargets.same ||
+      this.correctCount.greaterThan < this.correctShownTargets.greaterThan ||
+      this.correctCount.lessThan < this.correctShownTargets.lessThan ||
+      this.correctCount.iCannotKnow < this.correctShownTargets.iCannotKnow) {
+        if (this.configBalanceDividedByGcd) {
+          this.correctShownTargets = {
+            different: 0,
+            same: this.correctShownTargets?.same + this.configBalanceDividedByGcd?.same,
+            greaterThan: this.correctShownTargets?.greaterThan + this.configBalanceDividedByGcd?.greaterThan,
+            lessThan: this.correctShownTargets?.lessThan + this.configBalanceDividedByGcd?.lessThan,
+            iCannotKnow: this.correctShownTargets?.iCannotKnow + this.configBalanceDividedByGcd?.iCannotKnow
+          };
+        } else {
+          throw Error('Config balance has not been created');
+        }
+      }
+      console.log('Shown targets set to', this.correctShownTargets);
+    }
+
     console.log('correct', this.correctCount);
-    console.log('incorrect', this.incorrectCount);
     console.log('sequentialCorrect', this.sequentialCorrect);
     console.log('correctPercentage', this.percentCorrect);
 
-    return isCorrect ? 'CORRECT' : 'WRONG';
+    if (this.correctShownTargets && isCorrect && selected) {
+      return this.correctCount[selected.cue.value] <= this.correctShownTargets[selected.cue.value] ? 'CORRECT' : null;
+    } else {
+      return isCorrect ? 'CORRECT' : 'WRONG';
+    }
   }
 
   /**
@@ -261,13 +330,6 @@ export class OperantChoiceBlock extends Block {
    */
   reset() {
     this.correctCount = {
-      different: 0,
-      same: 0,
-      greaterThan: 0,
-      lessThan: 0,
-      iCannotKnow: 0
-    };
-    this.incorrectCount = {
       different: 0,
       same: 0,
       greaterThan: 0,

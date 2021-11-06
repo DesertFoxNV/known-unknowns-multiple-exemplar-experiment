@@ -143,7 +143,7 @@ export abstract class Block {
    * @param {CueSelected | undefined} selected
    * @returns {"CORRECT" | "WRONG"}
    */
-  grade(selected: CueSelected|undefined): 'CORRECT'|'WRONG' {
+  grade(selected: CueSelected|undefined): 'CORRECT'|'WRONG'|null {
     const isCorrect = selected?.cue.value === this.trial.relation;
 
     if (selected?.cue.value === this.trial.relation) {
