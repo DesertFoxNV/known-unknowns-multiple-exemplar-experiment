@@ -15,6 +15,7 @@ import { FADE_OUT_DURATION_MS } from '../trial/fade-out-duration';
 import { Trial } from '../trial/trial';
 import { FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS } from '../trial/trial-correct/feedback-duration';
 import { Block } from './block';
+import { BlockComponent } from './block.component';
 import { randomizedComponentConfigs } from './cue-component-configs';
 import { TRIAL_DELAY_INTERVAL_MS } from './trial-animation-delay';
 
@@ -34,6 +35,7 @@ export class OperantChoiceBlock extends Block {
   };
   correctShownTargets: Record<CueNonArbitrary, number>|undefined;
   graph: RelationalFrameGraph;
+  index = -1;
   masterCriterion = {
     /**
      * Criteria 1
@@ -43,7 +45,7 @@ export class OperantChoiceBlock extends Block {
      *    b. ICK - 6 same, 24(greater or lesser than), 18 ( i cannot know)
      */
     // Path 1
-    sequentialCorrectTarget: 35,
+    sequentialCorrectTarget: this.config.iCannotKnow ? 56 : 35,
     sequentialCorrectTargetAchieved: false,
     // Path 2
     comparisonTarget: 24, // greater than or less than
@@ -62,12 +64,15 @@ export class OperantChoiceBlock extends Block {
   ) {
     super('Operant Choice', config);
     this.graph = this.createGraph(config);
+    this.trials = this.createTrials();
   }
 
   get isComplete(): boolean {
-    console.log('this.sequentialCorrect >= this.trials.length * 2', this.sequentialCorrect >= this.trials.length * 2);
-    console.log('(this.meetsMasterCriterion1 && this.meetsMasterCriterion2)',
-      (this.meetsMasterCriterion1 && this.meetsMasterCriterion2));
+    console.log('this.sequentialCorrect >= this.trials.length * 2 (alternative criterion)',
+      this.sequentialCorrect >= this.trials.length * 2);
+    console.log('this.meetsMasterCriterion1 && this.meetsMasterCriterion2',
+      this.meetsMasterCriterion1 && this.meetsMasterCriterion2);
+    (this.meetsMasterCriterion1 && this.meetsMasterCriterion2);
     return this.sequentialCorrect >= this.trials.length * 2 ||
       (this.meetsMasterCriterion1 && this.meetsMasterCriterion2);
   }
@@ -83,6 +88,12 @@ export class OperantChoiceBlock extends Block {
     const { greaterThan, iCannotKnow, lessThan, same } = this.correctCount;
     if (this.sequentialCorrect ===
       sequentialCorrectTarget) this.masterCriterion.sequentialCorrectTargetAchieved = true;
+    console.log(
+      `Correctly sequentially completed ${sequentialCorrectTarget} trials during this block:`,
+      sequentialCorrectTargetAchieved);
+    console.log(
+      `Same trials is gte than ${sameTarget}, comparison trials is gte than ${comparisonTarget}, and i cannot know trials is gte ${iCannotKnowTarget}: `,
+      (same >= sameTarget && (greaterThan + lessThan >= comparisonTarget) && iCannotKnow === iCannotKnowTarget));
     return sequentialCorrectTargetAchieved ||
       (same >= sameTarget && (greaterThan + lessThan >= comparisonTarget) && iCannotKnow === iCannotKnowTarget);
   }
@@ -284,7 +295,6 @@ export class OperantChoiceBlock extends Block {
 
     console.log('correct', this.correctCount);
     console.log('sequentialCorrect', this.sequentialCorrect);
-    console.log('correctPercentage', this.percentCorrect);
 
     if (this.correctShownTargets && isCorrect && selected) {
       return this.correctCount[selected.cue.value] <= this.correctShownTargets[selected.cue.value] ? 'CORRECT' : null;
@@ -300,22 +310,14 @@ export class OperantChoiceBlock extends Block {
    * the study is completed.
    */
   nextTrial(): void {
-    // set timer for trial timeout
-    if (this.trialNum === 0) {
-      if (this.timeout) clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this.numTimeouts++;
-        if (this.numTimeouts > this.numAllottedTimeouts) {
-          this.failed();
-        } else {
-          this.retry();
-        }
-      }, 2 * this.trials.length * (this.config.trialTimeoutSeconds * 1000 + FEEDBACK_DURATION_MS));
-      super.nextTrial();
-    } else if (this.isComplete) {
+    console.log('index', this.index);
+    if (this.isComplete) {
       this.complete();
     } else {
-      if (this.index == this.trials.length - 1) this.index = -1;
+      if (this.index == this.trials.length - 1) {
+        this.component?.setVisibility(true);
+        this.index = -1;
+      }
       super.nextTrial();
     }
   }
@@ -331,7 +333,9 @@ export class OperantChoiceBlock extends Block {
       lessThan: 0,
       iCannotKnow: 0
     };
-    super.reset();
+    this.index = -1;
+    this.correct = 0;
+    this.incorrect = 0;
   }
 
   /**
@@ -346,8 +350,22 @@ export class OperantChoiceBlock extends Block {
         this.feedBackShown = false;
         this.component?.setVisibility(true, 0);
         this.nextTrial();
+        this.setTimeout();
       });
     this.reset();
+  }
+
+  setTimeout() {
+    if (this.timeout) clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
+      this.component?.trialComponent?.clearTimer();
+      this.numTimeouts++;
+      if (this.numTimeouts > this.numAllottedTimeouts) {
+        this.failed();
+      } else {
+        this.retry();
+      }
+    }, 2 * this.trials.length * (this.config.trialTimeoutSeconds * 1000 + FEEDBACK_DURATION_MS));
   }
 
   /**
@@ -377,5 +395,18 @@ export class OperantChoiceBlock extends Block {
 
     if (countsInARow >= 3) this.containsSequentialTriplicates = true;
 
+  }
+
+  /***
+   * Resets block index, binds to the view, and shows a message.
+   * @param {BlockComponent} component
+   */
+  start(component: BlockComponent) {
+    this.component = component;
+    component.prompt('CLICK TO START', false, TRIAL_DELAY_INTERVAL_MS)
+      .subscribe(() => {
+        this.setTimeout();
+        this.nextTrial();
+      });
   }
 }

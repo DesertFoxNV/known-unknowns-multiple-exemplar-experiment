@@ -38,6 +38,10 @@ export class TrialComponent implements AfterViewInit {
     this.completed.emit({ cue, position });
   }
 
+  clearTimer() {
+    if (this.timerSub) this.timerSub.unsubscribe();
+  }
+
   setTimer() {
     if (this.timerSub) this.timerSub.unsubscribe();
     this.secondsInTrial = 0;
