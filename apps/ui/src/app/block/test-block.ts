@@ -18,7 +18,7 @@ import { randomizedComponentConfigs } from './cue-component-configs';
 
 export class TestBlock extends Block {
   graph: RelationalFrameGraph;
-  numDuplicates: number;
+  numDuplicates = 4;
 
   /**
    * Test Block
@@ -27,15 +27,14 @@ export class TestBlock extends Block {
    *    16 mutually entailed trials (default) = mutually-entailed (B:A, C:A) * numDuplicates (4 default) * 2 networks
    *    16 combinatorially entailed trials (default) = combinatorially-entailed (B:C, C:B) * numDuplicates  (4 default) * 2 networks
    * @param {StudyConfig} config
-   * @param numDuplicates the number of mutually entailed and combinatorially-entailed duplicates
+   * @param graph
    */
   constructor(
     config: StudyConfigWCase,
-    numDuplicates = 4
+    graph?: RelationalFrameGraph
   ) {
     super('Test', config);
-    this.graph = this.createGraph(config);
-    this.numDuplicates = numDuplicates;
+    this.graph = graph || this.createGraph(config);
   }
 
   /**
@@ -50,65 +49,65 @@ export class TestBlock extends Block {
       MUTUALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK,
       COMBINATORIALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK);
 
-    // Network 1 - known network
-    const nodeA1 = new RelationalNode('A', 1, getRandomStimulus(config.stimulusCase));
-    const nodeB1 = new RelationalNode('B', 1, getRandomStimulus(config.stimulusCase));
-    const nodeC1 = new RelationalNode('C', 1, getRandomStimulus(config.stimulusCase));
+    // Network 3 - known network
+    const nodeA3 = new RelationalNode('A', 3, getRandomStimulus(config.stimulusCase));
+    const nodeB3 = new RelationalNode('B', 3, getRandomStimulus(config.stimulusCase));
+    const nodeC3 = new RelationalNode('C', 3, getRandomStimulus(config.stimulusCase));
 
     // Add nodes for network 1
-    graph.addNode(nodeA1);
-    graph.addNode(nodeB1);
-    graph.addNode(nodeC1);
+    graph.addNode(nodeA3);
+    graph.addNode(nodeB3);
+    graph.addNode(nodeC3);
 
     // Get randomized known network operator combination
-    const [a1ToB1Relation, a1ToC1Relation, b1ToC1Relation] = sample(
+    const [a3ToB3Relation, a3ToC3Relation, b3ToC3Relation] = sample(
       KNOWN_NETWORK_CUE_OPERATORS_SAME_GT_LT) as TriNodeNetworkOperatorCombination<CueNonArbitrary>;
 
-    // Set A1 => B1 relation
-    if (a1ToB1Relation) {
-      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA1, nodeB1, a1ToB1Relation, RelationType.trained));
+    // Set A3 => B3 relation
+    if (a3ToB3Relation) {
+      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA3, nodeB3, a3ToB3Relation, RelationType.trained));
     }
 
-    // Set A1 => C1 relation
-    if (a1ToC1Relation) {
-      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA1, nodeC1, a1ToC1Relation, RelationType.trained));
+    // Set A3 => C3 relation
+    if (a3ToC3Relation) {
+      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA3, nodeC3, a3ToC3Relation, RelationType.trained));
     }
 
-    // Set B1 => C1 relation
-    if (b1ToC1Relation) {
-      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeB1, nodeC1, b1ToC1Relation, RelationType.trained));
+    // Set B3 => C3 relation
+    if (b3ToC3Relation) {
+      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeB3, nodeC3, b3ToC3Relation, RelationType.trained));
+    }
+
+    // Network 2 - unknown network
+    const nodeA4 = new RelationalNode('A', 4, getRandomStimulus(config.stimulusCase));
+    const nodeB4 = new RelationalNode('B', 4, getRandomStimulus(config.stimulusCase));
+    const nodeC4 = new RelationalNode('C', 4, getRandomStimulus(config.stimulusCase));
+
+    // Add nodes for network 2
+    graph.addNode(nodeA4);
+    graph.addNode(nodeB4);
+    graph.addNode(nodeC4);
+
+    // Get randomized unknown network operator combination
+    const [a4ToB4Relation, a4ToC4Relation, b4ToC4Relation] = sample(
+      UNKNOWN_NETWORK_CUE_OPERATORS_SAME_GT_LT) as TriNodeNetworkOperatorCombination<CueNonArbitrary>;
+
+    // Set A4 => B4 relation
+    if (a4ToB4Relation) {
+      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA4, nodeB4, a4ToB4Relation, RelationType.trained));
+    }
+
+    // Set A4 => C4 relation
+    if (a4ToC4Relation) {
+      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA4, nodeC4, a4ToC4Relation, RelationType.trained));
+    }
+
+    // Set B4 => C4 relation
+    if (b4ToC4Relation) {
+      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeB4, nodeC4, b4ToC4Relation, RelationType.trained));
     }
 
     console.log(graph.toString());
-
-    // Network 2 - unknown network
-    const nodeA2 = new RelationalNode('A', 2, getRandomStimulus(config.stimulusCase));
-    const nodeB2 = new RelationalNode('B', 2, getRandomStimulus(config.stimulusCase));
-    const nodeC2 = new RelationalNode('C', 2, getRandomStimulus(config.stimulusCase));
-
-    // Add nodes for network 2
-    graph.addNode(nodeA2);
-    graph.addNode(nodeB2);
-    graph.addNode(nodeC2);
-
-    // Get randomized unknown network operator combination
-    const [a2ToB2Relation, a2ToC2Relation, b2ToC2Relation] = sample(
-      UNKNOWN_NETWORK_CUE_OPERATORS_SAME_GT_LT) as TriNodeNetworkOperatorCombination<CueNonArbitrary>;
-
-    // Set A2 => B2 relation
-    if (a2ToB2Relation) {
-      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA2, nodeB2, a2ToB2Relation, RelationType.trained));
-    }
-
-    // Set A2 => C2 relation
-    if (a2ToC2Relation) {
-      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA2, nodeC2, a2ToC2Relation, RelationType.trained));
-    }
-
-    // Set B2 => C2 relation
-    if (b2ToC2Relation) {
-      graph.addTrainedAndMutualRelations(new RelationalEdge(nodeB2, nodeC2, b2ToC2Relation, RelationType.trained));
-    }
 
     return graph;
   }
