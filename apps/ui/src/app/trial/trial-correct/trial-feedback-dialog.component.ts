@@ -20,9 +20,11 @@ export class TrialFeedbackDialogComponent {
   ) {
     setTimeout(() => this.animated = true, 0); // This delay prevents a change detection error
     setTimeout(() => this.ref.close(), this.data.durationMs);
-    const audio = new Audio();
-    audio.src = './assets/correct.mp3';
-    audio.load();
-    audio.play().then();
+    if (data.feedback === 'CORRECT') {
+      const audio = new Audio();
+      audio.src = './assets/correct.mp3';
+      audio.load();
+      audio.play().then(() => audio.remove());
+    }
   }
 }
