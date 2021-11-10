@@ -78,6 +78,8 @@ export class TestBlock extends Block {
       graph.addTrainedAndMutualRelations(new RelationalEdge(nodeB3, nodeC3, b3ToC3Relation, RelationType.trained));
     }
 
+    console.log(graph.toString());
+
     // Network 2 - unknown network
     const nodeA4 = new RelationalNode('A', 4, getRandomStimulus(config.stimulusCase));
     const nodeB4 = new RelationalNode('B', 4, getRandomStimulus(config.stimulusCase));

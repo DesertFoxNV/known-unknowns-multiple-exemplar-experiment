@@ -163,7 +163,7 @@ export class ForcedChoiceBlock extends Block {
   }
 
   /**
-   * Next trial overrides the base class so that the trail can be segmented
+   * Next trial overrides the base class so that the trial can be segmented
    * into two phases training and probe. If the participant fails a phase they
    * are allowed to retry up to the amount of failures allotted, otherwise
    * the study is completed.
@@ -174,8 +174,7 @@ export class ForcedChoiceBlock extends Block {
 
     if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100) {
       this.trainingsFailed++;
-      console.log('training failed', this.trialNum);
-      console.log('trainingsFailed', this.trainingsFailed);
+      console.log('training failed', this.trainingsFailed);
 
       // If trainings failed equals the max training failures allowed, the block completes, otherwise the participant retries the block
       if (this.trainingsFailed === this.trainingFailuresAllotted) {
@@ -186,8 +185,7 @@ export class ForcedChoiceBlock extends Block {
 
     } else if (this.trialNum === this.numProbeTrials + this.numTrainingTrials && this.percentCorrect !== 100) {
       this.probesFailed++;
-      console.log('training failed', this.trialNum);
-      console.log('probesFailed', this.probesFailed);
+      console.log('probes failed', this.probesFailed);
 
       // If probes failed equals the max probe failures allowed, the block completes, otherwise the participant retries the block
       if (this.probesFailed === this.probeFailuresAllotted) {

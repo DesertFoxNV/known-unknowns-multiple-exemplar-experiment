@@ -46,7 +46,7 @@ export abstract class Block {
    * @returns {number}
    */
   get percentCorrect(): number {
-    return (this.correct / this.trialNum) * 100;
+    return (this.correct / (this.correct + this.incorrect)) * 100;
   }
 
   /**

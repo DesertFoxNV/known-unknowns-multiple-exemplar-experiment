@@ -304,7 +304,7 @@ export class OperantChoiceBlock extends Block {
   }
 
   /**
-   * Next trial overrides the base class so that the trail can be segmented
+   * Next trial overrides the base class so that the trial can be segmented
    * into two phases training and probe. If the participant fails a phase they
    * are allowed to retry up to the amount of failures allotted, otherwise
    * the study is completed.
