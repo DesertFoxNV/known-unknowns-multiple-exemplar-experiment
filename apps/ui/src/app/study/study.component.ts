@@ -25,6 +25,7 @@ export class StudyComponent implements OnInit {
     if (this.blocks.length > 0) {
       this.blocks.shift()?.start(this.blockComponent);
     } else {
+      this.blockComponent.prompt('THANKS FOR PARTICIPATING!', true).subscribe();
       this.completed.emit();
     }
   }

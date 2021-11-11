@@ -406,6 +406,7 @@ export class OperantChoiceBlock extends Block {
     component.prompt('CLICK TO START', false, TRIAL_DELAY_INTERVAL_MS)
       .subscribe(() => {
         this.setTimeout();
+        this.component?.setVisibility(true, 0);
         this.nextTrial();
       });
   }

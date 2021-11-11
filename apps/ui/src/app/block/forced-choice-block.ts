@@ -6,7 +6,6 @@ import { RelationType } from '../graph/relation-type';
 import { RelationalEdge } from '../graph/relational-edge';
 import { RelationalFrameGraph } from '../graph/relational-frame-graph';
 import { RelationalNode } from '../graph/relational-node';
-import { BinaryNetwork } from '../network/binary-network';
 import { CUE_NON_ARBITRARY } from '../study-conditions/cue.constants';
 import { getRandomStimulus } from '../study-conditions/get-random-stimuli';
 import { StudyConfig, StudyConfigWCase } from '../study-config-form/study-config';
@@ -38,8 +37,6 @@ export class ForcedChoiceBlock extends Block {
    *    6 identities (A:A x 2, B:B x 2, C:C x 2)
    *    6 different (A:B, B:C, C:A, B:A, C:B, A:C)
    *    6 ick (A:D, B:E, C:F, A:F, B:D, C:E ... select 6 of 18 combinations)
-   * @param {BinaryNetwork} network1
-   * @param {BinaryNetwork} network2
    * @param {StudyConfig} config
    */
   constructor(
@@ -169,6 +166,8 @@ export class ForcedChoiceBlock extends Block {
    * the study is completed.
    */
   nextTrial(): void {
+    console.log('block name', this.name);
+    
     // if training is passed reset the training failures allotted
     if (this.trialNum === this.numTrainingTrials) this.trainingFailuresAllotted = 0;
 

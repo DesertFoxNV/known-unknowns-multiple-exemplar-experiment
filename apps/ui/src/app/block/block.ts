@@ -70,13 +70,11 @@ export abstract class Block {
    */
   complete() {
     this.attempts++;
-    this.component?.setVisibility(false);
+    this.component?.setVisibility(false, TRIAL_DELAY_INTERVAL_MS);
     this.completed = new Date();
-    this.component?.prompt(
-      'BLOCK COMPLETE',
-      true,
-      TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe();
-    this.component?.completed.emit();
+    setTimeout(() => {
+      this.component?.completed.emit();
+    }, TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS));
   }
 
   /**
@@ -196,6 +194,9 @@ export abstract class Block {
     this.component = component;
     if (this.trials.length === 0) this.reset();
     component.prompt('CLICK TO START', false, TRIAL_DELAY_INTERVAL_MS)
-      .subscribe(() => this.nextTrial());
+      .subscribe(() => {
+        this.component?.setVisibility(true, 0);
+        this.nextTrial();
+      });
   }
 }

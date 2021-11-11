@@ -1,4 +1,6 @@
 import { Block } from '../block/block';
+import { ForcedChoiceBlock } from '../block/forced-choice-block';
+import { OperantChoiceBlock } from '../block/operant-choice-block';
 import { TestBlock } from '../block/test-block';
 import { TrainingNetworks } from '../block/training-networks';
 import { StudyConfigWCase } from '../study-config-form/study-config';
@@ -12,11 +14,10 @@ export class StudyConditions {
     const network3And4Graph = preTestBlock.graph;
     this.config = config;
     this.blocks = [
-      // preTestBlock,
-      // new ForcedChoiceBlock(config)
-      // new OperantChoiceBlock(config),
+      preTestBlock,
+      new ForcedChoiceBlock(config),
+      new OperantChoiceBlock(config),
       new TrainingNetworks(config, network3And4Graph)
-      // new TestBlock(config, network3And4Graph)
     ];
   }
 }
