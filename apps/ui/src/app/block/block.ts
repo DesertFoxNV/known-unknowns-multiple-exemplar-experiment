@@ -92,7 +92,7 @@ export abstract class Block {
     this.history.push({ ...this.trial, selected });
 
     // This prevents the user from seeing the last trial again, due to fadeout animation.
-    if (this.isLastTrial) this.component?.setVisibility(false);
+    // if (this.isLastTrial) this.component?.setVisibility(false);
 
     const feedback = this.grade(selected);
 

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { Block } from '../block/block';
 import { BlockComponent } from '../block/block.component';
+import { TRIAL_DELAY_INTERVAL_MS } from '../block/trial-animation-delay';
 import { StudyConditionService } from '../study-conditions/study-condition.service';
 import { StudyConfig } from '../study-config-form/study-config';
 
@@ -25,7 +26,7 @@ export class StudyComponent implements OnInit {
     if (this.blocks.length > 0) {
       this.blocks.shift()?.start(this.blockComponent);
     } else {
-      this.blockComponent.prompt('THANKS FOR PARTICIPATING!', true).subscribe();
+      this.blockComponent.prompt('THANKS FOR PARTICIPATING!', true, TRIAL_DELAY_INTERVAL_MS).subscribe();
       this.completed.emit();
     }
   }

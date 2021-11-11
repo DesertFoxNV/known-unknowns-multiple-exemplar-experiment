@@ -93,9 +93,9 @@ export class OperantChoiceBlock extends Block {
       sequentialCorrectTargetAchieved);
     console.log(
       `Same trials is gte than ${sameTarget}, comparison trials is gte than ${comparisonTarget}, and i cannot know trials is gte ${iCannotKnowTarget}: `,
-      (same >= sameTarget && (greaterThan + lessThan >= comparisonTarget) && iCannotKnow === iCannotKnowTarget));
+      (same >= sameTarget && (greaterThan + lessThan >= comparisonTarget) && iCannotKnow >= iCannotKnowTarget));
     return sequentialCorrectTargetAchieved ||
-      (same >= sameTarget && (greaterThan + lessThan >= comparisonTarget) && iCannotKnow === iCannotKnowTarget);
+      (same >= sameTarget && (greaterThan + lessThan >= comparisonTarget) && iCannotKnow >= iCannotKnowTarget);
   }
 
   get meetsMasterCriterion2(): boolean {
@@ -315,7 +315,7 @@ export class OperantChoiceBlock extends Block {
       this.complete();
     } else {
       if (this.index == this.trials.length - 1) {
-        this.component?.setVisibility(true);
+        this.component?.setVisibility(true, 0);
         this.index = -1;
       }
       super.nextTrial();
