@@ -65,7 +65,7 @@ export class BlockComponent {
    * @param {{duration: number, delay: number}} animationParams
    */
   showFeedback(
-    feedback: string,
+    feedback: FeedBackDialogData['feedback'],
     durationMs = FEEDBACK_DURATION_MS,
     animationParams = { delay: FEEDBACK_FADE_OUT_DELAY_MS, duration: FADE_OUT_DURATION_MS }
   ) {

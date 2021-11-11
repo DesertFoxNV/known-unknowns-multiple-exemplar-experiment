@@ -4,5 +4,5 @@ export interface FeedBackDialogData {
     duration: number
   }
   durationMs: number;
-  feedback: string;
+  feedback: 'CORRECT'|'WRONG'|'TIME EXPIRED';
 }

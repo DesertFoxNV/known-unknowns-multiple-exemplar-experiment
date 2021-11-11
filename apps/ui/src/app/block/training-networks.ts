@@ -4,24 +4,26 @@ import { StudyConfig, StudyConfigWCase } from '../study-config-form/study-config
 import { CueSelected } from '../trial/cue-selected';
 import { FADE_OUT_DURATION_MS } from '../trial/fade-out-duration';
 import { Trial } from '../trial/trial';
-import { FEEDBACK_FADE_OUT_DELAY_MS } from '../trial/trial-correct/feedback-duration';
+import { FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS } from '../trial/trial-correct/feedback-duration';
 import { Block } from './block';
+import { BlockComponent } from './block.component';
 import { randomizedComponentConfigs } from './cue-component-configs';
 import { TRIAL_DELAY_INTERVAL_MS } from './trial-animation-delay';
 
 export class TrainingNetworks extends Block {
   graph: RelationalFrameGraph;
+  numAllottedTimeouts = 1;
   numIdkProbeTrials = 5;
   numProbeDuplicates = 4;
   numProbeTrials = 32;
+  numTimeouts = 0;
   numTrainingDuplicates = 2;
   numTrainingTrials = 20;
   probeFailuresAllotted = 2;
   probesFailed = 0;
   sequentialCorrect = 0;
   sequentialCorrectTarget = 23;
-  trainingFailuresAllotted = 2;
-  trainingsFailed = 0;
+  timeout?: NodeJS.Timeout;
 
   /**
    * Training Networks Block
@@ -31,9 +33,8 @@ export class TrainingNetworks extends Block {
    *  W-ICK: 32 trials (12 greater than, 12 less than, 8 idk)
    *    16 mutually entailed trials (default) = mutually-entailed (B:A, C:A) * numDuplicates (4 default) * 2 networks
    *    16 combinatorially entailed trials (default) = combinatorially-entailed (B:C, C:B) * numDuplicates  (4 default) * 2 networks
-   * @param {BinaryNetwork} network1
-   * @param {BinaryNetwork} network2
    * @param {StudyConfig} config
+   * @param graph
    */
   constructor(
     config: StudyConfigWCase,
@@ -41,6 +42,11 @@ export class TrainingNetworks extends Block {
   ) {
     super('Training Networks', config);
     this.graph = graph;
+  }
+
+  complete() {
+    if (this.timeout) clearTimeout(this.timeout);
+    super.complete();
   }
 
   /**
@@ -120,16 +126,11 @@ export class TrainingNetworks extends Block {
     // if training is passed reset the training failures allotted
     if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100 && this.sequentialCorrect !==
       this.sequentialCorrectTarget) {
-      this.trainingsFailed++;
-      console.log('training failed', this.trainingsFailed);
+      console.log('training failed');
 
-      // If trainings failed equals the max training failures allowed, the block completes, otherwise the participant retries the block
-      if (this.trainingsFailed === this.trainingFailuresAllotted) {
-        this.failed();
-      } else {
-        this.reset();
-        super.nextTrial();
-      }
+      this.reset();
+      super.nextTrial();
+
       // If <90% correct of the number of the 24 trials presented that have a correct response (because the 8 KU trials do not have a ‘correct’ response without an IDK),
     } else if (this.trialNum === this.numProbeTrials + this.numTrainingTrials && this.percentCorrect <
       (this.config.iCannotKnow ? 90 : 75 * .9)) {
@@ -144,7 +145,7 @@ export class TrainingNetworks extends Block {
       }
     } else {
       if (this.trialNum === this.numTrainingTrials) {
-        this.trainingFailuresAllotted = 0;
+        if (this.timeout) clearTimeout(this.timeout);
         this.correct = 0;
         this.incorrect = 0;
       }
@@ -164,7 +165,35 @@ export class TrainingNetworks extends Block {
         this.feedBackShown = false;
         this.component?.setVisibility(true, 0);
         this.nextTrial();
+        this.setTimeout();
       });
     this.reset();
+  }
+
+  setTimeout() {
+    if (this.timeout) clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
+      this.component?.trialComponent?.clearTimer();
+      this.numTimeouts++;
+      if (this.numTimeouts > this.numAllottedTimeouts) {
+        this.failed();
+      } else {
+        this.retry();
+      }
+    }, 50 * this.trials.length * (this.config.trialTimeoutSeconds * 1000 + FEEDBACK_DURATION_MS));
+  }
+
+  /***
+   * Resets block index, binds to the view, and shows a message.
+   * @param {BlockComponent} component
+   */
+  start(component: BlockComponent) {
+    this.component = component;
+    if (this.trials.length === 0) this.reset();
+    component.prompt('CLICK TO START', false, TRIAL_DELAY_INTERVAL_MS)
+      .subscribe(() => {
+        this.setTimeout();
+        this.nextTrial();
+      });
   }
 }
