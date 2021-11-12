@@ -1,2 +1,12 @@
-<block (completed)="nextBlock()"></block>
+<mat-card [ngClass]="{'d-none': !showInstructions}" style="max-width: 400px">
+  <mat-card-title>Welcome</mat-card-title>
+  <mat-card-content style="white-space: pre-line">
+    {{instructions}}
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button (click)="nextBlock()">CONTINUE</button>
+  </mat-card-actions>
+</mat-card>
+
+<block [ngClass]="{'d-none': showInstructions}" (completed)="nextBlock()"></block>
 

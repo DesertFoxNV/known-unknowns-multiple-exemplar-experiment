@@ -6,27 +6,33 @@ import { FormBuilder, FormGroup } from '@ngneat/reactive-forms';
 import { Observable } from 'rxjs';
 import { catchError, first, map, tap } from 'rxjs/operators';
 import { studyConfigFromParams } from '../param-conversions/study-config-from-params';
+import { ReportService } from '../report/report.service';
 import { CUE_TYPE } from '../study-conditions/cue.constants';
-import { StudyConfig } from './study-config';
+import { randomStimulusCase } from '../study-conditions/random-stimulus-case';
+import { StudyConfig, StudyConfigWCase } from './study-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StudyConfigService {
+  stimulusCase = randomStimulusCase();
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
+    private reportSvc: ReportService,
     private router: Router,
     private snackBarSvc: SnackBarService
   ) {
   }
 
-  config$(): Observable<StudyConfig> {
+  config$(): Observable<StudyConfigWCase> {
     return this.activatedRoute.queryParams.pipe(
       first(),
       map(studyConfigFromParams),
       tap((config) => this.isConfigValid(config)),
+      map(config => ({ ...config, stimulusCase: this.stimulusCase })),
+      tap(configWCase => this.reportSvc.addConfig(configWCase)),
       catchError((err) => {
         this.snackBarSvc.error(err.message);
         this.router.navigate([`../`]).then();

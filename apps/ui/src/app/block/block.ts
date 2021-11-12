@@ -26,6 +26,7 @@ export abstract class Block {
    *
    * @param {string} name
    * @param {StudyConfig} config
+   * @param reportSvc
    * @protected
    */
   protected constructor(name: string, config: StudyConfigWCase) {
