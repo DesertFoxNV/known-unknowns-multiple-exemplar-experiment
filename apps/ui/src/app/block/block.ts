@@ -18,6 +18,7 @@ export abstract class Block {
   incorrect = 0;
   index = -1;
   name: string;
+  sequentialCorrect = 0;
   started: Date|undefined;
   trials: Trial[] = [];
 
@@ -30,14 +31,6 @@ export abstract class Block {
   protected constructor(name: string, config: StudyConfigWCase) {
     this.name = name;
     this.config = config;
-  }
-
-  /**
-   * Returns true if it is the last trial and false if is is not.
-   * @returns {boolean}
-   */
-  get isLastTrial(): boolean {
-    return this.index === this.trials.length - 1;
   }
 
   /**
@@ -147,8 +140,10 @@ export abstract class Block {
 
     if (selected?.cue.value === this.trial.relation) {
       this.correct++;
+      this.sequentialCorrect++;
     } else {
       this.incorrect++;
+      this.sequentialCorrect = 0;
     }
     console.log('correct', this.correct);
     console.log('incorrect', this.incorrect);
@@ -183,6 +178,7 @@ export abstract class Block {
     this.index = -1;
     this.correct = 0;
     this.incorrect = 0;
+    this.sequentialCorrect = 0;
     this.trials = this.createTrials();
   }
 

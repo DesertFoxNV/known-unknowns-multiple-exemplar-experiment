@@ -55,7 +55,6 @@ export class OperantChoiceBlock extends Block {
   maxShuffles = 2500;
   numAllottedTimeouts = 1;
   numTimeouts = 0;
-  sequentialCorrect = 0;
   stimuliComparisonCopies = 2;
   timeout?: NodeJS.Timeout;
 
@@ -126,9 +125,9 @@ export class OperantChoiceBlock extends Block {
     graph.includeRelationsBetweenNetworks = config.iCannotKnow;
 
     // Network 1 - known network
-    const nodeA1 = new RelationalNode('A', 1, getRandomStimulus(config.stimulusCase));
-    const nodeB1 = new RelationalNode('B', 1, getRandomStimulus(config.stimulusCase));
-    const nodeC1 = new RelationalNode('C', 1, getRandomStimulus(config.stimulusCase));
+    const nodeA1 = new RelationalNode('A', 5, getRandomStimulus(config.stimulusCase));
+    const nodeB1 = new RelationalNode('B', 5, getRandomStimulus(config.stimulusCase));
+    const nodeC1 = new RelationalNode('C', 5, getRandomStimulus(config.stimulusCase));
 
     // Add nodes for network 1
     graph.addNode(nodeA1);
@@ -141,9 +140,9 @@ export class OperantChoiceBlock extends Block {
     graph.addTrainedAndMutualRelations(new RelationalEdge(nodeB1, nodeC1, 'same', RelationType.trained));
 
     // Network 2 - A2 > B2 > C2
-    const nodeA2 = new RelationalNode('A', 2, getRandomStimulus(config.stimulusCase));
-    const nodeB2 = new RelationalNode('B', 2, getRandomStimulus(config.stimulusCase));
-    const nodeC2 = new RelationalNode('C', 2, getRandomStimulus(config.stimulusCase));
+    const nodeA2 = new RelationalNode('A', 6, getRandomStimulus(config.stimulusCase));
+    const nodeB2 = new RelationalNode('B', 6, getRandomStimulus(config.stimulusCase));
+    const nodeC2 = new RelationalNode('C', 6, getRandomStimulus(config.stimulusCase));
 
     // Add nodes for network 2
     graph.addNode(nodeA2);

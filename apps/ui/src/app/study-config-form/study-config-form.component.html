@@ -18,7 +18,7 @@
 
       <mat-checkbox formControlName="iCannotKnow">I cannot know</mat-checkbox>
 
-<!--      <mat-checkbox formControlName="contextualControl">Contextual control</mat-checkbox>-->
+      <!--      <mat-checkbox formControlName="contextualControl">Contextual control</mat-checkbox>-->
 
       <mat-form-field>
         <mat-label>Cue type</mat-label>
@@ -52,16 +52,16 @@
         <div class="mat-h4">Balance</div>
 
         <mat-form-field *ngIf="balanceGroup.get('same') as sameCtrl" appearance="outline">
-          <mat-label>Equal to</mat-label>
+          <mat-label>Same</mat-label>
           <input matInput min="1" max="99" type="number" formControlName="same">
           <mat-error *ngIf="sameCtrl.hasError('required')">
-            Equal to is <strong>required</strong>
+            Same to is <strong>required</strong>
           </mat-error>
           <mat-error *ngIf="sameCtrl.hasError('min')">
-            Equal to must be a <strong>minimum</strong> of 1
+            Same to must be a <strong>minimum</strong> of 1
           </mat-error>
           <mat-error *ngIf="sameCtrl.hasError('max')">
-            Equal to must be a <strong>maximum</strong> of 99
+            Same to must be a <strong>maximum</strong> of 99
           </mat-error>
         </mat-form-field>
 

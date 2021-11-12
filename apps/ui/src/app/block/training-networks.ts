@@ -153,6 +153,16 @@ export class TrainingNetworks extends Block {
     }
   }
 
+  /***
+   * Resets block index, correct count, incorrect count, and generates fresh trials.
+   */
+  reset() {
+    this.index = -1;
+    this.correct = 0;
+    this.incorrect = 0;
+    this.trials = this.createTrials();
+  }
+
   /**
    * User is shown a retry block, which they have to click to continue.
    */
