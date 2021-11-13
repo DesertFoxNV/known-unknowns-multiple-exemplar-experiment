@@ -2,6 +2,8 @@ import { sample } from 'lodash-es';
 import { OneHundredNonWordTrigramsFilteredByFrequency } from './one-hundred-non-word-trigrams-filtered-by-frequency';
 import { STIMULUS_CASE, StimulusCase } from './stimulus-case';
 
+// TODO: Turn this into a provider?
+
 /***
  * Generates random stimuli and removes them from list to prevent duplicates
  * @param {number} num is integer

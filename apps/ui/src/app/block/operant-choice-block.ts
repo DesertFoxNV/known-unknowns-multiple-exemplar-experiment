@@ -116,11 +116,12 @@ export class OperantChoiceBlock extends Block {
    * @returns {RelationalFrameGraph}
    */
   createGraph(config: StudyConfigWCase) {
-    const graph = new RelationalFrameGraph(
-      'same',
-      'iCannotKnow',
-      MUTUALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK,
-      COMBINATORIALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK);
+    const graph = new RelationalFrameGraph({
+      selfRelation: 'same',
+      unknownRelation: 'iCannotKnow',
+      mutualDictionary: MUTUALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK,
+      combinatorialDictionary: COMBINATORIALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK
+    });
 
     graph.includeRelationsBetweenNetworks = config.iCannotKnow;
 

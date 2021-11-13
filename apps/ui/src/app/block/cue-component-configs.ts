@@ -5,7 +5,7 @@ import {
   CUES_NON_ARBITRARY_WO_ICK
 } from '../study-conditions/cue.constants';
 import { TrialCueComponentConfig } from '../study-conditions/trial-cue-component-config';
-import { StudyConfig, StudyConfigWCase } from '../study-config-form/study-config';
+import { StudyConfig } from '../study-config-form/study-config';
 
 /**
  * Generates the same config for all relation placements. Can be used in ick and non ick trials.
@@ -51,12 +51,11 @@ export function twoChoiceCueComponentConfig(
 /**
  * Generates two choices for all relation placements. Should only be used in ick trials.
  * @param {StudyConfig} config
- * @param {CueNonArbitrary} cue1
- * @param {CueNonArbitrary} cue2
+ * @param stimulusCase
  * @returns {TrialCueComponentConfig[]}
  */
 export function randomizedComponentConfigs(
-  config: StudyConfigWCase,
+  config: StudyConfig
 ): TrialCueComponentConfig[] {
   // Cue order is randomized
   const cues = shuffle(config.iCannotKnow ? CUES_NON_ARBITRARY_W_ICK : CUES_NON_ARBITRARY_WO_ICK);

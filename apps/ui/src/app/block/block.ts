@@ -11,7 +11,7 @@ export abstract class Block {
   attempts = 0;
   completed?: Date;
   component?: BlockComponent;
-  config: StudyConfigWCase;
+  config!: StudyConfigWCase;
   correct = 0;
   feedBackShown = false;
   history: CompletedTrial[] = [];
@@ -26,12 +26,11 @@ export abstract class Block {
    *
    * @param {string} name
    * @param {StudyConfig} config
-   * @param reportSvc
    * @protected
    */
-  protected constructor(name: string, config: StudyConfigWCase) {
+  protected constructor(name: string, config?: StudyConfigWCase) {
     this.name = name;
-    this.config = config;
+    if (config) this.config = config;
   }
 
   /**

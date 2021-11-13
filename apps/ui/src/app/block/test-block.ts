@@ -33,7 +33,7 @@ export class TestBlock extends Block {
     config: StudyConfigWCase,
     graph?: RelationalFrameGraph
   ) {
-    super('Test', config);
+    super('Test');
     this.graph = graph || this.createGraph(config);
   }
 
@@ -43,11 +43,12 @@ export class TestBlock extends Block {
    * @returns {RelationalFrameGraph}
    */
   createGraph(config: StudyConfigWCase) {
-    const graph = new RelationalFrameGraph(
-      'same',
-      'iCannotKnow',
-      MUTUALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK,
-      COMBINATORIALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK);
+    const graph = new RelationalFrameGraph({
+      selfRelation: 'same',
+      unknownRelation: 'iCannotKnow',
+      mutualDictionary: MUTUALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK,
+      combinatorialDictionary: COMBINATORIALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK
+    });
 
     // Network 3 - known network
     const nodeA3 = new RelationalNode('A', 3, getRandomStimulus(config.stimulusCase));
