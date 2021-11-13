@@ -1,19 +1,13 @@
 import { Inject, Injectable } from '@angular/core';
-import { sample } from 'lodash-es';
-import { CueNonArbitrary } from '../study-conditions/cue.constants';
 import { getRandomStimulus } from '../study-conditions/get-random-stimuli';
 import { StimulusCase } from '../study-conditions/stimulus-case';
 import { STIMULUS_CASE } from '../study/study.module';
-import {
-  KNOWN_NETWORK_CUE_OPERATORS_SAME_GT_LT, TriNodeNetworkOperatorCombination
-} from './known-network-cue-operators-same-gt-lt';
 import { RelationType } from './relation-type';
 import { RelationalEdge } from './relational-edge';
 import { RelationalFrameGraph } from './relational-frame-graph';
 import { RelationalFrameGraphConfig } from './relational-frame-graph-config';
 import { RelationalNode } from './relational-node';
 import { SAME_GT_LT_ICK_GRAPH_CONFIG } from './same-gt-lt-ick-graph-config';
-import { UNKNOWN_NETWORK_CUE_OPERATORS_SAME_GT_LT } from './unknown-network-cue-operators-same-gt-lt';
 
 @Injectable({
   providedIn: 'root'
@@ -25,10 +19,6 @@ export class Network5And6Graph extends RelationalFrameGraph {
     @Inject(SAME_GT_LT_ICK_GRAPH_CONFIG) private relationalFrameGraphConfig: RelationalFrameGraphConfig
   ) {
     super(relationalFrameGraphConfig);
-
-    // TODO: This need to be set within the block
-    // this.includeRelationsBetweenNetworks = iCannotKnow;
-    this.includeRelationsBetweenNetworks = true;
 
     // Network 1 - known network
     const nodeA1 = new RelationalNode('A', 5, getRandomStimulus(stimulusCase));

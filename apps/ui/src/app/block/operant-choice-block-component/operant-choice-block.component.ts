@@ -1,29 +1,28 @@
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { isEqual, shuffle } from 'lodash-es';
-import {
-  COMBINATORIALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK, MUTUALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK
-} from '../graph/operator-dictionaries';
-import { RelationType } from '../graph/relation-type';
-import { RelationalEdge } from '../graph/relational-edge';
-import { RelationalFrameGraph } from '../graph/relational-frame-graph';
-import { RelationalNode } from '../graph/relational-node';
-import { StimuliComparison } from '../graph/stimuli-comparison';
-import { CueNonArbitrary, CUES_NON_ARBITRARY_W_ICK } from '../study-conditions/cue.constants';
-import { getRandomStimulus } from '../study-conditions/get-random-stimuli';
-import { StudyConfigWCase } from '../study-config-form/study-config';
-import { CueSelected } from '../trial/cue-selected';
-import { FADE_OUT_DURATION_MS } from '../trial/fade-out-duration';
-import { Trial } from '../trial/trial';
-import { FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS } from '../trial/trial-correct/feedback-duration';
-import { Block } from './block';
-import { BlockComponent } from './block.component';
-import { randomizedComponentConfigs } from './cue-component-configs';
-import { TRIAL_DELAY_INTERVAL_MS } from './trial-animation-delay';
+import { Network5And6Graph } from '../../graph/network-5-and-6-graph';
+import { RelationalNode } from '../../graph/relational-node';
+import { StimuliComparison } from '../../graph/stimuli-comparison';
+import { CueNonArbitrary, CUES_NON_ARBITRARY_W_ICK } from '../../study-conditions/cue.constants';
+import { CueSelected } from '../../trial/cue-selected';
+import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
+import { Trial } from '../../trial/trial';
+import { FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS } from '../../trial/trial-correct/feedback-duration';
+import { BlockComponent } from '../block.component';
+import { randomizedComponentConfigs } from '../cue-component-configs';
+import { TRIAL_DELAY_INTERVAL_MS } from '../trial-animation-delay';
 
 const gcd = (a: number, b: number): number => a ? gcd(b % a, a) : b;
 const lcm = (a: number, b: number) => a * b / gcd(a, b);
 
-export class OperantChoiceBlock extends Block {
-
+@Component({
+  selector: 'operant-choice-block',
+  templateUrl: './operant-choice-block.component.html',
+  styleUrls: ['./operant-choice-block.component.scss'],
+  animations: []
+})
+export class OperantChoiceBlockComponent extends BlockComponent implements OnInit {
   configBalanceDividedByGcd: Record<CueNonArbitrary, number>|undefined;
   containsSequentialTriplicates = false;
   correctCount: Record<CueNonArbitrary, number> = {
@@ -34,36 +33,21 @@ export class OperantChoiceBlock extends Block {
     iCannotKnow: 0
   };
   correctShownTargets: Record<CueNonArbitrary, number>|undefined;
-  graph: RelationalFrameGraph;
   index = -1;
-  masterCriterion = {
-    /**
-     * Criteria 1
-     *  1. Sequential correct > 35
-     *  2. Comparison
-     *    a. Non ICK - 6 same, 24 (greater or lesser than), 0 (i cannot know)
-     *    b. ICK - 6 same, 24(greater or lesser than), 18 ( i cannot know)
-     */
-    // Path 1
-    sequentialCorrectTarget: this.config.iCannotKnow ? 56 : 35,
-    sequentialCorrectTargetAchieved: false,
-    // Path 2
-    comparisonTarget: 24, // greater than or less than
-    iCannotKnowTarget: this.config.iCannotKnow ? 18 : 0,
-    sameTarget: 6
-  };
   maxShuffles = 2500;
+  name = 'Operant Choice';
   numAllottedTimeouts = 1;
   numTimeouts = 0;
   stimuliComparisonCopies = 2;
   timeout?: NodeJS.Timeout;
 
   constructor(
-    config: StudyConfigWCase
+    dialog: MatDialog,
+    private network5And6Graph: Network5And6Graph
   ) {
-    super('Operant Choice', config);
-    this.graph = this.createGraph(config);
-    this.trials = this.createTrials();
+    super(dialog);
+    console.log(this.name);
+    console.log(this.network5And6Graph.toString());
   }
 
   get isComplete(): boolean {
@@ -74,6 +58,26 @@ export class OperantChoiceBlock extends Block {
     (this.meetsMasterCriterion1 && this.meetsMasterCriterion2);
     return this.sequentialCorrect >= this.trials.length * 2 ||
       (this.meetsMasterCriterion1 && this.meetsMasterCriterion2);
+  }
+
+  get masterCriterion() {
+    if (!this.studyConfig) throw Error('Study configuration is undefined');
+    return {
+      /**
+       * Criteria 1
+       *  1. Sequential correct > 35
+       *  2. Comparison
+       *    a. Non ICK - 6 same, 24 (greater or lesser than), 0 (i cannot know)
+       *    b. ICK - 6 same, 24(greater or lesser than), 18 ( i cannot know)
+       */
+      // Path 1
+      sequentialCorrectTarget: this.studyConfig.iCannotKnow ? 56 : 35,
+      sequentialCorrectTargetAchieved: false,
+      // Path 2
+      comparisonTarget: 24, // greater than or less than
+      iCannotKnowTarget: this.studyConfig.iCannotKnow ? 18 : 0,
+      sameTarget: 6
+    };
   }
 
   get meetsMasterCriterion1(): boolean {
@@ -111,66 +115,20 @@ export class OperantChoiceBlock extends Block {
   }
 
   /**
-   * Creates relational graph
-   * @param {StudyConfigWCase} config
-   * @returns {RelationalFrameGraph}
-   */
-  createGraph(config: StudyConfigWCase) {
-    const graph = new RelationalFrameGraph({
-      selfRelation: 'same',
-      unknownRelation: 'iCannotKnow',
-      mutualDictionary: MUTUALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK,
-      combinatorialDictionary: COMBINATORIALLY_ENTAILED_DICTIONARY_SAME_GT_LT_ICK
-    });
-
-    graph.includeRelationsBetweenNetworks = config.iCannotKnow;
-
-    // Network 1 - known network
-    const nodeA1 = new RelationalNode('A', 5, getRandomStimulus(config.stimulusCase));
-    const nodeB1 = new RelationalNode('B', 5, getRandomStimulus(config.stimulusCase));
-    const nodeC1 = new RelationalNode('C', 5, getRandomStimulus(config.stimulusCase));
-
-    // Add nodes for network 1
-    graph.addNode(nodeA1);
-    graph.addNode(nodeB1);
-    graph.addNode(nodeC1);
-
-    // Set A1 = B1 = C1
-    graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA1, nodeB1, 'same', RelationType.trained));
-    graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA1, nodeC1, 'same', RelationType.trained));
-    graph.addTrainedAndMutualRelations(new RelationalEdge(nodeB1, nodeC1, 'same', RelationType.trained));
-
-    // Network 2 - A2 > B2 > C2
-    const nodeA2 = new RelationalNode('A', 6, getRandomStimulus(config.stimulusCase));
-    const nodeB2 = new RelationalNode('B', 6, getRandomStimulus(config.stimulusCase));
-    const nodeC2 = new RelationalNode('C', 6, getRandomStimulus(config.stimulusCase));
-
-    // Add nodes for network 2
-    graph.addNode(nodeA2);
-    graph.addNode(nodeB2);
-    graph.addNode(nodeC2);
-
-    // Set A2 > B2 > C2
-    graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA2, nodeB2, 'greaterThan', RelationType.trained));
-    graph.addTrainedAndMutualRelations(new RelationalEdge(nodeA2, nodeC2, 'greaterThan', RelationType.trained));
-    graph.addTrainedAndMutualRelations(new RelationalEdge(nodeB2, nodeC2, 'greaterThan', RelationType.trained));
-
-    console.log(graph.toString());
-
-    return graph;
-  }
-
-  /**
    * Creates trials.
    * @returns {unknown[] | Array<Trial[][keyof Trial[]]>}
    */
   createTrials() {
+    const { studyConfig } = this; // defined locally so typescript can infer types
+    if (!studyConfig) throw Error('Study configuration is undefined');
+
+    this.network5And6Graph.includeRelationsBetweenNetworks = studyConfig.iCannotKnow;
 
     // pool network comparisons
     const comparisons: StimuliComparison<RelationalNode>[] = [
-      this.graph.trained,
-      this.graph.mutuallyEntailed
-    ].flat().concat(this.config.iCannotKnow ? this.graph.combinatoriallyEntailed : []);
+      this.network5And6Graph.trained,
+      this.network5And6Graph.mutuallyEntailed
+    ].flat().concat(studyConfig.iCannotKnow ? this.network5And6Graph.combinatoriallyEntailed : []);
 
     // creates a record of relation type to unique stimuli comparisons
     const cueByStimuli = CUES_NON_ARBITRARY_W_ICK.reduce(
@@ -194,25 +152,25 @@ export class OperantChoiceBlock extends Block {
       }),
       {} as Record<CueNonArbitrary, number>);
 
-    const balanceGcd = Object.values(this.config.balance)
+    const balanceGcd = Object.values(studyConfig.balance)
       .filter(b => b)
       .reduce(gcd);
 
     this.configBalanceDividedByGcd = {
       different: 0,
-      same: this.config.balance.same / balanceGcd,
-      greaterThan: this.config.balance.greaterThan / balanceGcd,
-      lessThan: this.config.balance.lessThan / balanceGcd,
-      iCannotKnow: this.config.balance?.iCannotKnow ? this.config.balance.iCannotKnow / balanceGcd : 0
+      same: studyConfig.balance.same / balanceGcd,
+      greaterThan: studyConfig.balance.greaterThan / balanceGcd,
+      lessThan: studyConfig.balance.lessThan / balanceGcd,
+      iCannotKnow: studyConfig.balance?.iCannotKnow ? studyConfig.balance.iCannotKnow / balanceGcd : 0
     };
 
     const balanceTimesMultiplier: Record<CueNonArbitrary, number> = {
       different: 0,
-      same: (this.config.balance.same * cueMultiplierByStimuli.same),
-      greaterThan: (this.config.balance.greaterThan * cueMultiplierByStimuli.greaterThan),
-      lessThan: (this.config.balance.lessThan * cueMultiplierByStimuli.lessThan),
-      iCannotKnow: this.config.balance?.iCannotKnow ?
-        (this.config.balance.iCannotKnow * cueMultiplierByStimuli.iCannotKnow) : 0
+      same: (studyConfig.balance.same * cueMultiplierByStimuli.same),
+      greaterThan: (studyConfig.balance.greaterThan * cueMultiplierByStimuli.greaterThan),
+      lessThan: (studyConfig.balance.lessThan * cueMultiplierByStimuli.lessThan),
+      iCannotKnow: studyConfig.balance?.iCannotKnow ?
+        (studyConfig.balance.iCannotKnow * cueMultiplierByStimuli.iCannotKnow) : 0
     };
 
     const multiplierGcd = Object.values(balanceTimesMultiplier)
@@ -227,7 +185,7 @@ export class OperantChoiceBlock extends Block {
         this.trials = this.trials.concat(
           cueByStimuli[cue].flat().map(stimuliComparison => ({
             ...stimuliComparison,
-            cueComponentConfigs: randomizedComponentConfigs(this.config)
+            cueComponentConfigs: randomizedComponentConfigs(studyConfig)
           })));
       }
     }
@@ -240,8 +198,8 @@ export class OperantChoiceBlock extends Block {
    * Participants that fail the block criterion are thanked for their participation and the study is completed.
    */
   failed() {
-    this.component?.setVisibility(false);
-    this.component?.prompt('THANKS FOR PARTICIPATING', true, TRIAL_DELAY_INTERVAL_MS +
+    this.setVisibility(false);
+    this.prompt('THANKS FOR PARTICIPATING', true, TRIAL_DELAY_INTERVAL_MS +
       (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe();
   }
 
@@ -315,11 +273,16 @@ export class OperantChoiceBlock extends Block {
       this.complete();
     } else {
       if (this.index == this.trials.length - 1) {
-        this.component?.setVisibility(true, 0);
+        this.setVisibility(true, 0);
         this.index = -1;
       }
       super.nextTrial();
     }
+  }
+
+  ngOnInit(): void {
+    this.createTrials();
+    this.start();
   }
 
   /***
@@ -343,12 +306,12 @@ export class OperantChoiceBlock extends Block {
    */
   retry() {
     this.attempts++;
-    this.component?.setVisibility(false);
-    this.component?.prompt('CLICK TO TRY AGAIN', false,
+    this.setVisibility(false);
+    this.prompt('CLICK TO TRY AGAIN', false,
       TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe(
       () => {
         this.feedBackShown = false;
-        this.component?.setVisibility(true, 0);
+        this.setVisibility(true, 0);
         this.nextTrial();
         this.setTimeout();
       });
@@ -356,16 +319,17 @@ export class OperantChoiceBlock extends Block {
   }
 
   setTimeout() {
+    if (!this.studyConfig) throw Error('Study configuration is undefined');
     if (this.timeout) clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
-      this.component?.trialComponent?.clearTimer();
+      this.trialComponent?.clearTimer();
       this.numTimeouts++;
       if (this.numTimeouts > this.numAllottedTimeouts) {
         this.failed();
       } else {
         this.retry();
       }
-    }, 2 * this.trials.length * (this.config.trialTimeoutSeconds * 1000 + FEEDBACK_DURATION_MS));
+    }, 2 * this.trials.length * (this.studyConfig.trialTimeoutSeconds * 1000 + FEEDBACK_DURATION_MS));
   }
 
   /**
@@ -401,12 +365,11 @@ export class OperantChoiceBlock extends Block {
    * Resets block index, binds to the view, and shows a message.
    * @param {BlockComponent} component
    */
-  start(component: BlockComponent) {
-    this.component = component;
-    component.prompt('CLICK TO START', false, TRIAL_DELAY_INTERVAL_MS)
+  start() {
+    this.prompt('CLICK TO START', false, TRIAL_DELAY_INTERVAL_MS)
       .subscribe(() => {
         this.setTimeout();
-        this.component?.setVisibility(true, 0);
+        this.setVisibility(true, 0);
         this.nextTrial();
       });
   }

@@ -8,7 +8,7 @@ import { TrialCueComponentConfig } from '../study-conditions/trial-cue-component
 import { StudyConfig } from '../study-config-form/study-config';
 
 /**
- * Generates the same config for all relation placements. Can be used in ick and non ick trials.
+ * Generates the same studyConfig for all relation placements. Can be used in ick and non ick trials.
  * @param {StudyConfig} config
  * @param {CueNonArbitrary} cue
  * @returns {TrialCueComponentConfig[]}

@@ -1,7 +1,7 @@
 import { MatDialogConfig } from '@angular/material/dialog';
 
 /**
- * Creates a full screen mat dialog config with a typed data pass through. The dialog
+ * Creates a full screen mat dialog studyConfig with a typed data pass through. The dialog
  * cannot be closed manually.
  * @param {T} data
  * @returns {{panelClass: string[], data: T | undefined, closeOnNavigation: boolean, maxHeight: string, hasBackdrop: boolean, width: string, disableClose: boolean, height: string, maxWidth: string}}

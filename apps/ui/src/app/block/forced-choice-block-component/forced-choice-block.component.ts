@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { cloneDeep, sampleSize, shuffle } from 'lodash-es';
 import { Network1And2Graph } from '../../graph/network-1-and-2-graph';
 import { CUE_NON_ARBITRARY } from '../../study-conditions/cue.constants';
-import { StudyConfig } from '../../study-config-form/study-config';
 import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
 import { Trial } from '../../trial/trial';
 import { FEEDBACK_FADE_OUT_DELAY_MS } from '../../trial/trial-correct/feedback-duration';
@@ -11,17 +10,6 @@ import { BlockComponent } from '../block.component';
 import { oneChoiceCueComponentConfig, twoChoiceCueComponentConfig } from '../cue-component-configs';
 import { TRIAL_DELAY_INTERVAL_MS } from '../trial-animation-delay';
 
-/**
- * Forced Choice Block
- *  WO-ICK: 12 trials
- *    6 identities (A:A x 2, B:B x 2, C:C x 2)
- *    6 different (A:B, B:C, C:A, B:A, C:B, A:C)
- *  W-ICK: 18 trials
- *    6 identities (A:A x 2, B:B x 2, C:C x 2)
- *    6 different (A:B, B:C, C:A, B:A, C:B, A:C)
- *    6 ick (A:D, B:E, C:F, A:F, B:D, C:E ... select 6 of 18 combinations)
- * @param {StudyConfig} config
- */
 @Component({
   selector: 'forced-choice-block',
   templateUrl: './forced-choice-block.component.html',
@@ -72,7 +60,7 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
    */
   createTrials() {
     const { studyConfig } = this; // defined locally so that typescript can properly infer types
-    if (!studyConfig) throw Error('Study config not defined');
+    if (!studyConfig) throw Error('Study studyConfig not defined');
 
     // Cue component configs are generated for the same, different and ick configs
     const sameCueComponentConfigs = oneChoiceCueComponentConfig(studyConfig, CUE_NON_ARBITRARY.same);
@@ -175,7 +163,6 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
     }
   }
 
-  // TODO: This will be removed once this is controlled by the study service
   ngOnInit(): void {
     this.start();
   }

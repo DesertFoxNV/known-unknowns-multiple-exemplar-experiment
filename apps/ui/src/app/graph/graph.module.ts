@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { InjectionToken, NgModule } from '@angular/core';
-import { randomStimulusCase } from '../study-conditions/random-stimulus-case';
+import { NgModule } from '@angular/core';
 import {
   SAME_DIFFERENT_ICK_GRAPH_CONFIG, SAME_DIFFERENT_ICK_GRAPH_CONFIG_VALUE
 } from './same-different-ick-graph-config';
@@ -13,7 +12,7 @@ import { SAME_GT_LT_ICK_GRAPH_CONFIG, SAME_GT_LT_ICK_GRAPH_CONFIG_VALUE } from '
   ],
   providers: [
     { provide: SAME_DIFFERENT_ICK_GRAPH_CONFIG, useValue: SAME_DIFFERENT_ICK_GRAPH_CONFIG_VALUE },
-    { provide: SAME_GT_LT_ICK_GRAPH_CONFIG, useValue: SAME_GT_LT_ICK_GRAPH_CONFIG_VALUE },
+    { provide: SAME_GT_LT_ICK_GRAPH_CONFIG, useValue: SAME_GT_LT_ICK_GRAPH_CONFIG_VALUE }
   ]
 })
 export class GraphModule {}

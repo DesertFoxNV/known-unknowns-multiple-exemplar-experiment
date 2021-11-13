@@ -1,17 +1,23 @@
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { shuffle } from 'lodash-es';
-import { RelationalFrameGraph } from '../graph/relational-frame-graph';
-import { StudyConfig, StudyConfigWCase } from '../study-config-form/study-config';
-import { CueSelected } from '../trial/cue-selected';
-import { FADE_OUT_DURATION_MS } from '../trial/fade-out-duration';
-import { Trial } from '../trial/trial';
-import { FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS } from '../trial/trial-correct/feedback-duration';
-import { Block } from './block';
-import { BlockComponent } from './block.component';
-import { randomizedComponentConfigs } from './cue-component-configs';
-import { TRIAL_DELAY_INTERVAL_MS } from './trial-animation-delay';
+import { Network3And4Graph } from '../../graph/network-3-and-4-graph';
+import { CueSelected } from '../../trial/cue-selected';
+import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
+import { Trial } from '../../trial/trial';
+import { FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS } from '../../trial/trial-correct/feedback-duration';
+import { BlockComponent } from '../block.component';
+import { randomizedComponentConfigs } from '../cue-component-configs';
+import { TRIAL_DELAY_INTERVAL_MS } from '../trial-animation-delay';
 
-export class TrainingNetworks extends Block {
-  graph: RelationalFrameGraph;
+@Component({
+  selector: 'training-networks-block',
+  templateUrl: './training-networks-block.component.html',
+  styleUrls: ['./training-networks-block.component.scss'],
+  animations: []
+})
+export class TrainingNetworksBlockComponent extends BlockComponent implements OnInit {
+  name = 'Training Networks';
   numAllottedTimeouts = 1;
   numIdkProbeTrials = 5;
   numProbeDuplicates = 4;
@@ -33,15 +39,16 @@ export class TrainingNetworks extends Block {
    *  W-ICK: 32 trials (12 greater than, 12 less than, 8 idk)
    *    16 mutually entailed trials (default) = mutually-entailed (B:A, C:A) * numDuplicates (4 default) * 2 networks
    *    16 combinatorially entailed trials (default) = combinatorially-entailed (B:C, C:B) * numDuplicates  (4 default) * 2 networks
-   * @param {StudyConfig} config
-   * @param graph
+   * @param dialog
+   * @param network3And4Graph
    */
   constructor(
-    config: StudyConfigWCase,
-    graph: RelationalFrameGraph
+    dialog: MatDialog,
+    private network3And4Graph: Network3And4Graph
   ) {
-    super('Training Networks', config);
-    this.graph = graph;
+    super(dialog);
+    console.log(this.name);
+    console.log(this.network3And4Graph.toString());
   }
 
   complete() {
@@ -54,15 +61,17 @@ export class TrainingNetworks extends Block {
    * @returns {unknown[] | Array<Trial[][keyof Trial[]]>}
    */
   createTrials() {
+    const { studyConfig } = this; // defined locally so that typescript can infer types
+    if (!studyConfig) throw Error('Study configuration is undefined');
 
     // Identity and trained trials are generated for each network
     let trainingTrials: Trial[] = [];
     for (let i = 0; i < this.numTrainingDuplicates; i++) {
       trainingTrials = trainingTrials.concat([
-        this.graph.identities,
-        this.graph.trained
+        this.network3And4Graph.identities,
+        this.network3And4Graph.trained
       ].flat().map(
-        stimuliComparison => ({ ...stimuliComparison, cueComponentConfigs: randomizedComponentConfigs(this.config) })
+        stimuliComparison => ({ ...stimuliComparison, cueComponentConfigs: randomizedComponentConfigs(studyConfig) })
       ));
     }
 
@@ -74,10 +83,10 @@ export class TrainingNetworks extends Block {
     let probeTrials: Trial[] = [];
     for (let i = 0; i < this.numProbeDuplicates; i++) {
       probeTrials = probeTrials.concat([
-          this.graph.mutuallyEntailed,
-          this.graph.combinatoriallyEntailed
+          this.network3And4Graph.mutuallyEntailed,
+          this.network3And4Graph.combinatoriallyEntailed
         ].flat().map(
-          stimuliComparison => ({ ...stimuliComparison, cueComponentConfigs: randomizedComponentConfigs(this.config) }))
+          stimuliComparison => ({ ...stimuliComparison, cueComponentConfigs: randomizedComponentConfigs(studyConfig) }))
       );
     }
 
@@ -117,6 +126,7 @@ export class TrainingNetworks extends Block {
    * the study is completed.
    */
   nextTrial(): void {
+    if (!this.studyConfig) throw Error('Study configuration is undefined');
     console.log('trial num', this.trialNum);
     console.log('sequential correct', this.sequentialCorrect);
     console.log('percent correct', this.percentCorrect);
@@ -133,7 +143,7 @@ export class TrainingNetworks extends Block {
 
       // If <90% correct of the number of the 24 trials presented that have a correct response (because the 8 KU trials do not have a ‘correct’ response without an IDK),
     } else if (this.trialNum === this.numProbeTrials + this.numTrainingTrials && this.percentCorrect <
-      (this.config.iCannotKnow ? 90 : 75 * .9)) {
+      (this.studyConfig.iCannotKnow ? 90 : 75 * .9)) {
       this.probesFailed++;
       console.log('probes failed', this.probesFailed);
 
@@ -153,6 +163,10 @@ export class TrainingNetworks extends Block {
     }
   }
 
+  ngOnInit(): void {
+    this.start();
+  }
+
   /***
    * Resets block index, correct count, incorrect count, and generates fresh trials.
    */
@@ -168,12 +182,12 @@ export class TrainingNetworks extends Block {
    */
   retry() {
     this.attempts++;
-    this.component?.setVisibility(false);
-    this.component?.prompt('CLICK TO TRY AGAIN', false,
+    this.setVisibility(false);
+    this.prompt('CLICK TO TRY AGAIN', false,
       TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe(
       () => {
         this.feedBackShown = false;
-        this.component?.setVisibility(true, 0);
+        this.setVisibility(true, 0);
         this.nextTrial();
         this.setTimeout();
       });
@@ -181,29 +195,28 @@ export class TrainingNetworks extends Block {
   }
 
   setTimeout() {
+    if (!this.studyConfig) throw Error('Study configuration is undefined');
     if (this.timeout) clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
-      this.component?.trialComponent?.clearTimer();
+      this.trialComponent?.clearTimer();
       this.numTimeouts++;
       if (this.numTimeouts > this.numAllottedTimeouts) {
         this.failed();
       } else {
         this.retry();
       }
-    }, 50 * this.trials.length * (this.config.trialTimeoutSeconds * 1000 + FEEDBACK_DURATION_MS));
+    }, 50 * this.trials.length * (this.studyConfig.trialTimeoutSeconds * 1000 + FEEDBACK_DURATION_MS));
   }
 
   /***
    * Resets block index, binds to the view, and shows a message.
-   * @param {BlockComponent} component
    */
-  start(component: BlockComponent) {
-    this.component = component;
+  start() {
     if (this.trials.length === 0) this.reset();
-    component.prompt('CLICK TO START', false, TRIAL_DELAY_INTERVAL_MS)
+    this.prompt('CLICK TO START', false, TRIAL_DELAY_INTERVAL_MS)
       .subscribe(() => {
         this.setTimeout();
-        this.component?.setVisibility(true, 0);
+        this.setVisibility(true, 0);
         this.nextTrial();
       });
   }

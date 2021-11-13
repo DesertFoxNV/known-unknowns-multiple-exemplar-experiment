@@ -11,8 +11,8 @@ import { HomeComponent } from './home.component';
   imports: [
     CommonModule,
     HomeRoutingModule,
+    MatButtonModule,
     MatToolbarModule,
-    MatButtonModule
   ],
   exports: [HomeComponent]
 })

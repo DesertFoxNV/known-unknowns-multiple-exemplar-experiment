@@ -23,7 +23,7 @@ export class StudyConfigService {
   ) {
   }
 
-  get config(): Observable<StudyConfig> {
+  get studyConfig(): Observable<StudyConfig> {
     return this.activatedRoute.queryParams.pipe(
       first(),
       map(studyConfigFromParams),

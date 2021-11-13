@@ -46,7 +46,7 @@ export class ReportService {
     this.add('cueType', config.cueType);
     this.add('iCannotKnow', config.iCannotKnow);
     this.add('trialTimeoutSeconds', config.trialTimeoutSeconds);
-    // this.add('stimulusCase', config.stimulusCase);
+    // this.add('stimulusCase', studyConfig.stimulusCase);
   }
 
   reset() {

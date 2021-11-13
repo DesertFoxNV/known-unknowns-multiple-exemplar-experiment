@@ -57,7 +57,6 @@ export class PreTestBlockComponent extends BlockComponent implements OnInit {
     return shuffle(this.trials);
   }
 
-  // TODO: This will be removed once this is controlled by the study service
   ngOnInit(): void {
     this.start();
   }

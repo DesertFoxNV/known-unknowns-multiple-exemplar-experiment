@@ -8,21 +8,7 @@
   </mat-card-actions>
 </mat-card>
 
-<ng-container *ngIf="studyConfigSvc.config | async as studyConfig">
-
-  <!--  <pre-test-block-->
-  <!--    (completed)="complete()"-->
-  <!--    [ngClass]="{'d-none': showInstructions}"-->
-  <!--    [studyConfig]="studyConfig"-->
-  <!--  ></pre-test-block>-->
-
-  <forced-choice-block
-    (completed)="complete()"
-    [ngClass]="{'d-none': showInstructions}"
-    [studyConfig]="studyConfig"
-  ></forced-choice-block>
-
-</ng-container>
+<ng-container #container></ng-container>
 
 
 
