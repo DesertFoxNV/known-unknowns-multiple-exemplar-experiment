@@ -18,12 +18,12 @@ button.trial-item {
 
 .trial-item {
   align-items: center;
-  aspect-ratio: 2;
+  min-height: 75px;
+  height: 10vw;
   background-color: white;
   background-size: cover;
   border: unset;
   display: flex;
-  min-height: 0.000001vw; // https://stackoverflow.com/questions/63965489/safari-14-min-max-clamp-not-working-with-vw-and-px-values
   border-radius: clamp(3px, 1vw, 15px);
   justify-content: center;
   margin: 1vw;
@@ -35,7 +35,6 @@ button.trial-item {
   }
 
   strong {
-    min-height: 0.000001vw; // https://stackoverflow.com/questions/63965489/safari-14-min-max-clamp-not-working-with-vw-and-px-values
     font-size: clamp(1rem, 2vw, 4rem);
     white-space: nowrap;
   }
@@ -43,7 +42,6 @@ button.trial-item {
 
 .dynamic-text {
   font-weight: bold;
-  min-height: 0.000001vw; // https://stackoverflow.com/questions/63965489/safari-14-min-max-clamp-not-working-with-vw-and-px-values
   font-size: clamp(1rem, 2vw, 4rem);
   white-space: nowrap;
 }
