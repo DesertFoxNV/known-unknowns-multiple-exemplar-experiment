@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1636993111911,
+  "timestamp": 1636993624028,
   "index": "./index.html",
   "assetGroups": [
     {
@@ -14,12 +14,12 @@
         "./134.83b03d26521fe4a3cbac.js",
         "./275.5185348b10dc4efe3b23.js",
         "./813.716d093a59cc1375a868.js",
-        "./85.e3647536ab087b11661c.js",
+        "./85.2519d3b8b635ac8844ad.js",
         "./favicon.ico",
         "./index.html",
         "./main.2160635df85232a18161.js",
         "./polyfills.0d484ae9c32f0384cc2e.js",
-        "./runtime.8c6945bbac79bd52c265.js",
+        "./runtime.957a41e3e0cdcbf10cda.js",
         "./styles.84b9d938fb4d486d544e.css"
       ],
       "patterns": []
@@ -55,7 +55,7 @@
     "./134.83b03d26521fe4a3cbac.js": "c325b8a56008e5fc5adfce8df7b016c7ebdf4eb8",
     "./275.5185348b10dc4efe3b23.js": "c980d833d23437d9db7b85e5a9ffdea7d43a2ae3",
     "./813.716d093a59cc1375a868.js": "a39812508d7d9364d987106f0f0c79b8b8b4fb8e",
-    "./85.e3647536ab087b11661c.js": "7ad7f425d3ced43bb31b707fb054f9ace0a2b714",
+    "./85.2519d3b8b635ac8844ad.js": "f1b3d78ce04784f13273ac14113957a078fec98a",
     "./assets/button-1.svg": "90e0f5867dbe0e7b4658a7187bf124cc8185b369",
     "./assets/button-2.svg": "40d10bb9fbb7d746a7884ec1ea72cf51f5d72979",
     "./assets/button-3.svg": "0c194f2236f9dc1501f21e20c310ca4449ecb991",
@@ -71,10 +71,10 @@
     "./assets/time-expired.mp3": "040b262b25d7fdfdb841887653fdf124ba42aee5",
     "./assets/wrong.mp3": "18ec6c7fa7362df0c0e3b2cec6a2d600b14c6d8a",
     "./favicon.ico": "9f1ea4fcbc6156946ada68cc4f69ae4a17513625",
-    "./index.html": "bc8b16c230e3f789d72a43a35262a833ddbe94a1",
+    "./index.html": "eb3b9f5a77e45b9afcae41c6f4c7b507fcaabc05",
     "./main.2160635df85232a18161.js": "503ab002fef51d02d4d2bdfd5049eaf04ba3f4ed",
     "./polyfills.0d484ae9c32f0384cc2e.js": "61af46d6fa84d5a2e506aa80574514c1fc59eb12",
-    "./runtime.8c6945bbac79bd52c265.js": "ec0f5054ba548ee5c72f7d7ff90eb5b9da8e5a21",
+    "./runtime.957a41e3e0cdcbf10cda.js": "e3165dfc96e58532fe72c2467eb46749a7e07130",
     "./styles.84b9d938fb4d486d544e.css": "81a8458d7699db595deb42881c15f22f813006cb"
   },
   "navigationUrls": [
