@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { timer } from 'rxjs';
 import { fadeIn } from '../../animations/fade-in.animation';
 import { fadeOut } from '../../animations/fade-out.animation';
@@ -19,6 +20,9 @@ export class TrialStimulusComponent {
   @Input() animationDelay = 0;
   backgroundImage?: string;
   cue?: string;
+  isDesktop = this.deviceDetectorSvc.isDesktop();
+
+  constructor(private deviceDetectorSvc: DeviceDetectorService) {}
 
   async set(cue: string) {
     this.animate = 'fade-out';

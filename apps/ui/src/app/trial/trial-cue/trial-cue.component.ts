@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { timer } from 'rxjs';
 import { fadeIn } from '../../animations/fade-in.animation';
 import { fadeOut } from '../../animations/fade-out.animation';
@@ -20,6 +21,9 @@ export class TrialCueComponent {
   config?: TrialCueComponentConfig;
   disabled = false;
   @Output() selected = new EventEmitter<TrialCueComponentConfig>();
+  isDesktop = this.deviceDetectorSvc.isDesktop();
+
+  constructor(private deviceDetectorSvc: DeviceDetectorService) {}
 
   select() {
     this.disabled = true;

@@ -6,7 +6,7 @@
   onclick="blur()"
   matRipple
   [matRippleDisabled]="disabled"
-  [ngClass]="{'d-none': config === undefined}"
+  [ngClass]="{'d-none': config === undefined, 'hover-able': isDesktop}"
   [ngStyle]="{'pointer-events': config?.value ? 'all' : 'none' }"
   [style.backgroundImage]="config?.fileName"
 >
