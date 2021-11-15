@@ -285,6 +285,13 @@
   dependencies:
     tslib "^2.2.0"
 
+"@angular/service-worker@^12.2.0":
+  version "12.2.13"
+  resolved "https://registry.yarnpkg.com/@angular/service-worker/-/service-worker-12.2.13.tgz#534f0293a8249efb9a6c6b9df4105f7625351f71"
+  integrity sha512-ersNQ11dgAWWKntdnhUEFoK27MH5sqtR4/K+SYnbNseOhWCbz7xYTEKJgwX2KBLdRy6T0MYEHQeAw5jiou8hVA==
+  dependencies:
+    tslib "^2.2.0"
+
 "@assemblyscript/loader@^0.10.1":
   version "0.10.1"
   resolved "https://registry.yarnpkg.com/@assemblyscript/loader/-/loader-0.10.1.tgz#70e45678f06c72fa2e350e8553ec4a4d72b92e06"
@@ -7713,6 +7720,13 @@ neo-async@^2.6.2:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
+
+ngx-device-detector@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/ngx-device-detector/-/ngx-device-detector-2.1.1.tgz#a22a9477f382d02edf28786c5609878a57d2834f"
+  integrity sha512-eTuQLAmc2XRRbxDnO9h1QVV0piSyPjstXT5G8fo1rvXy7Ly3MAiniEM2WvTiN7FjtY/VdhEeuBmu/ErSm5cLJg==
+  dependencies:
+    tslib "^2.0.0"
 
 nice-napi@^1.0.2:
   version "1.0.2"

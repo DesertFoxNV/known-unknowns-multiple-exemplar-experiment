@@ -8,15 +8,12 @@ import { catchError, first, map, tap } from 'rxjs/operators';
 import { studyConfigFromParams } from '../param-conversions/study-config-from-params';
 import { ReportService } from '../report/report.service';
 import { CUE_TYPE } from '../study-conditions/cue.constants';
-import { randomStimulusCase } from '../study-conditions/random-stimulus-case';
-import { StudyConfig, StudyConfigWCase } from './study-config';
+import { StudyConfig } from './study-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StudyConfigService {
-  stimulusCase = randomStimulusCase();
-
   constructor(
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
@@ -26,13 +23,14 @@ export class StudyConfigService {
   ) {
   }
 
-  config$(): Observable<StudyConfigWCase> {
+  get studyConfig(): Observable<StudyConfig> {
     return this.activatedRoute.queryParams.pipe(
       first(),
       map(studyConfigFromParams),
-      tap((config) => this.isConfigValid(config)),
-      map(config => ({ ...config, stimulusCase: this.stimulusCase })),
-      tap(configWCase => this.reportSvc.addConfig(configWCase)),
+      tap((config) => {
+        this.isConfigValid(config);
+        this.reportSvc.addConfig(config);
+      }),
       catchError((err) => {
         this.snackBarSvc.error(err.message);
         this.router.navigate([`../`]).then();

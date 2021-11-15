@@ -3,6 +3,7 @@
   [@fadeOut]="animate === 'fade-out'"
   class="trial-item dynamic-text"
   (tap)="!disabled && select()"
+  onclick="blur()"
   matRipple
   [matRippleDisabled]="disabled"
   [ngClass]="{'d-none': config === undefined}"
@@ -10,4 +11,5 @@
   [style.backgroundImage]="config?.fileName"
 >
   {{config?.isArbitrary ? '&nbsp;' : config?.viewValue || ''}}
+
 </button>

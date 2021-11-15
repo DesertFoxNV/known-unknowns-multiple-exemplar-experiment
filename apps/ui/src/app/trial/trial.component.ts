@@ -1,11 +1,10 @@
-import { AfterViewInit, Component, EventEmitter, Output, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output, QueryList, ViewChildren } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { shuffle } from 'lodash-es';
-import { interval, Subscription, timer } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { takeWhile, tap } from 'rxjs/operators';
 import { TRIAL_ANIMATION_DELAY_MS, TRIAL_ANIMATION_DURATION_MS } from '../block/trial-animation-delay';
-import { StudyConditionService } from '../study-conditions/study-condition.service';
 import { TrialCueComponentConfig } from '../study-conditions/trial-cue-component-config';
+import { StudyConfig } from '../study-config-form/study-config';
 import { Trial } from './trial';
 import { TrialCueComponent } from './trial-cue/trial-cue.component';
 import { TrialStimulusComponent } from './trial-stimulus/trial-stimulus.component';
@@ -21,11 +20,13 @@ export class TrialComponent implements AfterViewInit {
   complete = false;
   @Output() completed = new EventEmitter<{ cue: TrialCueComponentConfig, position: number }|undefined>();
   secondsInTrial = 0;
+  @Input() studyConfig?: StudyConfig;
   timerSub: Subscription|undefined;
   @ViewChildren(TrialCueComponent) trialCueComponents!: QueryList<TrialCueComponent>;
   @ViewChildren(TrialStimulusComponent) trialStimulusComponents!: QueryList<TrialStimulusComponent>;
 
-  constructor(private conditionSvc: StudyConditionService) {
+  clearTimer() {
+    if (this.timerSub) this.timerSub.unsubscribe();
   }
 
   ngAfterViewInit(): void {
@@ -38,19 +39,18 @@ export class TrialComponent implements AfterViewInit {
     this.completed.emit({ cue, position });
   }
 
-  clearTimer() {
-    if (this.timerSub) this.timerSub.unsubscribe();
-  }
-
   setTimer() {
+    const { studyConfig } = this; // defined locally so that typescript can properly infer types
+    if (!studyConfig) throw Error('Study configuration is undefined');
+
     if (this.timerSub) this.timerSub.unsubscribe();
     this.secondsInTrial = 0;
 
     this.timerSub = timer(TRIAL_ANIMATION_DURATION_MS, 1000).pipe(
-      takeWhile(() => this.secondsInTrial < this.conditionSvc.trialTimeoutSeconds),
+      takeWhile(() => this.secondsInTrial < studyConfig.trialTimeoutSeconds),
       tap(() => {
         this.secondsInTrial++;
-        if (this.secondsInTrial == this.conditionSvc.trialTimeoutSeconds) this.completed.emit();
+        if (this.secondsInTrial == studyConfig.trialTimeoutSeconds) this.completed.emit();
       }),
       untilDestroyed(this)
     ).subscribe();
@@ -60,6 +60,7 @@ export class TrialComponent implements AfterViewInit {
     console.log(trial);
     this.setTimer();
     for (const [i, node] of trial.stimuli.entries()) this.trialStimulusComponents.get(i)?.set(node.value);
-    for (let i = 0; i < this.trialCueComponents.length; i++) this.trialCueComponents.get(i)?.set(trial.cueComponentConfigs[i]);
+    for (let i = 0; i < this.trialCueComponents.length; i++) this.trialCueComponents.get(i)?.set(
+      trial.cueComponentConfigs[i]);
   };
 }

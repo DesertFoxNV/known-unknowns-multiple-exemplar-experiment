@@ -2,6 +2,7 @@ import { cloneDeep } from 'lodash-es';
 import { Digraph } from './digraph';
 import { RelationType } from './relation-type';
 import { RelationalEdge } from './relational-edge';
+import { RelationalFrameGraphConfig } from './relational-frame-graph-config';
 import { RelationalNode } from './relational-node';
 import { StimuliComparison } from './stimuli-comparison';
 
@@ -9,21 +10,17 @@ export class RelationalFrameGraph extends Digraph<RelationalNode, RelationalEdge
 
   combinatorialDictionary: { [key: string]: { [key: string]: string }; };
   includeRelationsBetweenNetworks = false;
-  reverseDictionary: { [key: string]: string };
+  mutualDictionary: { [key: string]: string };
   selfRelation: string;
   unknownRelation: string;
 
-  constructor(
-    selfRelation: string,
-    unknownRelation: string,
-    reverseDictionary: { [key: string]: string },
-    combinatorialDictionary: { [key: string]: { [key: string]: string }; }
+  constructor(config: RelationalFrameGraphConfig
   ) {
     super();
-    this.selfRelation = selfRelation;
-    this.unknownRelation = unknownRelation;
-    this.reverseDictionary = reverseDictionary;
-    this.combinatorialDictionary = combinatorialDictionary;
+    this.selfRelation = config.selfRelation;
+    this.unknownRelation = config.unknownRelation;
+    this.mutualDictionary = config.mutualDictionary;
+    this.combinatorialDictionary = config.combinatorialDictionary;
   }
 
   get combinatoriallyEntailed() {
@@ -107,7 +104,7 @@ export class RelationalFrameGraph extends Digraph<RelationalNode, RelationalEdge
     if (!this.hasNode(src)) throw Error(`Add edge failed source node "${src.toString()}" is not in graph.`);
     if (!this.hasNode(dest)) throw Error(
       `Add edge failed destination node "${dest.toString()}" is not in graph.`);
-    if (!this.reverseDictionary?.[edge.relation]) throw Error(
+    if (!this.mutualDictionary?.[edge.relation]) throw Error(
       `Could not find inverse of relation ${edge.relation}`);
     if (this.edges.get(edge.src)?.some(e => e.src === src && e.dest === dest)) throw Error(
       `Add edge failed an edge already exists with src ${src.toString()} => dest ${dest.toString()}`);
@@ -116,7 +113,7 @@ export class RelationalFrameGraph extends Digraph<RelationalNode, RelationalEdge
       new RelationalEdge(
         edge.dest,
         edge.src,
-        this.reverseDictionary[edge.relation],
+        this.mutualDictionary[edge.relation],
         RelationType.mutuallyEntailed)));
   }
 

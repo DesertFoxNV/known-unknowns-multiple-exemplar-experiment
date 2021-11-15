@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { timer } from 'rxjs';
 import { fadeOut } from '../../animations/fade-out.animation';
-import { delay } from '../../trial/delay';
 import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
 
 export interface BlockButtonDialogData {
@@ -28,7 +28,7 @@ export class BlockButtonDialogComponent {
 
   async close() {
     this.animated = true;
-    await delay(FADE_OUT_DURATION_MS);
+    await timer(FADE_OUT_DURATION_MS).toPromise();
     this.ref.close();
   }
 

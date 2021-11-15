@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@known-unknowns-multiple-exemplar-experiment/ng-mat-service-worker": [
+        "libs/ng/mat-service-worker/src/index.ts"
+      ],
       "@known-unknowns-multiple-exemplar-experiment/ng/mat-snack-bar": [
         "libs/ng/mat-snack-bar/src/index.ts"
       ],

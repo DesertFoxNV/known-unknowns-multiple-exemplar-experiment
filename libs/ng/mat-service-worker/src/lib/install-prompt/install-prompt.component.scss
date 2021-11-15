@@ -1,0 +1,19 @@
+#install-prompt {
+  align-items: center;
+  display: -ms-flexbox;
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+
+  div {
+    margin: 0 0 0 0.25em;
+
+    h2 {
+      margin: 0 0 0 0em;
+    }
+
+    span {
+      font-size: 75%;
+    }
+  }
+}

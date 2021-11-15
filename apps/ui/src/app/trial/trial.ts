@@ -3,7 +3,6 @@ import { StimuliComparison } from '../graph/stimuli-comparison';
 import { TrialCueComponentConfig } from '../study-conditions/trial-cue-component-config';
 import { CueSelected } from './cue-selected';
 
-// TODO: Remove any type
 export interface Trial extends StimuliComparison<RelationalNode> {
   cueComponentConfigs: TrialCueComponentConfig[];
 }

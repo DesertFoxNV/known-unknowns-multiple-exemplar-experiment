@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { timer } from 'rxjs';
 import { fadeIn } from '../../animations/fade-in.animation';
 import { fadeOut } from '../../animations/fade-out.animation';
 import { TrialCueComponentConfig } from '../../study-conditions/trial-cue-component-config';
-import { delay } from '../delay';
 import { FADE_OUT_DURATION_MS } from '../fade-out-duration';
 
 @Component({
@@ -29,7 +29,7 @@ export class TrialCueComponent {
   async set(config: TrialCueComponentConfig) {
     this.animate = 'fade-out';
     // This delay prevents the cues from changing mid animation.
-    await delay(FADE_OUT_DURATION_MS);
+    await timer(FADE_OUT_DURATION_MS).toPromise();
     this.disabled = false;
     this.config = config;
     this.animate = 'fade-in';
