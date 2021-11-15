@@ -1,6 +1,31 @@
 {
   "version": 1,
   "projects": {
+    "ng-mat-service-worker": {
+      "projectType": "library",
+      "root": "libs/ng/mat-service-worker",
+      "sourceRoot": "libs/ng/mat-service-worker/src",
+      "prefix": "known-unknowns-multiple-exemplar-experiment",
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/ng/mat-service-worker"],
+          "options": {
+            "jestConfig": "libs/ng/mat-service-worker/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/ng/mat-service-worker/src/**/*.ts",
+              "libs/ng/mat-service-worker/src/**/*.html"
+            ]
+          }
+        }
+      }
+    },
     "ng-mat-snack-bar": {
       "projectType": "library",
       "root": "libs/ng/mat-snack-bar",
@@ -67,12 +92,18 @@
             "polyfills": "apps/ui/src/polyfills.ts",
             "tsConfig": "apps/ui/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": ["apps/ui/src/favicon.ico", "apps/ui/src/assets"],
+            "assets": [
+              "apps/ui/src/favicon.ico",
+              "apps/ui/src/assets",
+              "apps/ui/src/manifest.webmanifest"
+            ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "apps/ui/src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "serviceWorker": true,
+            "ngswConfigPath": "apps/ui/ngsw-config.json"
           },
           "configurations": {
             "production": {

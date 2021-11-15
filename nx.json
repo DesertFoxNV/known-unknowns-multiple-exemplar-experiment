@@ -28,6 +28,9 @@
     ]
   },
   "projects": {
+    "ng-mat-service-worker": {
+      "tags": []
+    },
     "ng-mat-snack-bar": {
       "tags": []
     },
