@@ -22,20 +22,23 @@ export class TrialComponent implements AfterViewInit {
   secondsInTrial = 0;
   @Input() studyConfig?: StudyConfig;
   timerSub: Subscription|undefined;
-  @ViewChildren(TrialCueComponent) trialCueComponents!: QueryList<TrialCueComponent>;
-  @ViewChildren(TrialStimulusComponent) trialStimulusComponents!: QueryList<TrialStimulusComponent>;
+  @ViewChildren(TrialCueComponent) trialCueComponents?: QueryList<TrialCueComponent>;
+  @ViewChildren(TrialStimulusComponent) trialStimulusComponents?: QueryList<TrialStimulusComponent>;
 
   clearTimer() {
     if (this.timerSub) this.timerSub.unsubscribe();
   }
 
   ngAfterViewInit(): void {
+    if (!this.trialCueComponents) throw Error('Trial cue components are undefined');
+    if (!this.trialStimulusComponents) throw Error('Trial stimulus components are undefined');
     this.trialCueComponents.changes.pipe(untilDestroyed(this)).subscribe();
     this.trialStimulusComponents.changes.pipe(untilDestroyed(this)).subscribe();
   }
 
   selected(cue: TrialCueComponentConfig, position: number) {
-    this.timerSub?.unsubscribe();
+    this.clearTimer();
+    this.complete = true;
     this.completed.emit({ cue, position });
   }
 
@@ -43,21 +46,25 @@ export class TrialComponent implements AfterViewInit {
     const { studyConfig } = this; // defined locally so that typescript can properly infer types
     if (!studyConfig) throw Error('Study configuration is undefined');
 
-    if (this.timerSub) this.timerSub.unsubscribe();
+    this.clearTimer();
     this.secondsInTrial = 0;
 
     this.timerSub = timer(TRIAL_ANIMATION_DURATION_MS, 1000).pipe(
-      takeWhile(() => this.secondsInTrial < studyConfig.trialTimeoutSeconds),
+      takeWhile(() => this.secondsInTrial < studyConfig.trialTimeoutSeconds && !this.complete),
       tap(() => {
         this.secondsInTrial++;
-        if (this.secondsInTrial == studyConfig.trialTimeoutSeconds) this.completed.emit();
+        if (this.secondsInTrial == studyConfig.trialTimeoutSeconds && !this.complete) this.completed.emit();
       }),
       untilDestroyed(this)
     ).subscribe();
   }
 
   show(trial: Trial) {
+    if (!this.trialCueComponents) throw Error('Trial cue components are undefined');
+    if (!this.trialStimulusComponents) throw Error('Trial stimulus components are undefined');
     console.log(trial);
+
+    this.complete = false;
     this.setTimer();
     for (const [i, node] of trial.stimuli.entries()) this.trialStimulusComponents.get(i)?.set(node.value);
     for (let i = 0; i < this.trialCueComponents.length; i++) this.trialCueComponents.get(i)?.set(
