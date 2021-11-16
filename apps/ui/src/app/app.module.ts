@@ -34,7 +34,7 @@ const listenForInstallEvent: Provider = {
     MatRippleModule,
     MatServiceWorkerModule.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: environment.production,
+      enabled: true,
       registrationStrategy: 'registerImmediately'
     })
   ],
