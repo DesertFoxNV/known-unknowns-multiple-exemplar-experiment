@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { shuffle } from 'lodash-es';
 import { Network3And4Graph } from '../../graph/network-3-and-4-graph';
-import { CueSelected } from '../../trial/cue-selected';
+import { ReportService } from '../../report/report.service';
 import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
 import { Trial } from '../../trial/trial';
 import { FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS } from '../../trial/trial-correct/feedback-duration';
+import { TrialCompleted } from '../../trial/trial.component';
 import { BlockComponent } from '../block.component';
 import { randomizedComponentConfigs } from '../cue-component-configs';
 import { TRIAL_DELAY_INTERVAL_MS } from '../trial-animation-delay';
@@ -27,7 +28,6 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
   numTrainingTrials = 20;
   probeFailuresAllotted = 2;
   probesFailed = 0;
-  sequentialCorrect = 0;
   sequentialCorrectTarget = 23;
   timeout?: NodeJS.Timeout;
 
@@ -40,13 +40,15 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
    *    16 mutually entailed trials (default) = mutually-entailed (B:A, C:A) * numDuplicates (4 default) * 2 networks
    *    16 combinatorially entailed trials (default) = combinatorially-entailed (B:C, C:B) * numDuplicates  (4 default) * 2 networks
    * @param dialog
+   * @param reportSvc
    * @param network3And4Graph
    */
   constructor(
     dialog: MatDialog,
+    reportSvc: ReportService,
     private network3And4Graph: Network3And4Graph
   ) {
-    super(dialog);
+    super(dialog, reportSvc);
     console.log(this.name);
     console.log(this.network3And4Graph.toString());
   }
@@ -105,10 +107,10 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
     return this.index < this.numTrainingTrials;
   }
 
-  grade(selected: CueSelected|undefined): 'CORRECT'|'WRONG' {
-    const isCorrect = selected?.cue.value === this.trial.relation;
+  grade(selected: TrialCompleted) {
+    const isCorrect = selected?.cue?.value === this.trial.relation;
 
-    if (selected?.cue.value === this.trial.relation) {
+    if (selected?.cue?.value === this.trial.relation) {
       this.correct++;
       this.sequentialCorrect++;
     } else {
@@ -136,6 +138,7 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
     // if training is passed reset the training failures allotted
     if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100 && this.sequentialCorrect !==
       this.sequentialCorrectTarget) {
+      this.incrementTrainingAttempts();
       console.log('training failed');
 
       this.reset();
@@ -145,6 +148,7 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
     } else if (this.trialNum === this.numProbeTrials + this.numTrainingTrials && this.percentCorrect <
       (this.studyConfig.iCannotKnow ? 90 : 75 * .9)) {
       this.probesFailed++;
+      this.incrementProbeAttempts();
       console.log('probes failed', this.probesFailed);
 
       // If probes failed equals the max probe failures allowed, the block completes, otherwise the participant retries the block
@@ -181,9 +185,9 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
    * User is shown a retry block, which they have to click to continue.
    */
   retry() {
-    this.attempts++;
+    this.incrementAttempt();
     this.setVisibility(false);
-    this.prompt('CLICK TO TRY AGAIN', false,
+    this.prompt(this.retryInstructions, false,
       TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe(
       () => {
         this.feedBackShown = false;
@@ -197,6 +201,8 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
   setTimeout() {
     if (!this.studyConfig) throw Error('Study configuration is undefined');
     if (this.timeout) clearTimeout(this.timeout);
+    this.failSafeDuration = 50 * this.trials.length *
+      (this.studyConfig.trialTimeoutSeconds * 1000 + FEEDBACK_DURATION_MS);
     this.timeout = setTimeout(() => {
       this.trialComponent?.clearTimer();
       this.numTimeouts++;
@@ -213,7 +219,7 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
    */
   start() {
     if (this.trials.length === 0) this.reset();
-    this.prompt('CLICK TO START', false, TRIAL_DELAY_INTERVAL_MS)
+    this.prompt(this.startInstructions, false, TRIAL_DELAY_INTERVAL_MS)
       .subscribe(() => {
         this.setTimeout();
         this.setVisibility(true, 0);

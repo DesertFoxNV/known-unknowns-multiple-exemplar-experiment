@@ -4,11 +4,12 @@ import { isEqual, shuffle } from 'lodash-es';
 import { Network5And6Graph } from '../../graph/network-5-and-6-graph';
 import { RelationalNode } from '../../graph/relational-node';
 import { StimuliComparison } from '../../graph/stimuli-comparison';
+import { ReportService } from '../../report/report.service';
 import { CueNonArbitrary, CUES_NON_ARBITRARY_W_ICK } from '../../study-conditions/cue.constants';
-import { CueSelected } from '../../trial/cue-selected';
 import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
 import { Trial } from '../../trial/trial';
 import { FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS } from '../../trial/trial-correct/feedback-duration';
+import { TrialCompleted } from '../../trial/trial.component';
 import { BlockComponent } from '../block.component';
 import { randomizedComponentConfigs } from '../cue-component-configs';
 import { TRIAL_DELAY_INTERVAL_MS } from '../trial-animation-delay';
@@ -24,7 +25,6 @@ const lcm = (a: number, b: number) => a * b / gcd(a, b);
 })
 export class OperantChoiceBlockComponent extends BlockComponent implements OnInit {
   configBalanceDividedByGcd: Record<CueNonArbitrary, number>|undefined;
-  containsSequentialTriplicates = false;
   correctCount: Record<CueNonArbitrary, number> = {
     different: 0,
     same: 0,
@@ -43,9 +43,10 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
 
   constructor(
     dialog: MatDialog,
+    reportSvc: ReportService,
     private network5And6Graph: Network5And6Graph
   ) {
-    super(dialog);
+    super(dialog, reportSvc);
     console.log(this.name);
     console.log(this.network5And6Graph.toString());
   }
@@ -195,15 +196,6 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
   }
 
   /**
-   * Participants that fail the block criterion are thanked for their participation and the study is completed.
-   */
-  failed() {
-    this.setVisibility(false);
-    this.prompt('THANKS FOR PARTICIPATING', true, TRIAL_DELAY_INTERVAL_MS +
-      (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe();
-  }
-
-  /**
    * Feedback is enabled in the operant choice block.
    * @returns {boolean}
    */
@@ -211,10 +203,10 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
     return true;
   }
 
-  grade(selected: CueSelected|undefined): 'CORRECT'|'WRONG'|null {
-    const isCorrect = selected?.cue.value === this.trial.relation;
+  grade(selected: TrialCompleted) {
+    const isCorrect = selected?.cue?.value === this.trial.relation;
 
-    if (selected?.cue.value === this.trial.relation) {
+    if (selected?.cue?.value === this.trial.relation) {
       this.correct++;
       this.sequentialCorrect++;
       this.correctCount[selected.cue.value]++;
@@ -254,8 +246,8 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
     console.log('correct', this.correctCount);
     console.log('sequentialCorrect', this.sequentialCorrect);
 
-    if (this.correctShownTargets && isCorrect && selected) {
-      return this.correctCount[selected.cue.value] <= this.correctShownTargets[selected.cue.value] ? 'CORRECT' : null;
+    if (this.correctShownTargets && isCorrect && selected?.cue) {
+      return this.correctCount[selected.cue.value] <= this.correctShownTargets[selected.cue.value] ? 'CORRECT' : undefined;
     } else {
       return isCorrect ? 'CORRECT' : 'WRONG';
     }
@@ -305,9 +297,9 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
    * User is shown a retry block, which they have to click to continue.
    */
   retry() {
-    this.attempts++;
+    this.incrementAttempt();
     this.setVisibility(false);
-    this.prompt('CLICK TO TRY AGAIN', false,
+    this.prompt(this.retryInstructions, false,
       TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe(
       () => {
         this.feedBackShown = false;
@@ -321,6 +313,8 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
   setTimeout() {
     if (!this.studyConfig) throw Error('Study configuration is undefined');
     if (this.timeout) clearTimeout(this.timeout);
+    this.failSafeDuration = 2 * this.trials.length *
+      (this.studyConfig.trialTimeoutSeconds * 1000 + FEEDBACK_DURATION_MS);
     this.timeout = setTimeout(() => {
       this.trialComponent?.clearTimer();
       this.numTimeouts++;
@@ -329,7 +323,7 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
       } else {
         this.retry();
       }
-    }, 2 * this.trials.length * (this.studyConfig.trialTimeoutSeconds * 1000 + FEEDBACK_DURATION_MS));
+    }, this.failSafeDuration);
   }
 
   /**
@@ -366,7 +360,7 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
    * @param {BlockComponent} component
    */
   start() {
-    this.prompt('CLICK TO START', false, TRIAL_DELAY_INTERVAL_MS)
+    this.prompt(this.startInstructions, false, TRIAL_DELAY_INTERVAL_MS)
       .subscribe(() => {
         this.setTimeout();
         this.setVisibility(true, 0);

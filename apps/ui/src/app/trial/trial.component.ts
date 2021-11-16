@@ -9,6 +9,13 @@ import { Trial } from './trial';
 import { TrialCueComponent } from './trial-cue/trial-cue.component';
 import { TrialStimulusComponent } from './trial-stimulus/trial-stimulus.component';
 
+export interface TrialCompleted {
+  completedAt: Date;
+  cue?: TrialCueComponentConfig,
+  position?: number
+  startedAt: Date;
+}
+
 @UntilDestroy()
 @Component({
   selector: 'trial',
@@ -18,8 +25,9 @@ import { TrialStimulusComponent } from './trial-stimulus/trial-stimulus.componen
 export class TrialComponent implements AfterViewInit {
   animationDelayMs = TRIAL_ANIMATION_DELAY_MS;
   complete = false;
-  @Output() completed = new EventEmitter<{ cue: TrialCueComponentConfig, position: number }|undefined>();
+  @Output() completed = new EventEmitter<TrialCompleted>();
   secondsInTrial = 0;
+  startedAt: Date|undefined;
   @Input() studyConfig?: StudyConfig;
   timerSub: Subscription|undefined;
   @ViewChildren(TrialCueComponent) trialCueComponents?: QueryList<TrialCueComponent>;
@@ -36,10 +44,11 @@ export class TrialComponent implements AfterViewInit {
     this.trialStimulusComponents.changes.pipe(untilDestroyed(this)).subscribe();
   }
 
-  selected(cue: TrialCueComponentConfig, position: number): void {
+  selected(cue?: TrialCueComponentConfig, position?: number): void {
+    if (!this.startedAt) throw Error('Started at date is undefined');
     this.clearTimer();
     this.complete = true;
-    this.completed.emit({ cue, position });
+    this.completed.emit({ cue, position, startedAt: this.startedAt, completedAt: new Date() });
   }
 
   setTimer() {
@@ -53,7 +62,7 @@ export class TrialComponent implements AfterViewInit {
       takeWhile(() => this.secondsInTrial < studyConfig.trialTimeoutSeconds && !this.complete),
       tap(() => {
         this.secondsInTrial++;
-        if (this.secondsInTrial == studyConfig.trialTimeoutSeconds && !this.complete) this.completed.emit();
+        if (this.secondsInTrial === studyConfig.trialTimeoutSeconds && !this.complete) this.selected();
       }),
       untilDestroyed(this)
     ).subscribe();
@@ -62,8 +71,7 @@ export class TrialComponent implements AfterViewInit {
   show(trial: Trial) {
     if (!this.trialCueComponents) throw Error('Trial cue components are undefined');
     if (!this.trialStimulusComponents) throw Error('Trial stimulus components are undefined');
-    console.log(trial);
-
+    this.startedAt = new Date();
     this.complete = false;
     this.setTimer();
     for (const [i, node] of trial.stimuli.entries()) this.trialStimulusComponents.get(i)?.set(node.value);

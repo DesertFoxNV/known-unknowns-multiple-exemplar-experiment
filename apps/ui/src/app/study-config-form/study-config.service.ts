@@ -27,10 +27,7 @@ export class StudyConfigService {
     return this.activatedRoute.queryParams.pipe(
       first(),
       map(studyConfigFromParams),
-      tap((config) => {
-        this.isConfigValid(config);
-        this.reportSvc.addConfig(config);
-      }),
+      tap((config) => this.isConfigValid(config)),
       catchError((err) => {
         this.snackBarSvc.error(err.message);
         this.router.navigate([`../`]).then();

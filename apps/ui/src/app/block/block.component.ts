@@ -2,14 +2,15 @@ import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, timer } from 'rxjs';
 import { first, switchMap } from 'rxjs/operators';
+import { ReportService } from '../report/report.service';
 import { StudyConfig } from '../study-config-form/study-config';
 import { CueSelected } from '../trial/cue-selected';
 import { FADE_OUT_DURATION_MS } from '../trial/fade-out-duration';
-import { CompletedTrial, Trial } from '../trial/trial';
+import { Trial } from '../trial/trial';
 import { FeedBackDialogData } from '../trial/trial-correct/feed-back-dialog.data';
 import { FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS } from '../trial/trial-correct/feedback-duration';
 import { TrialFeedbackDialogComponent } from '../trial/trial-correct/trial-feedback-dialog.component';
-import { TrialComponent } from '../trial/trial.component';
+import { TrialCompleted, TrialComponent } from '../trial/trial.component';
 import { BlockButtonDialogComponent, BlockButtonDialogData } from './block-button-dialog/block-button-dialog.component';
 import { fullScreenDialogWithData } from './full-screen-dialog-with-data';
 import { TRIAL_ANIMATION_DURATION_MS, TRIAL_DELAY_INTERVAL_MS } from './trial-animation-delay';
@@ -21,26 +22,55 @@ import { TRIAL_ANIMATION_DURATION_MS, TRIAL_DELAY_INTERVAL_MS } from './trial-an
   animations: []
 })
 export class BlockComponent {
-  attempts = 0;
   @Output() completed = new EventEmitter();
-  @Input() studyConfig?: StudyConfig;
   completedAt?: Date;
+  containsSequentialTriplicates = false;
   correct = 0;
+  failSafeDuration = 0;
   feedBackShown = false;
-  history: CompletedTrial[] = [];
+  feedback?: FeedBackDialogData['feedback'];
   incorrect = 0;
   index = -1;
   isVisible = true;
   name = 'Block';
+  retryInstructions = 'CLICK TO TRY AGAIN';
   sequentialCorrect = 0;
+  startInstructions = 'CLICK TO START';
   startedAt: Date|undefined;
+  @Input() studyConfig?: StudyConfig;
+  studyFailed = false;
   @Output() trialCompleted = new EventEmitter();
   @ViewChild(TrialComponent, { static: false }) trialComponent?: TrialComponent;
   trials: Trial[] = [];
 
   constructor(
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private reportSvc: ReportService
   ) {
+  }
+
+  private _attempts = 0;
+
+  get attempts() {
+    return this._attempts;
+  }
+
+  private _probeAttempts = 0;
+
+  get probeAttempts() {
+    return this._probeAttempts;
+  }
+
+  private _totalTrials = 0;
+
+  get totalTrials() {
+    return this._totalTrials;
+  }
+
+  private _trainingAttempts = 0;
+
+  get trainingAttempts() {
+    return this._trainingAttempts;
   }
 
   /**
@@ -72,7 +102,7 @@ export class BlockComponent {
    * Increases the number of attempts, sets the completed at date, then emits the completed event.
    */
   complete() {
-    this.attempts++;
+    this.incrementAttempt();
     this.setVisibility(false, TRIAL_DELAY_INTERVAL_MS);
     this.completedAt = new Date();
     setTimeout(() => {
@@ -88,39 +118,10 @@ export class BlockComponent {
   }
 
   /**
-   * When a relation is selected. The associated trial and relation selected data
-   * is stored. Feedback is shown if an item is not selected or feedback
-   * is enabled. Then the block is advanced to the next trial.
-   * @param {CueSelected | undefined} selected
-   */
-  cueSelected(selected: CueSelected|undefined) {
-    this.history.push({ ...this.trial, selected });
-
-    const feedback = this.grade(selected);
-
-    if (!selected) {
-      this.showFeedback('TIME EXPIRED');
-      this.feedBackShown = true;
-    } else if (feedback && this.feedbackEnabled()) {
-      this.showFeedback(feedback);
-      this.feedBackShown = true;
-    } else {
-      this.feedBackShown = false;
-    }
-
-    /**
-     * If feedback is not enabled but the "TIME EXPIRED" feedback is shown a
-     * delay must be added so that the participant will see the trial stimuli
-     * and relation animations.
-     */
-    this.nextTrial();
-
-  }
-
-  /**
    * Participants that fail the block criterion are thanked for their participation and the study is completed.
    */
   failed() {
+    this.studyFailed = true;
     this.setVisibility(false);
     this.prompt('THANKS FOR PARTICIPATING', true, TRIAL_DELAY_INTERVAL_MS +
       (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe();
@@ -144,10 +145,10 @@ export class BlockComponent {
    * @param {CueSelected | undefined} selected
    * @returns {"CORRECT" | "WRONG"}
    */
-  grade(selected: CueSelected|undefined): 'CORRECT'|'WRONG'|null {
-    const isCorrect = selected?.cue.value === this.trial.relation;
+  grade(selected: TrialCompleted): FeedBackDialogData['feedback']|undefined {
+    const isCorrect = selected?.cue?.value === this.trial.relation;
 
-    if (selected?.cue.value === this.trial.relation) {
+    if (selected?.cue?.value === this.trial.relation) {
       this.correct++;
       this.sequentialCorrect++;
     } else {
@@ -159,6 +160,22 @@ export class BlockComponent {
     console.log('correctPercentage', this.percentCorrect);
 
     return isCorrect ? 'CORRECT' : 'WRONG';
+  }
+
+  increaseTotalTrials() {
+    this._totalTrials++;
+  }
+
+  incrementAttempt() {
+    this._attempts++;
+  }
+
+  incrementProbeAttempts() {
+    return this._probeAttempts++;
+  }
+
+  incrementTrainingAttempts() {
+    return this._trainingAttempts++;
   }
 
   /**
@@ -249,10 +266,34 @@ export class BlockComponent {
    */
   start() {
     if (this.trials.length === 0) this.reset();
-    this.prompt('CLICK TO START', false, TRIAL_DELAY_INTERVAL_MS)
+    this.prompt(this.startInstructions, false, TRIAL_DELAY_INTERVAL_MS)
       .subscribe(() => {
         this.setVisibility(true, 0);
         this.nextTrial();
       });
+  }
+
+  /**
+   * When a relation is selected. The associated trial and relation selected data
+   * is stored. Feedback is shown if an item is not selected or feedback
+   * is enabled. Then the block is advanced to the next trial.
+   * @param {CueSelected | undefined} selected
+   */
+  private cueSelected(selected: TrialCompleted) {
+    this.feedback = this.grade(selected);
+
+    if (!selected) {
+      this.showFeedback('TIME EXPIRED');
+      this.feedBackShown = true;
+    } else if (this.feedback && this.feedbackEnabled()) {
+      this.showFeedback(this.feedback);
+      this.feedBackShown = true;
+    } else {
+      this.feedBackShown = false;
+    }
+
+    this.reportSvc.addTrial(this, selected);
+    this.increaseTotalTrials();
+    this.nextTrial();
   }
 }

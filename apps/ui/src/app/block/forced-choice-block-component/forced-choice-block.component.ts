@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { cloneDeep, sampleSize, shuffle } from 'lodash-es';
 import { Network1And2Graph } from '../../graph/network-1-and-2-graph';
+import { ReportService } from '../../report/report.service';
 import { CUE_NON_ARBITRARY } from '../../study-conditions/cue.constants';
 import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
 import { Trial } from '../../trial/trial';
@@ -37,14 +38,15 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
    *    6 different (A:B, B:C, C:A, B:A, C:B, A:C)
    *    6 ick (A:D, B:E, C:F, A:F, B:D, C:E ... select 6 of 18 combinations)
    * @param dialog
-   * @param config
+   * @param reportSvc
    * @param network1And2Graph
    */
   constructor(
     dialog: MatDialog,
+    reportSvc: ReportService,
     private network1And2Graph: Network1And2Graph
   ) {
-    super(dialog);
+    super(dialog, reportSvc);
     console.log(this.name);
     console.log(this.network1And2Graph.toString());
   }
@@ -139,6 +141,7 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
 
     if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100) {
       this.trainingsFailed++;
+      this.incrementTrainingAttempts();
       console.log('training failed', this.trainingsFailed);
 
       // If trainings failed equals the max training failures allowed, the block completes, otherwise the participant retries the block
@@ -150,6 +153,7 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
 
     } else if (this.trialNum === this.numProbeTrials + this.numTrainingTrials && this.percentCorrect !== 100) {
       this.probesFailed++;
+      this.incrementProbeAttempts();
       console.log('probes failed', this.probesFailed);
 
       // If probes failed equals the max probe failures allowed, the block completes, otherwise the participant retries the block
@@ -171,9 +175,9 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
    * User is shown a retry block, which they have to click to continue.
    */
   retry() {
-    this.attempts++;
+    this.incrementAttempt();
     this.setVisibility(false);
-    this.prompt('CLICK TO TRY AGAIN', false,
+    this.prompt(this.retryInstructions, false,
       TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe(
       () => {
         this.feedBackShown = false;

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { shuffle } from 'lodash-es';
 import { Network3And4Graph } from '../../graph/network-3-and-4-graph';
+import { ReportService } from '../../report/report.service';
 import { Trial } from '../../trial/trial';
 import { BlockComponent } from '../block.component';
 import { randomizedComponentConfigs } from '../cue-component-configs';
@@ -23,13 +24,15 @@ export class PreTestBlockComponent extends BlockComponent implements OnInit {
    *    16 mutually entailed trials (default) = mutually-entailed (B:A, C:A) * numDuplicates (4 default) * 2 networks
    *    16 combinatorially entailed trials (default) = combinatorially-entailed (B:C, C:B) * numDuplicates  (4 default) * 2 networks
    * @param dialog
+   * @param reportSvc
    * @param network3And4Graph
    */
   constructor(
     dialog: MatDialog,
+    reportSvc: ReportService,
     private network3And4Graph: Network3And4Graph
   ) {
-    super(dialog);
+    super(dialog, reportSvc);
     console.log(this.name);
     console.log(this.network3And4Graph.toString());
   }
