@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1637030321360,
+  "timestamp": 1637031251921,
   "index": "./index.html",
   "assetGroups": [
     {
@@ -122,7 +122,7 @@
     "./assets/wrong.mp3": "18ec6c7fa7362df0c0e3b2cec6a2d600b14c6d8a",
     "./index.html": "82bfeb8b0ee97a1d4074878b3e9e9ad483f21e6d",
     "./main.77a6e9e6a9805682f065.js": "ccd0167f4f9daa72c7212b94ba9d375a708b7a21",
-    "./manifest.webmanifest": "b4fc0d56bc750ce1ec3cd80c7a97b001a8582199",
+    "./manifest.webmanifest": "fa70b480b1a3bf3c4ddea00eac921b60396fbb77",
     "./polyfills.0d484ae9c32f0384cc2e.js": "61af46d6fa84d5a2e506aa80574514c1fc59eb12",
     "./runtime.d674e96b3a97e33029bb.js": "ffd8c3d428f52fe81b92ffda9192c4d0bfaff6d0",
     "./styles.84b9d938fb4d486d544e.css": "81a8458d7699db595deb42881c15f22f813006cb"
