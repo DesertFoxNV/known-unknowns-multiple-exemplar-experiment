@@ -2,8 +2,8 @@
   <mat-card>
     <mat-card-title>Study Conditions</mat-card-title>
     <mat-card-subtitle>Set the conditions and start now, or copy link to start later.</mat-card-subtitle>
-    <mat-divider></mat-divider>
-    <form [formGroup]="form" class="form-group form-padding-top">
+
+    <form [formGroup]="form" class="form-group">
 
       <mat-form-field *ngIf="form.get('participantId') as participantIdCtrl" appearance="outline">
         <mat-label>Participant id</mat-label>
@@ -44,11 +44,7 @@
         </mat-error>
       </mat-form-field>
 
-
-      <mat-divider></mat-divider>
-
-
-      <div class="form-padding-top" formGroupName="balance" *ngIf="form.get('balance') as balanceGroup">
+      <div formGroupName="balance" *ngIf="form.get('balance') as balanceGroup">
         <div class="mat-h4">Balance</div>
 
         <mat-form-field *ngIf="balanceGroup.get('same') as sameCtrl" appearance="outline">
@@ -109,7 +105,7 @@
 
       </div>
     </form>
-    <mat-divider></mat-divider>
+
     <mat-card-actions align="start">
       <button
         (tap)="start()"
