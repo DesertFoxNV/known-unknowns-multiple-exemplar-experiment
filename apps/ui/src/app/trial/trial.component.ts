@@ -36,7 +36,7 @@ export class TrialComponent implements AfterViewInit {
     this.trialStimulusComponents.changes.pipe(untilDestroyed(this)).subscribe();
   }
 
-  selected(cue: TrialCueComponentConfig, position: number) {
+  selected(cue: TrialCueComponentConfig, position: number): void {
     this.clearTimer();
     this.complete = true;
     this.completed.emit({ cue, position });
