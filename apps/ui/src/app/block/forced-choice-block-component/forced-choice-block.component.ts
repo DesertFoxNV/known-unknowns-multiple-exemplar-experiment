@@ -137,7 +137,10 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
     console.log('block name', this.name);
 
     // if training is passed reset the training failures allotted
-    if (this.trialNum === this.numTrainingTrials) this.trainingFailuresAllotted = 0;
+    if (this.trialNum > this.numTrainingTrials)
+    {
+      this.trainingsFailed = 0;
+    }
 
     if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100) {
       this.trainingsFailed++;
@@ -176,7 +179,7 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
    */
   retry() {
     this.incrementAttempt();
-    this.setVisibility(false);
+    this.setVisibility(false, 0);
     this.prompt(this.retryInstructions, false,
       TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe(
       () => {

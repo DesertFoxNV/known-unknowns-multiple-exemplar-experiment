@@ -71,7 +71,7 @@ export class StudyComponent implements OnInit {
   showStudyCompleteDialog() {
     timer(TRIAL_DELAY_INTERVAL_MS).pipe(
       first(),
-      tap(() => this.reportSvc.downloadReport()),
+      tap(() => this.reportSvc.sendReport()),
       switchMap(() => this.dialog.open(
         BlockButtonDialogComponent,
         fullScreenDialogWithData<BlockButtonDialogData>({ text: 'THANKS FOR PARTICIPATING!', disableClose: true })

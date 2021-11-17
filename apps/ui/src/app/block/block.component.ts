@@ -122,9 +122,10 @@ export class BlockComponent {
    */
   failed() {
     this.studyFailed = true;
-    this.setVisibility(false);
+    this.setVisibility(false, 0);
     this.prompt('THANKS FOR PARTICIPATING', true, TRIAL_DELAY_INTERVAL_MS +
       (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe();
+    this.completed.emit();
   }
 
   /**

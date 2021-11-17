@@ -125,21 +125,18 @@ export class ReportService {
     });
   }
 
-  downloadReport() {
+  async sendReport() {
     const CRLF = '\r\n';
 
     const report = this.reportEntries.map(
       reportEntry => Object.values(reportEntry).map(value => value?.toString() ?? '').join(';')).join(CRLF);
 
-    const blob =
+    const name = `MEEKU - ${this.reportEntries[0].participantId}.csv`;
+    const blob = new Blob([
+      Object.keys(this.reportEntries[0]).join(';') + CRLF + report
+    ], { type: 'text/csv' });
 
-      this.sendReport(`MEEKU - ${this.reportEntries[0].participantId}.csv`, new Blob([
-        Object.keys(this.reportEntries[0]).join(';') + CRLF + report
-      ], { type: 'text/csv' })).then();
-  }
-
-  async sendReport(name: string, blob: Blob) {
-
+    console.log('sending report');
     const content = await this.blobToBase64(blob);
 
     init('user_OawQbiPiSgdzcdY3SkdGT');
