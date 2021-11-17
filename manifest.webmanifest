@@ -6,6 +6,7 @@
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
+  "id": "/known-unknowns-multiple-exemplar-experiment/",
   "description": "A application used to run known unknowns multiple exemplar experiments.",
   "dir": "ltr",
   "icons": [
