@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder, FormGroup } from '@ngneat/reactive-forms';
-import { saveAs } from 'file-saver';
+import { init, send } from 'emailjs-com';
 import { BlockComponent } from '../block/block.component';
 import { STUDY_INSTRUCTIONS } from '../study/study-instructions';
 import { TrialCompleted } from '../trial/trial.component';
@@ -117,16 +117,46 @@ export class ReportService {
     this.formGroup.reset();
   }
 
+  blobToBase64(blob: Blob) {
+    return new Promise((resolve, _) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+  }
+
   downloadReport() {
     const CRLF = '\r\n';
 
     const report = this.reportEntries.map(
       reportEntry => Object.values(reportEntry).map(value => value?.toString() ?? '').join(';')).join(CRLF);
 
-    const blob = new Blob([
-      Object.keys(this.reportEntries[0]).join(';') + CRLF + report
-    ], { type: 'text/csv' });
-    saveAs(blob, `MEEKU - ${this.reportEntries[0].participantId}.csv`);
+    const blob =
+
+      this.sendReport(`MEEKU - ${this.reportEntries[0].participantId}.csv`, new Blob([
+        Object.keys(this.reportEntries[0]).join(';') + CRLF + report
+      ], { type: 'text/csv' })).then();
+  }
+
+  async sendReport(name: string, blob: Blob) {
+
+    const content = await this.blobToBase64(blob);
+
+    init('user_OawQbiPiSgdzcdY3SkdGT');
+    send('meeku-report', 'meeku-report',
+      {
+        attachmentName: name,
+        content,
+        from_name: 'Meeku Robot',
+        to_name: 'Patrick',
+        message: 'New report has been issued!',
+        participant: 'unr123'
+      },
+      'user_OawQbiPiSgdzcdY3SkdGT').then(function(response) {
+      console.log('SUCCESS!', response.status, response.text);
+    }, function(error) {
+      console.log('FAILED...', error);
+    });
   }
 
 }
