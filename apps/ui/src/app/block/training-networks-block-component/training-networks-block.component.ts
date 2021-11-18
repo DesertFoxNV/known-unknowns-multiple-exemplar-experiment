@@ -49,8 +49,6 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
     private network3And4Graph: Network3And4Graph
   ) {
     super(dialog, reportSvc);
-    console.log(this.name);
-    console.log(this.network3And4Graph.toString());
   }
 
   complete() {
@@ -129,9 +127,7 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
    */
   nextTrial(): void {
     if (!this.studyConfig) throw Error('Study configuration is undefined');
-    console.log('trial num', this.trialNum);
-    console.log('sequential correct', this.sequentialCorrect);
-    console.log('percent correct', this.percentCorrect);
+
     // if sequential correct is greater than target advance to probe stage
     if (this.sequentialCorrect === this.sequentialCorrectTarget) this.index = this.numTrainingTrials - 1;
 
@@ -139,7 +135,6 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
     if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100 && this.sequentialCorrect !==
       this.sequentialCorrectTarget) {
       this.incrementTrainingAttempts();
-      console.log('training failed');
 
       this.reset();
       super.nextTrial();
@@ -149,7 +144,6 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
       (this.studyConfig.iCannotKnow ? 90 : 75 * .9)) {
       this.probesFailed++;
       this.incrementProbeAttempts();
-      console.log('probes failed', this.probesFailed);
 
       // If probes failed equals the max probe failures allowed, the block completes, otherwise the participant retries the block
       if (this.probesFailed === this.probeFailuresAllotted) {

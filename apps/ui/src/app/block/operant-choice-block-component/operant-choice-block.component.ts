@@ -47,16 +47,9 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
     private network5And6Graph: Network5And6Graph
   ) {
     super(dialog, reportSvc);
-    console.log(this.name);
-    console.log(this.network5And6Graph.toString());
   }
 
   get isComplete(): boolean {
-    console.log('this.sequentialCorrect >= this.trials.length * 2 (alternative criterion)',
-      this.sequentialCorrect >= this.trials.length * 2);
-    console.log('this.meetsMasterCriterion1 && this.meetsMasterCriterion2',
-      this.meetsMasterCriterion1 && this.meetsMasterCriterion2);
-    (this.meetsMasterCriterion1 && this.meetsMasterCriterion2);
     return this.sequentialCorrect >= this.trials.length * 2 ||
       (this.meetsMasterCriterion1 && this.meetsMasterCriterion2);
   }
@@ -92,12 +85,6 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
     const { greaterThan, iCannotKnow, lessThan, same } = this.correctCount;
     if (this.sequentialCorrect ===
       sequentialCorrectTarget) this.masterCriterion.sequentialCorrectTargetAchieved = true;
-    console.log(
-      `Correctly sequentially completed ${sequentialCorrectTarget} trials during this block:`,
-      sequentialCorrectTargetAchieved);
-    console.log(
-      `Same trials is gte than ${sameTarget}, comparison trials is gte than ${comparisonTarget}, and i cannot know trials is gte ${iCannotKnowTarget}: `,
-      (same >= sameTarget && (greaterThan + lessThan >= comparisonTarget) && iCannotKnow >= iCannotKnowTarget));
     return sequentialCorrectTargetAchieved ||
       (same >= sameTarget && (greaterThan + lessThan >= comparisonTarget) && iCannotKnow >= iCannotKnowTarget);
   }
@@ -240,11 +227,7 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
           throw Error('Config balance has not been created');
         }
       }
-      console.log('Shown targets set to', this.correctShownTargets);
     }
-
-    console.log('correct', this.correctCount);
-    console.log('sequentialCorrect', this.sequentialCorrect);
 
     if (this.correctShownTargets && isCorrect && selected?.cue) {
       return this.correctCount[selected.cue.value] <= this.correctShownTargets[selected.cue.value] ? 'CORRECT' : undefined;
@@ -260,7 +243,6 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
    * the study is completed.
    */
   nextTrial(): void {
-    console.log('index', this.index);
     if (this.isComplete) {
       this.complete();
     } else {

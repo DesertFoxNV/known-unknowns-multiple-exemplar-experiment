@@ -123,7 +123,7 @@ export class BlockComponent {
   failed() {
     this.studyFailed = true;
     this.setVisibility(false, 0);
-    this.prompt('THANKS FOR PARTICIPATING', true, TRIAL_DELAY_INTERVAL_MS +
+    this.prompt('THANKS FOR PARTICIPATING!', true, TRIAL_DELAY_INTERVAL_MS +
       (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe();
     this.completed.emit();
   }
@@ -156,9 +156,6 @@ export class BlockComponent {
       this.incorrect++;
       this.sequentialCorrect = 0;
     }
-    console.log('correct', this.correct);
-    console.log('incorrect', this.incorrect);
-    console.log('correctPercentage', this.percentCorrect);
 
     return isCorrect ? 'CORRECT' : 'WRONG';
   }

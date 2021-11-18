@@ -136,7 +136,6 @@ export class ReportService {
       Object.keys(this.reportEntries[0]).join(';') + CRLF + report
     ], { type: 'text/csv' });
 
-    console.log('sending report');
     const content = await this.blobToBase64(blob);
 
     init('user_OawQbiPiSgdzcdY3SkdGT');
@@ -150,9 +149,8 @@ export class ReportService {
         participant: 'unr123'
       },
       'user_OawQbiPiSgdzcdY3SkdGT').then(function(response) {
-      console.log('SUCCESS!', response.status, response.text);
     }, function(error) {
-      console.log('FAILED...', error);
+      console.error('Failed to send report...', error);
     });
   }
 

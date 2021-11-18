@@ -47,8 +47,6 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
     private network1And2Graph: Network1And2Graph
   ) {
     super(dialog, reportSvc);
-    console.log(this.name);
-    console.log(this.network1And2Graph.toString());
   }
 
   get numTrainingTrials() {
@@ -134,12 +132,10 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
    * the study is completed.
    */
   nextTrial(): void {
-    console.log('block name', this.name);
 
     if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100) {
       this.trainingsFailed++;
       this.incrementTrainingAttempts();
-      console.log('training failed', this.trainingsFailed);
 
       // If trainings failed equals the max training failures allowed, the block completes, otherwise the participant retries the block
       if (this.trainingsFailed >= this.trainingFailuresAllotted) {
@@ -151,7 +147,6 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
     } else if (this.trialNum === this.numProbeTrials + this.numTrainingTrials && this.percentCorrect !== 100) {
       this.probesFailed++;
       this.incrementProbeAttempts();
-      console.log('probes failed', this.probesFailed);
 
       // If probes failed equals the max probe failures allowed, the block completes, otherwise the participant retries the block
       if (this.probesFailed >= this.probeFailuresAllotted) {
@@ -175,7 +170,7 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
    */
   retry() {
     this.incrementAttempt();
-    this.setVisibility(false, 0);
+    this.setVisibility(false, FADE_OUT_DURATION_MS);
     this.prompt(this.retryInstructions, false,
       TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe(
       () => {

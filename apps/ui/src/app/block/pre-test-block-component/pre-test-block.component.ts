@@ -33,8 +33,6 @@ export class PreTestBlockComponent extends BlockComponent implements OnInit {
     private network3And4Graph: Network3And4Graph
   ) {
     super(dialog, reportSvc);
-    console.log(this.name);
-    console.log(this.network3And4Graph.toString());
   }
 
   /**
