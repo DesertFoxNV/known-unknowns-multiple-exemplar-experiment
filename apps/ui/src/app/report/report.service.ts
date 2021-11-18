@@ -146,7 +146,7 @@ export class ReportService {
         from_name: 'Meeku Robot',
         to_name: 'Patrick',
         message: 'New report has been issued!',
-        participant: 'unr123'
+        participant: name
       },
       'user_OawQbiPiSgdzcdY3SkdGT').then(function(response) {
     }, function(error) {
