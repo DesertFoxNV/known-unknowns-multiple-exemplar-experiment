@@ -136,19 +136,13 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
   nextTrial(): void {
     console.log('block name', this.name);
 
-    // if training is passed reset the training failures allotted
-    if (this.trialNum > this.numTrainingTrials)
-    {
-      this.trainingsFailed = 0;
-    }
-
     if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100) {
       this.trainingsFailed++;
       this.incrementTrainingAttempts();
       console.log('training failed', this.trainingsFailed);
 
       // If trainings failed equals the max training failures allowed, the block completes, otherwise the participant retries the block
-      if (this.trainingsFailed === this.trainingFailuresAllotted) {
+      if (this.trainingsFailed >= this.trainingFailuresAllotted) {
         this.failed();
       } else {
         this.retry();
@@ -160,12 +154,14 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
       console.log('probes failed', this.probesFailed);
 
       // If probes failed equals the max probe failures allowed, the block completes, otherwise the participant retries the block
-      if (this.probesFailed === this.probeFailuresAllotted) {
+      if (this.probesFailed >= this.probeFailuresAllotted) {
         this.failed();
       } else {
         this.retry();
       }
     } else {
+      // if training is passed reset the training failures allotted
+      if (this.trialNum >= this.numTrainingTrials) this.trainingsFailed = 0;
       super.nextTrial();
     }
   }

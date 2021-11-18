@@ -181,7 +181,7 @@
           "options": {
             "baseHref": "./",
             "silent": false,
-            "cname": ""
+            "cname": "www.meeku.io"
           }
         }
       }
