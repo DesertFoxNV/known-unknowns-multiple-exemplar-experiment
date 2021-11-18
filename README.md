@@ -1,10 +1,12 @@
 # KnownUnknownsMultipleExemplarExperiment
-
 This project was generated using [Nx](https://nx.dev).
 
 <p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
 
 🔎 **Smart, Extensible Build Framework**
+
+## Need A Customized Version
+Feel free to contact the original developer by email jwwrightcalpoly@gmail.com
 
 ## Quick Start & Documentation
 
