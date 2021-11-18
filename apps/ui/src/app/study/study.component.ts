@@ -10,6 +10,9 @@ import {
 import { BlockComponent } from '../block/block.component';
 import { ForcedChoiceBlockComponent } from '../block/forced-choice-block-component/forced-choice-block.component';
 import { fullScreenDialogWithData } from '../block/full-screen-dialog-with-data';
+import { OperantChoiceBlockComponent } from '../block/operant-choice-block-component/operant-choice-block.component';
+import { PreTestBlockComponent } from '../block/pre-test-block-component/pre-test-block.component';
+import { TrainingNetworksBlockComponent } from '../block/training-networks-block-component/training-networks-block.component';
 import { TRIAL_DELAY_INTERVAL_MS } from '../block/trial-animation-delay';
 import { ReportService } from '../report/report.service';
 import { StudyConfig } from '../study-config-form/study-config';
@@ -25,10 +28,10 @@ import { STUDY_INSTRUCTIONS } from './study-instructions';
 })
 export class StudyComponent implements OnInit {
   blocks: ComponentType<BlockComponent>[] = [
-    // PreTestBlockComponent,
-    ForcedChoiceBlockComponent
-    // OperantChoiceBlockComponent,
-    // TrainingNetworksBlockComponent
+    PreTestBlockComponent,
+    ForcedChoiceBlockComponent,
+    OperantChoiceBlockComponent,
+    TrainingNetworksBlockComponent
   ];
   @ViewChild('container', { read: ViewContainerRef, static: true }) container?: ViewContainerRef;
   instructions = STUDY_INSTRUCTIONS;
