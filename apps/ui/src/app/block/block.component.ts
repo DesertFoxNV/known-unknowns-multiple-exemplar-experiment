@@ -280,7 +280,7 @@ export class BlockComponent {
   private cueSelected(selected: TrialCompleted) {
     this.feedback = this.grade(selected);
 
-    if (!selected) {
+    if (!selected?.cue) {
       this.showFeedback('TIME EXPIRED');
       this.feedBackShown = true;
     } else if (this.feedback && this.feedbackEnabled()) {
