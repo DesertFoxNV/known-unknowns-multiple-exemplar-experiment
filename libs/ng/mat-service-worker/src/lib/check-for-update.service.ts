@@ -7,8 +7,8 @@ export class CheckForUpdateService {
   constructor(private updates: SwUpdate) {}
 
   start() {
-    // Check for updates every 15 seconds
+    // Check for updates every 60 seconds
     this.updates.checkForUpdate().then();
-    interval(15 * 1000).subscribe(() => this.updates.checkForUpdate());
+    interval(60 * 1000).subscribe(() => this.updates.checkForUpdate().then());
   }
 }
