@@ -31,7 +31,7 @@ export class StudyConfigFormComponent implements OnInit {
 
   copyLink() {
     this.clipboard.copy(
-      `${environment.baseUrl}/known-unknowns-multiple-exemplar-experiment/study?${this.getQueryParamStr()}`);
+      `${environment.baseUrl}/study?${this.getQueryParamStr()}`);
   }
 
   getQueryParamObj(): StudyConfigFlattened {

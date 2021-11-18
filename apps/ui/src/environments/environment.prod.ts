@@ -1,4 +1,4 @@
 export const environment = {
-  baseUrl: "https://desertfoxnv.github.io",
-  production: true,
+  baseUrl: 'https://www.meeku.io',
+  production: true
 };
