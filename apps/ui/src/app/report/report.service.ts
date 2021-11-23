@@ -85,7 +85,7 @@ export class ReportService {
     this.add('probeAttempts', block.probeAttempts);
     this.add('trialNumber', block.trialNum);
     this.add('totalTrials', block.totalTrials);
-    this.add('sampleNode', block.trial.stimuli[1].toString());
+    this.add('sampleNode', block.trial.stimuli[0].toString());
     this.add('sample', block.trial.stimuli[0].value);
     this.add('comparisonNode', block.trial.stimuli[1].toString());
     this.add('comparison', block.trial.stimuli[1].value);
