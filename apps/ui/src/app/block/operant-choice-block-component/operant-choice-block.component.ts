@@ -280,7 +280,7 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
    */
   retry() {
     this.incrementAttempt();
-    this.setVisibility(false);
+    this.setVisibility(false, FADE_OUT_DURATION_MS);
     this.prompt(this.retryInstructions, false,
       TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe(
       () => {

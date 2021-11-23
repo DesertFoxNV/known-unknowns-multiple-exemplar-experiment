@@ -1,20 +1,23 @@
-import { Injectable } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { FormBuilder, FormGroup } from '@ngneat/reactive-forms';
-import { init, send } from 'emailjs-com';
-import { BlockComponent } from '../block/block.component';
-import { STUDY_INSTRUCTIONS } from '../study/study-instructions';
-import { TrialCompleted } from '../trial/trial.component';
-import { ReportEntry } from './report-entry-interface';
+import {Injectable} from '@angular/core';
+import {Validators} from '@angular/forms';
+import {FormBuilder, FormGroup} from '@ngneat/reactive-forms';
+import {init, send} from 'emailjs-com';
+import {BlockComponent} from '../block/block.component';
+import {STUDY_INSTRUCTIONS} from '../study/study-instructions';
+import {TrialCompleted} from '../trial/trial.component';
+import {ReportEntry} from './report-entry-interface';
+import {StudyConfig} from "../study-config-form/study-config";
+import {StudyConfigService} from "../study-config-form/study-config.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportService {
+  studyConfig?: StudyConfig;
   formGroup: FormGroup<ReportEntry>;
   reportEntries: ReportEntry[] = [];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private studyConfigService: StudyConfigService) {
     this.formGroup = this.fb.group({
       studyInstructions: [''],
       participantId: ['', Validators.required],
@@ -68,7 +71,7 @@ export class ReportService {
 
   addTrial(block: BlockComponent, selected: TrialCompleted) {
     if (!block.studyConfig) throw Error('Study configuration is undefined');
-
+    this.studyConfig = block.studyConfig;
     this.add('studyInstructions', this.reportEntries.length === 0 ? STUDY_INSTRUCTIONS.replaceAll('\n', '') : '');
     this.add('participantId', block.studyConfig.participantId);
     this.add('iCannotKnow', block.studyConfig.iCannotKnow);
@@ -126,16 +129,14 @@ export class ReportService {
   }
 
   async sendReport() {
+    const studyConfig = await this.studyConfigService.studyConfig.toPromise();
     const CRLF = '\r\n';
-
     const report = this.reportEntries.map(
       reportEntry => Object.values(reportEntry).map(value => value?.toString() ?? '').join(';')).join(CRLF);
-
-    const name = `MEEKU - ${this.reportEntries[0].participantId}.csv`;
+    const name = `MEEKU - ${studyConfig.participantId}.csv`;
     const blob = new Blob([
-      Object.keys(this.reportEntries[0]).join(';') + CRLF + report
-    ], { type: 'text/csv' });
-
+      Object.keys(this.formGroup.value).join(';') + CRLF + report
+    ], {type: 'text/csv'});
     const content = await this.blobToBase64(blob);
 
     init('user_OawQbiPiSgdzcdY3SkdGT');
@@ -145,11 +146,11 @@ export class ReportService {
         content,
         from_name: 'Meeku Robot',
         to_name: 'Patrick',
-        message: 'New report has been issued!',
+        message: `New report has been issued! ${studyConfig.participantId}`,
         participant: name
       },
-      'user_OawQbiPiSgdzcdY3SkdGT').then(function(response) {
-    }, function(error) {
+      'user_OawQbiPiSgdzcdY3SkdGT').then(function (response) {
+    }, function (error) {
       console.error('Failed to send report...', error);
     });
   }

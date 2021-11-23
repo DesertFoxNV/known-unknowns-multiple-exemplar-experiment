@@ -1,23 +1,24 @@
-import { ComponentType } from '@angular/cdk/overlay';
-import { Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { timer } from 'rxjs';
-import { first, switchMap, tap } from 'rxjs/operators';
+import {ComponentType} from '@angular/cdk/overlay';
+import {Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
+import {timer} from 'rxjs';
+import {first, switchMap, tap} from 'rxjs/operators';
 import {
-  BlockButtonDialogComponent, BlockButtonDialogData
+  BlockButtonDialogComponent,
+  BlockButtonDialogData
 } from '../block/block-button-dialog/block-button-dialog.component';
-import { BlockComponent } from '../block/block.component';
-import { ForcedChoiceBlockComponent } from '../block/forced-choice-block-component/forced-choice-block.component';
-import { fullScreenDialogWithData } from '../block/full-screen-dialog-with-data';
-import { OperantChoiceBlockComponent } from '../block/operant-choice-block-component/operant-choice-block.component';
-import { PreTestBlockComponent } from '../block/pre-test-block-component/pre-test-block.component';
-import { TrainingNetworksBlockComponent } from '../block/training-networks-block-component/training-networks-block.component';
-import { TRIAL_DELAY_INTERVAL_MS } from '../block/trial-animation-delay';
-import { ReportService } from '../report/report.service';
-import { StudyConfig } from '../study-config-form/study-config';
-import { StudyConfigService } from '../study-config-form/study-config.service';
-import { STUDY_INSTRUCTIONS } from './study-instructions';
+import {BlockComponent} from '../block/block.component';
+import {fullScreenDialogWithData} from '../block/full-screen-dialog-with-data';
+import {TrainingNetworksBlockComponent} from '../block/training-networks-block-component/training-networks-block.component';
+import {TRIAL_DELAY_INTERVAL_MS} from '../block/trial-animation-delay';
+import {ReportService} from '../report/report.service';
+import {StudyConfig} from '../study-config-form/study-config';
+import {StudyConfigService} from '../study-config-form/study-config.service';
+import {STUDY_INSTRUCTIONS} from './study-instructions';
+import {PreTestBlockComponent} from "../block/pre-test-block-component/pre-test-block.component";
+import {ForcedChoiceBlockComponent} from "../block/forced-choice-block-component/forced-choice-block.component";
+import {OperantChoiceBlockComponent} from "../block/operant-choice-block-component/operant-choice-block.component";
 
 @UntilDestroy()
 @Component({
@@ -33,7 +34,7 @@ export class StudyComponent implements OnInit {
     OperantChoiceBlockComponent,
     TrainingNetworksBlockComponent
   ];
-  @ViewChild('container', { read: ViewContainerRef, static: true }) container?: ViewContainerRef;
+  @ViewChild('container', {read: ViewContainerRef, static: true}) container?: ViewContainerRef;
   instructions = STUDY_INSTRUCTIONS;
   showInstructions = true;
   studyConfig?: StudyConfig;
@@ -77,7 +78,7 @@ export class StudyComponent implements OnInit {
       tap(() => this.reportSvc.sendReport()),
       switchMap(() => this.dialog.open(
         BlockButtonDialogComponent,
-        fullScreenDialogWithData<BlockButtonDialogData>({ text: 'THANKS FOR PARTICIPATING!', disableClose: true })
+        fullScreenDialogWithData<BlockButtonDialogData>({text: 'THANKS FOR PARTICIPATING!', disableClose: true})
       ).afterClosed())
     ).subscribe();
   }

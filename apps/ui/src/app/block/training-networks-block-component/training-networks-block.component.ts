@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { shuffle } from 'lodash-es';
-import { Network3And4Graph } from '../../graph/network-3-and-4-graph';
-import { ReportService } from '../../report/report.service';
-import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
-import { Trial } from '../../trial/trial';
-import { FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS } from '../../trial/trial-correct/feedback-duration';
-import { TrialCompleted } from '../../trial/trial.component';
-import { BlockComponent } from '../block.component';
-import { randomizedComponentConfigs } from '../cue-component-configs';
-import { TRIAL_DELAY_INTERVAL_MS } from '../trial-animation-delay';
+import {Component, OnInit} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {shuffle} from 'lodash-es';
+import {Network3And4Graph} from '../../graph/network-3-and-4-graph';
+import {ReportService} from '../../report/report.service';
+import {FADE_OUT_DURATION_MS} from '../../trial/fade-out-duration';
+import {Trial} from '../../trial/trial';
+import {FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS} from '../../trial/trial-correct/feedback-duration';
+import {TrialCompleted} from '../../trial/trial.component';
+import {BlockComponent} from '../block.component';
+import {randomizedComponentConfigs} from '../cue-component-configs';
+import {TRIAL_DELAY_INTERVAL_MS} from '../trial-animation-delay';
 
 @Component({
   selector: 'training-networks-block',
@@ -61,7 +61,7 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
    * @returns {unknown[] | Array<Trial[][keyof Trial[]]>}
    */
   createTrials() {
-    const { studyConfig } = this; // defined locally so that typescript can infer types
+    const {studyConfig} = this; // defined locally so that typescript can infer types
     if (!studyConfig) throw Error('Study configuration is undefined');
 
     // Identity and trained trials are generated for each network
@@ -71,7 +71,7 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
         this.network3And4Graph.identities,
         this.network3And4Graph.trained
       ].flat().map(
-        stimuliComparison => ({ ...stimuliComparison, cueComponentConfigs: randomizedComponentConfigs(studyConfig) })
+        stimuliComparison => ({...stimuliComparison, cueComponentConfigs: randomizedComponentConfigs(studyConfig)})
       ));
     }
 
@@ -86,7 +86,7 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
           this.network3And4Graph.mutuallyEntailed,
           this.network3And4Graph.combinatoriallyEntailed
         ].flat().map(
-          stimuliComparison => ({ ...stimuliComparison, cueComponentConfigs: randomizedComponentConfigs(studyConfig) }))
+          stimuliComparison => ({...stimuliComparison, cueComponentConfigs: randomizedComponentConfigs(studyConfig)}))
       );
     }
 
@@ -180,7 +180,7 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
    */
   retry() {
     this.incrementAttempt();
-    this.setVisibility(false);
+    this.setVisibility(false, FADE_OUT_DURATION_MS);
     this.prompt(this.retryInstructions, false,
       TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe(
       () => {
