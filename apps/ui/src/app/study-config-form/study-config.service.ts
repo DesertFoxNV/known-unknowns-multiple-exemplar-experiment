@@ -6,7 +6,6 @@ import { FormBuilder, FormGroup } from '@ngneat/reactive-forms';
 import { Observable } from 'rxjs';
 import { catchError, first, map, tap } from 'rxjs/operators';
 import { studyConfigFromParams } from '../param-conversions/study-config-from-params';
-import { ReportService } from '../report/report.service';
 import { CUE_TYPE } from '../study-conditions/cue.constants';
 import { StudyConfig } from './study-config';
 
@@ -17,7 +16,6 @@ export class StudyConfigService {
   constructor(
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
-    private reportSvc: ReportService,
     private router: Router,
     private snackBarSvc: SnackBarService
   ) {

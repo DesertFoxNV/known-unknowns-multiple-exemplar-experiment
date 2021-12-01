@@ -1,4 +1,5 @@
 .overlay-dynamic-text {
+    white-space: pre-wrap;
     font-size: clamp(1rem, 8vw, 15rem);
     line-height: clamp(1rem, 8vw, 15rem);
     text-align: center;
