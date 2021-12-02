@@ -7,7 +7,6 @@ import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
 import { Trial } from '../../trial/trial';
 import { FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS } from '../../trial/trial-correct/feedback-duration';
 import { TrialCounterService } from '../../trial/trial-counter.service';
-import { TrialCompleted } from '../../trial/trial.component';
 import { BlockComponent } from '../block.component';
 import { randomizedComponentConfigs } from '../cue-component-configs';
 import { TRIAL_DELAY_INTERVAL_MS } from '../trial-animation-delay';
@@ -106,21 +105,6 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
    */
   feedbackEnabled(): boolean {
     return this.index < this.numTrainingTrials;
-  }
-
-  grade(selected: TrialCompleted) {
-    if (!this.trial) throw Error('Trial is undefined');
-    const isCorrect = selected?.cue?.value === this.trial.relation;
-
-    if (selected?.cue?.value === this.trial.relation) {
-      this.correct++;
-      this.sequentialCorrect++;
-    } else {
-      this.sequentialCorrect = 0;
-      this.incorrect++;
-    }
-
-    return isCorrect ? 'CORRECT' : 'WRONG';
   }
 
   /**

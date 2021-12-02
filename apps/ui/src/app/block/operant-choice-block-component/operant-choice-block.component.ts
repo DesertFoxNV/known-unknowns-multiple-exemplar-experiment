@@ -26,12 +26,15 @@ const lcm = (a: number, b: number) => a * b / gcd(a, b);
 })
 export class OperantChoiceBlockComponent extends BlockComponent implements OnInit {
   configBalanceDividedByGcd: Record<CueNonArbitrary, number>|undefined;
-  correctCount: Record<CueNonArbitrary, number> = {
+  correctCount: Record<CueNonArbitrary|'red'|'green'|'blue', number> = {
     different: 0,
     same: 0,
     greaterThan: 0,
     lessThan: 0,
-    iCannotKnow: 0
+    iCannotKnow: 0,
+    red: 0,
+    green: 0,
+    blue: 0
   };
   correctShownTargets: Record<CueNonArbitrary, number>|undefined;
   index = -1;
@@ -232,7 +235,8 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
       }
     }
 
-    if (this.correctShownTargets && isCorrect && selected?.cue) {
+    if (this.correctShownTargets && isCorrect && selected?.cue &&
+      !['red', 'green', 'blue'].includes(selected.cue.value)) {
       return this.correctCount[selected.cue.value] <= this.correctShownTargets[selected.cue.value] ? 'CORRECT' :
         undefined;
     } else {
@@ -272,7 +276,10 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
       same: 0,
       greaterThan: 0,
       lessThan: 0,
-      iCannotKnow: 0
+      iCannotKnow: 0,
+      red: 0,
+      green: 0,
+      blue: 0
     };
     this.index = -1;
     this.correct = 0;
