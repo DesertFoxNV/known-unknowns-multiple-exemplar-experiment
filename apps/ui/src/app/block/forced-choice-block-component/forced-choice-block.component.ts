@@ -7,6 +7,7 @@ import { CUE_NON_ARBITRARY } from '../../study-conditions/cue.constants';
 import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
 import { Trial } from '../../trial/trial';
 import { FEEDBACK_FADE_OUT_DELAY_MS } from '../../trial/trial-correct/feedback-duration';
+import { TrialCounterService } from '../../trial/trial-counter.service';
 import { BlockComponent } from '../block.component';
 import { oneChoiceCueComponentConfig, twoChoiceCueComponentConfig } from '../cue-component-configs';
 import { TRIAL_DELAY_INTERVAL_MS } from '../trial-animation-delay';
@@ -39,14 +40,16 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
    *    6 ick (A:D, B:E, C:F, A:F, B:D, C:E ... select 6 of 18 combinations)
    * @param dialog
    * @param reportSvc
+   * @param trialCounterSvc
    * @param network1And2Graph
    */
   constructor(
     dialog: MatDialog,
     reportSvc: ReportService,
+    trialCounterSvc: TrialCounterService,
     private network1And2Graph: Network1And2Graph
   ) {
-    super(dialog, reportSvc);
+    super(dialog, reportSvc, trialCounterSvc);
   }
 
   get numTrainingTrials() {

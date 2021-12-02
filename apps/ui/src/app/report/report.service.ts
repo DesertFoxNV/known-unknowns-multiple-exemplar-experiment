@@ -71,6 +71,7 @@ export class ReportService {
 
   addTrial(block: BlockComponent, selected: TrialCompleted) {
     if (!block.studyConfig) throw Error('Study configuration is undefined');
+    if (!block.trial) throw Error('Trial is undefined');
     this.studyConfig = block.studyConfig;
     this.add('studyInstructions', this.reportEntries.length === 0 ? STUDY_INSTRUCTIONS.replaceAll('\n', '') : '');
     this.add('participantId', block.studyConfig.participantId);
@@ -118,6 +119,7 @@ export class ReportService {
     this.add('sequentialCorrect', block.sequentialCorrect);
     this.reportEntries.push(this.formGroup.value);
     this.formGroup.reset();
+    console.log(this.reportEntries);
   }
 
   blobToBase64(blob: Blob) {

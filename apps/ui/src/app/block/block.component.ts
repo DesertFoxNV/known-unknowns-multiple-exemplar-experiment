@@ -10,8 +10,10 @@ import { Trial } from '../trial/trial';
 import { FeedBackDialogData } from '../trial/trial-correct/feed-back-dialog.data';
 import { FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS } from '../trial/trial-correct/feedback-duration';
 import { TrialFeedbackDialogComponent } from '../trial/trial-correct/trial-feedback-dialog.component';
+import { TrialCounterService } from '../trial/trial-counter.service';
 import { TrialCompleted, TrialComponent } from '../trial/trial.component';
 import { BlockButtonDialogComponent, BlockButtonDialogData } from './block-button-dialog/block-button-dialog.component';
+import { createColorTrial } from './color-trial';
 import { fullScreenDialogWithData } from './full-screen-dialog-with-data';
 import { TRIAL_ANIMATION_DURATION_MS, TRIAL_DELAY_INTERVAL_MS } from './trial-animation-delay';
 
@@ -39,13 +41,15 @@ export class BlockComponent {
   startedAt: Date|undefined;
   @Input() studyConfig?: StudyConfig;
   studyFailed = false;
+  trial?: Trial;
   @Output() trialCompleted = new EventEmitter();
   @ViewChild(TrialComponent, { static: false }) trialComponent?: TrialComponent;
   trials: Trial[] = [];
 
   constructor(
     private dialog: MatDialog,
-    private reportSvc: ReportService
+    private reportSvc: ReportService,
+    private trialCounterSvc: TrialCounterService
   ) {
   }
 
@@ -80,14 +84,6 @@ export class BlockComponent {
    */
   get percentCorrect(): number {
     return (this.correct / (this.correct + this.incorrect)) * 100;
-  }
-
-  /**
-   * Returns the current trial based on the current index.
-   * @returns {Trial}
-   */
-  get trial(): Trial {
-    return this.trials[this.index];
   }
 
   /**
@@ -147,6 +143,7 @@ export class BlockComponent {
    * @returns {"CORRECT" | "WRONG"}
    */
   grade(selected: TrialCompleted): FeedBackDialogData['feedback']|undefined {
+    if (!this.trial) throw Error('Trial is undefined');
     const isCorrect = selected?.cue?.value === this.trial.relation;
 
     if (selected?.cue?.value === this.trial.relation) {
@@ -186,9 +183,15 @@ export class BlockComponent {
   nextTrial() {
     if (this.index === -1) this.startedAt = new Date();
 
-    if (this.index !== this.trials.length - 1) {
+    this.trialCounterSvc.increase();
+
+    if (this.trialCounterSvc.showColorTrial) {
+      this.showTrial(createColorTrial(), this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : 0);
+      this.trialCompleted.pipe(first()).subscribe(selected => this.cueSelected(selected));
+      this.trialCounterSvc.reset();
+    } else if (this.index !== this.trials.length - 1) {
       this.index++;
-      this.showTrial(this.trial, this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : 0);
+      this.showTrial(this.trials[this.index], this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : 0);
       this.trialCompleted.pipe(first()).subscribe(selected => this.cueSelected(selected));
     } else {
       this.complete();
@@ -255,6 +258,7 @@ export class BlockComponent {
    * @param {number} delayMs
    */
   showTrial(trial: Trial, delayMs = FEEDBACK_FADE_OUT_DELAY_MS) {
+    this.trial = trial;
     setTimeout(() => this.trialComponent?.show(trial), delayMs);
   }
 

@@ -9,6 +9,7 @@ import { CueNonArbitrary, CUES_NON_ARBITRARY_W_ICK } from '../../study-condition
 import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
 import { Trial } from '../../trial/trial';
 import { FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS } from '../../trial/trial-correct/feedback-duration';
+import { TrialCounterService } from '../../trial/trial-counter.service';
 import { TrialCompleted } from '../../trial/trial.component';
 import { BlockComponent } from '../block.component';
 import { randomizedComponentConfigs } from '../cue-component-configs';
@@ -44,9 +45,10 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
   constructor(
     dialog: MatDialog,
     reportSvc: ReportService,
+    trialCounterSvc: TrialCounterService,
     private network5And6Graph: Network5And6Graph
   ) {
-    super(dialog, reportSvc);
+    super(dialog, reportSvc, trialCounterSvc);
   }
 
   get isComplete(): boolean {
@@ -191,6 +193,7 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
   }
 
   grade(selected: TrialCompleted) {
+    if (!this.trial) throw Error('Trial is undefined');
     const isCorrect = selected?.cue?.value === this.trial.relation;
 
     if (selected?.cue?.value === this.trial.relation) {
@@ -230,7 +233,8 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
     }
 
     if (this.correctShownTargets && isCorrect && selected?.cue) {
-      return this.correctCount[selected.cue.value] <= this.correctShownTargets[selected.cue.value] ? 'CORRECT' : undefined;
+      return this.correctCount[selected.cue.value] <= this.correctShownTargets[selected.cue.value] ? 'CORRECT' :
+        undefined;
     } else {
       return isCorrect ? 'CORRECT' : 'WRONG';
     }
