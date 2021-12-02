@@ -7,7 +7,7 @@ export class TrialCounterService {
   #count = 0;
 
   get showColorTrial() {
-    return this.#count === 1;
+    return this.#count === 100;
   }
 
   increase() {
