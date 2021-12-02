@@ -12,5 +12,5 @@ export const STUDY_INSTRUCTIONS = `Throughout this experiment, you will be prese
     During some portions of the experiment you will be provided feedback on your selections. If you don’t see
     feedback, please continue making selections. There is a time limit for making your selections. Please choose your
     response as fast as you can while still being accurate. Your compensation will go up the more accurate you are.\n
-    This experiment will restart if it is no longer the active window.  In order to complete quickly, please do not open 
+    This experiment will restart if it is no longer the active window. In order to complete quickly, please do not open 
     other tabs or software while doing this task.`;
