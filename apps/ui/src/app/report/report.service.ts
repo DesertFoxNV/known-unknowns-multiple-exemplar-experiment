@@ -8,6 +8,7 @@ import { StudyConfigService } from '../study-config-form/study-config.service';
 import { STUDY_INSTRUCTIONS } from '../study/study-instructions';
 import { TrialCompleted } from '../trial/trial.component';
 import { ReportEntry } from './report-entry-interface';
+import { ReportStatus } from './report-status';
 
 @Injectable({
   providedIn: 'root'
@@ -119,7 +120,6 @@ export class ReportService {
     this.add('sequentialCorrect', block.sequentialCorrect);
     this.reportEntries.push(this.formGroup.value);
     this.formGroup.reset();
-    console.log(this.reportEntries);
   }
 
   blobToBase64(blob: Blob) {
@@ -130,12 +130,17 @@ export class ReportService {
     });
   }
 
-  async sendReport(status: string) {
+  async sendReport(status: ReportStatus) {
     const studyConfig = await this.studyConfigService.studyConfig.toPromise();
     const CRLF = '\r\n';
+
+    // Change study failed bases on status
+    this.reportEntries[this.reportEntries.length - 1].studyFailed = status !== 'complete' ? 'TRUE' : 'FALSE';
+
     const report = this.reportEntries.map(
       reportEntry => Object.values(reportEntry).map(value => value?.toString() ?? '').join(';')).join(CRLF);
     const name = `MEEKU - ${studyConfig.participantId}.csv`;
+
     const blob = new Blob([
       status + CRLF + Object.keys(this.formGroup.value).join(';') + CRLF + report
     ], { type: 'text/csv' });

@@ -2,7 +2,8 @@
   [@fadeIn]="{ value: animate === 'fade-in',  params: { delay: animationDelay } }"
   [@fadeOut]="animate === 'fade-out'"
   class="trial-item dynamic-text"
-  (tap)="!disabled && select()"
+  (click)="isDesktop && !disabled && select()"
+  (tap)="!isDesktop && !disabled && select()"
   onclick="blur()"
   matRipple
   [matRippleDisabled]="disabled"

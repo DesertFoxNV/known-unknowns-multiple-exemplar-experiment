@@ -19,9 +19,9 @@ export class TrialCueComponent {
   animate?: 'fade-in'|'fade-out';
   @Input() animationDelay = 0;
   config?: TrialCueComponentConfig;
-  disabled = false;
-  @Output() selected = new EventEmitter<TrialCueComponentConfig>();
+  disabled = true;
   isDesktop = this.deviceDetectorSvc.isDesktop();
+  @Output() selected = new EventEmitter<TrialCueComponentConfig>();
 
   constructor(private deviceDetectorSvc: DeviceDetectorService) {}
 
@@ -37,10 +37,5 @@ export class TrialCueComponent {
     this.disabled = false;
     this.config = config;
     this.animate = 'fade-in';
-  }
-
-  tap() {
-    this.disabled = true;
-    this.selected.emit(this.config);
   }
 }

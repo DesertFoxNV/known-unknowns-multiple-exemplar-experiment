@@ -71,7 +71,7 @@ export class TrialComponent implements AfterViewInit {
   show(trial: Trial) {
     if (!this.trialCueComponents) throw Error('Trial cue components are undefined');
     if (!this.trialStimulusComponents) throw Error('Trial stimulus components are undefined');
-    this.startedAt = new Date();
+    setTimeout(() => this.startedAt = new Date(), TRIAL_ANIMATION_DELAY_MS.cues[0]);
     this.complete = false;
     this.setTimer();
     for (const [i, node] of trial.stimuli.entries()) this.trialStimulusComponents.get(i)?.set(node.value);

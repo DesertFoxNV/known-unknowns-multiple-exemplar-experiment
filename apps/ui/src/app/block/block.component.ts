@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, timer } from 'rxjs';
+import { Observable, Subject, timer } from 'rxjs';
 import { first, switchMap } from 'rxjs/operators';
 import { ReportService } from '../report/report.service';
 import { StudyConfig } from '../study-config-form/study-config';
@@ -20,11 +20,10 @@ import { TRIAL_ANIMATION_DURATION_MS, TRIAL_DELAY_INTERVAL_MS } from './trial-an
 @Component({
   selector: 'block',
   templateUrl: './block.component.html',
-  styleUrls: ['./block.component.scss'],
-  animations: []
+  styleUrls: ['./block.component.scss']
 })
 export class BlockComponent {
-  @Output() completed = new EventEmitter();
+  @Output() completed = new Subject<{ failed: boolean }>();
   completedAt?: Date;
   containsSequentialTriplicates = false;
   correct = 0;
@@ -102,7 +101,7 @@ export class BlockComponent {
     this.setVisibility(false, TRIAL_DELAY_INTERVAL_MS);
     this.completedAt = new Date();
     setTimeout(() => {
-      this.completed.emit();
+      this.completed.next({ failed: false });
     }, TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS));
   }
 
@@ -117,11 +116,8 @@ export class BlockComponent {
    * Participants that fail the block criterion are thanked for their participation and the study is completed.
    */
   failed() {
-    this.studyFailed = true;
     this.setVisibility(false, 0);
-    this.prompt('THANKS FOR PARTICIPATING!', true, TRIAL_DELAY_INTERVAL_MS +
-      (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe();
-    this.completed.emit();
+    this.completed.next({ failed: true });
   }
 
   /**
