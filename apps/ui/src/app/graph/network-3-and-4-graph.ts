@@ -26,6 +26,9 @@ export class Network3And4Graph extends RelationalFrameGraph {
   ) {
     super(relationalFrameGraphConfig);
 
+    // Include comparisons between networks
+    this.includeRelationsBetweenNetworks = true;
+
     // Network 3 - known network
     const nodeA3 = new RelationalNode('A', 3, getRandomStimulus(stimulusCase));
     const nodeB3 = new RelationalNode('B', 3, getRandomStimulus(stimulusCase));
@@ -83,6 +86,7 @@ export class Network3And4Graph extends RelationalFrameGraph {
     if (b4ToC4Relation) {
       this.addTrainedAndMutualRelations(new RelationalEdge(nodeB4, nodeC4, b4ToC4Relation, RelationType.trained));
     }
+
   }
 
 }

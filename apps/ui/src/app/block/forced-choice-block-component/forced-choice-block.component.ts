@@ -24,9 +24,9 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
   numIdkProbeTrials = 5;
   numIdkTrainingTrials = 6;
   numProbeTrials = 10;
-  probeFailuresAllotted = 2;
+  probeFailuresAllotted = 10;
   probesFailed = 0;
-  trainingFailuresAllotted = 2;
+  trainingFailuresAllotted = 10;
   trainingsFailed = 0;
 
   /**
