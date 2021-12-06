@@ -60,6 +60,7 @@ export class StudyComponent implements OnInit {
     const componentRef = this.container.createComponent(componentFactory);
     const blockInstance = componentRef.instance;
     blockInstance.studyConfig = this.studyConfig;
+
     blockInstance.completed.pipe(first(), tap(({ failed }) => {
       if (failed) {
         this.showCompleteDialog(`THANKS FOR PARTICIPATING!\n\n PARTICIPANT ID:\n ${this.studyConfig?.participantId}`,
@@ -71,6 +72,7 @@ export class StudyComponent implements OnInit {
           'complete');
       }
     }), untilDestroyed(this)).subscribe();
+
   }
 
   nextBlock() {
@@ -86,13 +88,17 @@ export class StudyComponent implements OnInit {
     fromEvent(document, 'visibilitychange').pipe(
       filter(() => document.hidden),
       first(),
-      tap(() => this.showCompleteDialog(`STUDY ABANDONED!\n\n PARTICIPANT ID:\n ${this.studyConfig?.participantId}`,
-        'abandoned'))
+      tap(() => {
+        this.container?.clear();
+        this.showCompleteDialog(`STUDY ABANDONED!\n\n PARTICIPANT ID:\n ${this.studyConfig?.participantId}`,
+          'abandoned');
+      })
     ).subscribe();
   }
 
   showCompleteDialog(text: string, status: ReportStatus) {
     this.complete = true;
+    this.container?.clear();
     timer(TRIAL_DELAY_INTERVAL_MS).pipe(
       first(),
       switchMap(() => this.reportSvc.sendReport(status)),
