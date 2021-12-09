@@ -186,7 +186,7 @@ export class BlockComponent {
     this.trialCounterSvc.increase();
 
     if (this.trialCounterSvc.showColorTrial) {
-      this.showTrial(createColorTrial(), 0);
+      this.showTrial(createColorTrial(), this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : 0);
       this.trialCompleted.pipe(first()).subscribe(selected => this.cueSelected(selected));
       this.trialCounterSvc.reset();
     } else if (this.index !== this.trials.length - 1) {
@@ -194,7 +194,6 @@ export class BlockComponent {
       this.showTrial(this.trials[this.index], this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : 0);
       this.trialCompleted.pipe(first()).subscribe(selected => this.cueSelected(selected));
     } else {
-      console.log('completed here');
       this.complete();
     }
   }
@@ -274,7 +273,7 @@ export class BlockComponent {
    * @param {BlockComponent} component
    */
   start() {
-    // if (this.trials.length === 0) this.reset();
+    if (this.trials.length === 0) this.reset();
     this.prompt(this.startInstructions, false, TRIAL_DELAY_INTERVAL_MS)
       .subscribe(() => {
         this.nextTrial();
