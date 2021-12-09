@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { shuffle } from 'lodash-es';
 import { Network3And4Graph } from '../../graph/network-3-and-4-graph';
+import { OverlayService } from '../../overlay/overlay.service';
 import { ReportService } from '../../report/report.service';
-import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
 import { Trial } from '../../trial/trial';
-import { FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS } from '../../trial/trial-correct/feedback-duration';
+import { FEEDBACK_DURATION_MS } from '../../trial/trial-correct/feedback-duration';
 import { TrialCounterService } from '../../trial/trial-counter.service';
 import { BlockComponent } from '../block.component';
 import { randomizedComponentConfigs } from '../cue-component-configs';
@@ -17,12 +17,12 @@ import { TRIAL_DELAY_INTERVAL_MS } from '../trial-animation-delay';
   styleUrls: ['./training-networks-block.component.scss'],
   animations: []
 })
-export class TrainingNetworksBlockComponent extends BlockComponent implements OnInit {
+export class TrainingNetworksBlockComponent extends BlockComponent implements OnInit, OnDestroy {
   name = 'Training Networks';
   numAllottedTimeouts = 1;
   numIdkProbeTrials = 5;
   numProbeDuplicates = 4;
-  numProbeTrials = 32;
+  numProbeTrials = 104;
   numTimeouts = 0;
   numTrainingDuplicates = 2;
   numTrainingTrials = 20;
@@ -40,17 +40,19 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
    *    16 mutually entailed trials (default) = mutually-entailed (B:A, C:A) * numDuplicates (4 default) * 2 networks
    *    16 combinatorially entailed trials (default) = combinatorially-entailed (B:C, C:B) * numDuplicates  (4 default) * 2 networks
    * @param dialog
+   * @param overlaySvc
    * @param reportSvc
    * @param trialCounterSvc
    * @param network3And4Graph
    */
   constructor(
     dialog: MatDialog,
+    overlaySvc: OverlayService,
     reportSvc: ReportService,
     trialCounterSvc: TrialCounterService,
     private network3And4Graph: Network3And4Graph
   ) {
-    super(dialog, reportSvc, trialCounterSvc);
+    super(dialog, overlaySvc, reportSvc, trialCounterSvc);
   }
 
   complete() {
@@ -149,6 +151,10 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
     }
   }
 
+  ngOnDestroy(): void {
+    if (this.timeout) clearTimeout(this.timeout);
+  }
+
   ngOnInit(): void {
     this.start();
   }
@@ -161,23 +167,7 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
     this.correct = 0;
     this.incorrect = 0;
     this.trials = this.createTrials();
-  }
-
-  /**
-   * User is shown a retry block, which they have to click to continue.
-   */
-  retry() {
-    this.incrementAttempt();
-    this.setVisibility(false, FADE_OUT_DURATION_MS);
-    this.prompt(this.retryInstructions, false,
-      TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe(
-      () => {
-        this.feedBackShown = false;
-        this.setVisibility(true, 0);
-        this.nextTrial();
-        this.setTimeout();
-      });
-    this.reset();
+    this.setTimeout();
   }
 
   setTimeout() {
@@ -203,8 +193,6 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
     if (this.trials.length === 0) this.reset();
     this.prompt(this.startInstructions, false, TRIAL_DELAY_INTERVAL_MS)
       .subscribe(() => {
-        this.setTimeout();
-        this.setVisibility(true, 0);
         this.nextTrial();
       });
   }

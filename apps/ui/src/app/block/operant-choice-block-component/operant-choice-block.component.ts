@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { isEqual, shuffle } from 'lodash-es';
 import { Network5And6Graph } from '../../graph/network-5-and-6-graph';
 import { RelationalNode } from '../../graph/relational-node';
 import { StimuliComparison } from '../../graph/stimuli-comparison';
+import { OverlayService } from '../../overlay/overlay.service';
 import { ReportService } from '../../report/report.service';
 import { CueNonArbitrary, CUES_NON_ARBITRARY_W_ICK } from '../../study-conditions/cue.constants';
-import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
 import { Trial } from '../../trial/trial';
-import { FEEDBACK_DURATION_MS, FEEDBACK_FADE_OUT_DELAY_MS } from '../../trial/trial-correct/feedback-duration';
+import { FEEDBACK_DURATION_MS } from '../../trial/trial-correct/feedback-duration';
 import { TrialCounterService } from '../../trial/trial-counter.service';
 import { TrialCompleted } from '../../trial/trial.component';
 import { BlockComponent } from '../block.component';
@@ -24,7 +24,7 @@ const lcm = (a: number, b: number) => a * b / gcd(a, b);
   styleUrls: ['./operant-choice-block.component.scss'],
   animations: []
 })
-export class OperantChoiceBlockComponent extends BlockComponent implements OnInit {
+export class OperantChoiceBlockComponent extends BlockComponent implements OnInit, OnDestroy {
   configBalanceDividedByGcd: Record<CueNonArbitrary, number>|undefined;
   correctCount: Record<CueNonArbitrary|'red'|'green'|'blue', number> = {
     different: 0,
@@ -47,11 +47,12 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
 
   constructor(
     dialog: MatDialog,
+    overlaySvc: OverlayService,
     reportSvc: ReportService,
     trialCounterSvc: TrialCounterService,
     private network5And6Graph: Network5And6Graph
   ) {
-    super(dialog, reportSvc, trialCounterSvc);
+    super(dialog, overlaySvc, reportSvc, trialCounterSvc);
   }
 
   get isComplete(): boolean {
@@ -255,11 +256,14 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
       this.complete();
     } else {
       if (this.index == this.trials.length - 1) {
-        this.setVisibility(true, 0);
         this.index = -1;
       }
       super.nextTrial();
     }
+  }
+
+  ngOnDestroy(): void {
+    if (this.timeout) clearTimeout(this.timeout);
   }
 
   ngOnInit(): void {
@@ -284,23 +288,7 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
     this.index = -1;
     this.correct = 0;
     this.incorrect = 0;
-  }
-
-  /**
-   * User is shown a retry block, which they have to click to continue.
-   */
-  retry() {
-    this.incrementAttempt();
-    this.setVisibility(false, FADE_OUT_DURATION_MS);
-    this.prompt(this.retryInstructions, false,
-      TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe(
-      () => {
-        this.feedBackShown = false;
-        this.setVisibility(true, 0);
-        this.nextTrial();
-        this.setTimeout();
-      });
-    this.reset();
+    this.setTimeout();
   }
 
   setTimeout() {
@@ -355,8 +343,6 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
   start() {
     this.prompt(this.startInstructions, false, TRIAL_DELAY_INTERVAL_MS)
       .subscribe(() => {
-        this.setTimeout();
-        this.setVisibility(true, 0);
         this.nextTrial();
       });
   }

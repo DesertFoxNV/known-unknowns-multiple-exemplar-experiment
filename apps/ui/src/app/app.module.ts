@@ -10,6 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GraphModule } from './graph/graph.module';
 import { LISTEN_FOR_INSTALL_EVENT } from './listen-for-install-event';
+import { OverlayModule } from './overlay/overlay.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -22,6 +23,7 @@ import { LISTEN_FOR_INSTALL_EVENT } from './listen-for-install-event';
     MatSnackBarModule,
     MatRippleModule,
     MatServiceWorkerModule.forRoot(),
+    OverlayModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: true,
       registrationStrategy: 'registerImmediately'
