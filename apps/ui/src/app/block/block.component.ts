@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject, timer } from 'rxjs';
 import { first, switchMap } from 'rxjs/operators';
+import { OverlayService } from '../overlay/overlay.service';
 import { ReportService } from '../report/report.service';
 import { StudyConfig } from '../study-config-form/study-config';
 import { CueSelected } from '../trial/cue-selected';
@@ -47,6 +48,7 @@ export class BlockComponent {
 
   constructor(
     private dialog: MatDialog,
+    private overlaySvc: OverlayService,
     private reportSvc: ReportService,
     private trialCounterSvc: TrialCounterService
   ) {
@@ -76,6 +78,10 @@ export class BlockComponent {
     return this._trainingAttempts;
   }
 
+  get isLastTrial() {
+    return this.index === this.trials.length - 1;
+  }
+
   /**
    * Calculates the percent correct in the current trial attempt by
    * dividing the correct count by the trial number and multiplying by 100
@@ -98,7 +104,6 @@ export class BlockComponent {
    */
   complete() {
     this.incrementAttempt();
-    this.setVisibility(false, TRIAL_DELAY_INTERVAL_MS);
     this.completedAt = new Date();
     setTimeout(() => {
       this.completed.next({ failed: false });
@@ -116,7 +121,6 @@ export class BlockComponent {
    * Participants that fail the block criterion are thanked for their participation and the study is completed.
    */
   failed() {
-    this.setVisibility(false, 0);
     this.completed.next({ failed: true });
   }
 
@@ -182,7 +186,7 @@ export class BlockComponent {
     this.trialCounterSvc.increase();
 
     if (this.trialCounterSvc.showColorTrial) {
-      this.showTrial(createColorTrial(), this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : 0);
+      this.showTrial(createColorTrial(), 0);
       this.trialCompleted.pipe(first()).subscribe(selected => this.cueSelected(selected));
       this.trialCounterSvc.reset();
     } else if (this.index !== this.trials.length - 1) {
@@ -190,6 +194,7 @@ export class BlockComponent {
       this.showTrial(this.trials[this.index], this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : 0);
       this.trialCompleted.pipe(first()).subscribe(selected => this.cueSelected(selected));
     } else {
+      console.log('completed here');
       this.complete();
     }
   }
@@ -207,7 +212,7 @@ export class BlockComponent {
       switchMap(() => this.dialog.open(
         BlockButtonDialogComponent,
         fullScreenDialogWithData<BlockButtonDialogData>({ text, disableClose })
-      ).afterClosed())
+      ).componentInstance.closeClicked.pipe(first()))
     );
   }
 
@@ -223,12 +228,15 @@ export class BlockComponent {
   }
 
   /**
-   * Removes trial component from the component to hide cues from user.
-   * @param {boolean} isVisible
-   * @param {number} delayMs
+   * User is shown a retry block, which they have to click to continue.
    */
-  setVisibility(isVisible: boolean, delayMs = TRIAL_ANIMATION_DURATION_MS) {
-    setTimeout(() => this.isVisible = isVisible, delayMs);
+  retry() {
+    this.incrementAttempt();
+    this.prompt(this.retryInstructions, false,
+      TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe(
+      () => this.nextTrial()
+    );
+    this.reset();
   }
 
   /**
@@ -242,6 +250,8 @@ export class BlockComponent {
     durationMs = FEEDBACK_DURATION_MS,
     animationParams = { delay: FEEDBACK_FADE_OUT_DELAY_MS, duration: FADE_OUT_DURATION_MS }
   ) {
+    this.feedBackShown = true;
+    if (this.isLastTrial) this.overlaySvc.show(FEEDBACK_FADE_OUT_DELAY_MS);
     this.dialog.open(
       TrialFeedbackDialogComponent,
       fullScreenDialogWithData<FeedBackDialogData>({ animationParams, durationMs, feedback })
@@ -254,6 +264,7 @@ export class BlockComponent {
    * @param {number} delayMs
    */
   showTrial(trial: Trial, delayMs = FEEDBACK_FADE_OUT_DELAY_MS) {
+    this.feedBackShown = false;
     this.trial = trial;
     setTimeout(() => this.trialComponent?.show(trial), delayMs);
   }
@@ -263,10 +274,9 @@ export class BlockComponent {
    * @param {BlockComponent} component
    */
   start() {
-    if (this.trials.length === 0) this.reset();
+    // if (this.trials.length === 0) this.reset();
     this.prompt(this.startInstructions, false, TRIAL_DELAY_INTERVAL_MS)
       .subscribe(() => {
-        this.setVisibility(true, 0);
         this.nextTrial();
       });
   }
@@ -282,12 +292,8 @@ export class BlockComponent {
 
     if (!selected?.cue) {
       this.showFeedback('TIME EXPIRED');
-      this.feedBackShown = true;
     } else if (this.feedback && this.feedbackEnabled()) {
       this.showFeedback(this.feedback);
-      this.feedBackShown = true;
-    } else {
-      this.feedBackShown = false;
     }
 
     this.reportSvc.addTrial(this, selected);

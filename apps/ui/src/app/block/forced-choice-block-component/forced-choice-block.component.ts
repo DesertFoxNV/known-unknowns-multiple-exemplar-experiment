@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { cloneDeep, sampleSize, shuffle } from 'lodash-es';
 import { Network1And2Graph } from '../../graph/network-1-and-2-graph';
+import { OverlayService } from '../../overlay/overlay.service';
 import { ReportService } from '../../report/report.service';
 import { CUE_NON_ARBITRARY } from '../../study-conditions/cue.constants';
 import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
@@ -39,17 +40,19 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
    *    6 different (A:B, B:C, C:A, B:A, C:B, A:C)
    *    6 ick (A:D, B:E, C:F, A:F, B:D, C:E ... select 6 of 18 combinations)
    * @param dialog
+   * @param overlaySvc
    * @param reportSvc
    * @param trialCounterSvc
    * @param network1And2Graph
    */
   constructor(
     dialog: MatDialog,
+    overlaySvc: OverlayService,
     reportSvc: ReportService,
     trialCounterSvc: TrialCounterService,
     private network1And2Graph: Network1And2Graph
   ) {
-    super(dialog, reportSvc, trialCounterSvc);
+    super(dialog, overlaySvc, reportSvc, trialCounterSvc);
   }
 
   get numTrainingTrials() {
@@ -147,7 +150,7 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
         this.retry();
       }
 
-    } else if (this.trialNum === this.numProbeTrials + this.numTrainingTrials && this.percentCorrect !== 100) {
+    } else if ((this.trialNum === this.numProbeTrials + this.numTrainingTrials) && this.percentCorrect !== 100) {
       this.probesFailed++;
       this.incrementProbeAttempts();
 
@@ -166,21 +169,5 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
 
   ngOnInit(): void {
     this.start();
-  }
-
-  /**
-   * User is shown a retry block, which they have to click to continue.
-   */
-  retry() {
-    this.incrementAttempt();
-    this.setVisibility(false, FADE_OUT_DURATION_MS);
-    this.prompt(this.retryInstructions, false,
-      TRIAL_DELAY_INTERVAL_MS + (this.feedBackShown ? FEEDBACK_FADE_OUT_DELAY_MS : FADE_OUT_DURATION_MS)).subscribe(
-      () => {
-        this.feedBackShown = false;
-        this.setVisibility(true, 0);
-        this.nextTrial();
-      });
-    this.reset();
   }
 }

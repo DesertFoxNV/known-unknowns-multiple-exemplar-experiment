@@ -3,6 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription, timer } from 'rxjs';
 import { takeWhile, tap } from 'rxjs/operators';
 import { TRIAL_ANIMATION_DELAY_MS, TRIAL_ANIMATION_DURATION_MS } from '../block/trial-animation-delay';
+import { OverlayService } from '../overlay/overlay.service';
 import { TrialCueComponentConfig } from '../study-conditions/trial-cue-component-config';
 import { StudyConfig } from '../study-config-form/study-config';
 import { Trial } from './trial';
@@ -32,6 +33,8 @@ export class TrialComponent implements AfterViewInit {
   timerSub: Subscription|undefined;
   @ViewChildren(TrialCueComponent) trialCueComponents?: QueryList<TrialCueComponent>;
   @ViewChildren(TrialStimulusComponent) trialStimulusComponents?: QueryList<TrialStimulusComponent>;
+
+  constructor(private overlaySvc: OverlayService) {}
 
   clearTimer() {
     if (this.timerSub) this.timerSub.unsubscribe();
@@ -69,6 +72,7 @@ export class TrialComponent implements AfterViewInit {
   }
 
   show(trial: Trial) {
+    this.overlaySvc.hide();
     if (!this.trialCueComponents) throw Error('Trial cue components are undefined');
     if (!this.trialStimulusComponents) throw Error('Trial stimulus components are undefined');
     setTimeout(() => this.startedAt = new Date(), TRIAL_ANIMATION_DELAY_MS.cues[0]);

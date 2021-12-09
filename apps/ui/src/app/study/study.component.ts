@@ -9,7 +9,6 @@ import {
   BlockButtonDialogComponent, BlockButtonDialogData
 } from '../block/block-button-dialog/block-button-dialog.component';
 import { BlockComponent } from '../block/block.component';
-import { ForcedChoiceBlockComponent } from '../block/forced-choice-block-component/forced-choice-block.component';
 import { fullScreenDialogWithData } from '../block/full-screen-dialog-with-data';
 import { OperantChoiceBlockComponent } from '../block/operant-choice-block-component/operant-choice-block.component';
 import { PreTestBlockComponent } from '../block/pre-test-block-component/pre-test-block.component';
@@ -32,9 +31,9 @@ import { STUDY_INSTRUCTIONS } from './study-instructions';
 })
 export class StudyComponent implements OnInit {
   blocks: ComponentType<BlockComponent>[] = [
-    PreTestBlockComponent,
-    ForcedChoiceBlockComponent,
-    OperantChoiceBlockComponent,
+    // PreTestBlockComponent,
+    // ForcedChoiceBlockComponent,
+    // OperantChoiceBlockComponent,
     TrainingNetworksBlockComponent
   ];
   complete = false;

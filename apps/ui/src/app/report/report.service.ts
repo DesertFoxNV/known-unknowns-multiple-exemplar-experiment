@@ -131,6 +131,7 @@ export class ReportService {
   }
 
   async sendReport(status: ReportStatus) {
+    console.log('status', status);
     const studyConfig = await this.studyConfigService.studyConfig.toPromise();
     const CRLF = '\r\n';
 
