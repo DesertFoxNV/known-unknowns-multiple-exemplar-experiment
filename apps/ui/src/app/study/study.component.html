@@ -4,7 +4,8 @@
     {{instructions}}
   </mat-card-content>
   <mat-card-actions>
-    <button color="primary" (tap)="nextBlock()" onclick="blur()" mat-button>CONTINUE</button>
+    <button *ngIf="!preSurveyCompleted" color="primary" (tap)="showPreSurvey()" onclick="blur()" mat-button>COMPLETE SURVEY</button>
+    <button *ngIf="preSurveyCompleted" color="primary" (tap)="nextBlock()" onclick="blur()" mat-button>CONTINUE</button>
   </mat-card-actions>
 </mat-card>
 

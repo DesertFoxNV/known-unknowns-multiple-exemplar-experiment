@@ -131,41 +131,41 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
     return this.index < this.numTrainingTrials;
   }
 
-  /**
-   * Next trial overrides the base class so that the trial can be segmented
-   * into two phases training and probe. If the participant fails a phase they
-   * are allowed to retry up to the amount of failures allotted, otherwise
-   * the study is completed.
-   */
-  nextTrial(): void {
-
-    if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100) {
-      this.trainingsFailed++;
-      this.incrementTrainingAttempts();
-
-      // If trainings failed equals the max training failures allowed, the block completes, otherwise the participant retries the block
-      if (this.trainingsFailed >= this.trainingFailuresAllotted) {
-        this.failed();
-      } else {
-        this.retry();
-      }
-
-    } else if ((this.trialNum === this.numProbeTrials + this.numTrainingTrials) && this.percentCorrect !== 100) {
-      this.probesFailed++;
-      this.incrementProbeAttempts();
-
-      // If probes failed equals the max probe failures allowed, the block completes, otherwise the participant retries the block
-      if (this.probesFailed >= this.probeFailuresAllotted) {
-        this.failed();
-      } else {
-        this.retry();
-      }
-    } else {
-      // if training is passed reset the training failures allotted
-      if (this.trialNum >= this.numTrainingTrials) this.trainingsFailed = 0;
-      super.nextTrial();
-    }
-  }
+  // /**
+  //  * Next trial overrides the base class so that the trial can be segmented
+  //  * into two phases training and probe. If the participant fails a phase they
+  //  * are allowed to retry up to the amount of failures allotted, otherwise
+  //  * the study is completed.
+  //  */
+  // nextTrial(): void {
+  //
+  //   if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100) {
+  //     this.trainingsFailed++;
+  //     this.incrementTrainingAttempts();
+  //
+  //     // If trainings failed equals the max training failures allowed, the block completes, otherwise the participant retries the block
+  //     if (this.trainingsFailed >= this.trainingFailuresAllotted) {
+  //       this.failed();
+  //     } else {
+  //       this.retry();
+  //     }
+  //
+  //   } else if ((this.trialNum === this.numProbeTrials + this.numTrainingTrials) && this.percentCorrect !== 100) {
+  //     this.probesFailed++;
+  //     this.incrementProbeAttempts();
+  //
+  //     // If probes failed equals the max probe failures allowed, the block completes, otherwise the participant retries the block
+  //     if (this.probesFailed >= this.probeFailuresAllotted) {
+  //       this.failed();
+  //     } else {
+  //       this.retry();
+  //     }
+  //   } else {
+  //     // if training is passed reset the training failures allotted
+  //     if (this.trialNum >= this.numTrainingTrials) this.trainingsFailed = 0;
+  //     super.nextTrial();
+  //   }
+  // }
 
   ngOnInit(): void {
     this.start();

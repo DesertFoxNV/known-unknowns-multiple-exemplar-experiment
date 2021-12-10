@@ -32,14 +32,15 @@ import { STUDY_INSTRUCTIONS } from './study-instructions';
 })
 export class StudyComponent implements OnInit {
   blocks: ComponentType<BlockComponent>[] = [
-    PreTestBlockComponent,
+    // PreTestBlockComponent,
     ForcedChoiceBlockComponent,
-    OperantChoiceBlockComponent,
-    TrainingNetworksBlockComponent
+    // OperantChoiceBlockComponent,
+    // TrainingNetworksBlockComponent
   ];
   complete = false;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container?: ViewContainerRef;
   instructions = STUDY_INSTRUCTIONS;
+  preSurveyCompleted = false;
   showInstructions = true;
   studyConfig?: StudyConfig;
 
@@ -67,9 +68,11 @@ export class StudyComponent implements OnInit {
           'failed');
       } else if (this.blocks.length) {
         this.nextBlock();
+        this.reportSvc.sendReport('block');
       } else {
         this.showCompleteDialog(`THANKS FOR PARTICIPATING!\n\n PARTICIPANT ID:\n ${this.studyConfig?.participantId}`,
           'complete');
+        this.showPostSurvey()
       }
     }), untilDestroyed(this)).subscribe();
 
@@ -83,6 +86,7 @@ export class StudyComponent implements OnInit {
   }
 
   ngOnInit() {
+
     this.studyConfigSvc.studyConfig.pipe(tap((studyConfig) => this.studyConfig = studyConfig)).subscribe();
 
     fromEvent(document, 'visibilitychange').pipe(
@@ -96,6 +100,13 @@ export class StudyComponent implements OnInit {
     ).subscribe();
   }
 
+  popupwindow(url: string, title: string, w: number, h: number) {
+    const left = Math.round((screen.width / 2) - (w / 2));
+    const top = Math.round((screen.height / 2) - (h / 2));
+    return window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, '
+      + 'menubar=no, scrollbars=yes, resizable=no, copyhistory=no');
+  }
+
   showCompleteDialog(text: string, status: ReportStatus) {
     this.complete = true;
     this.container?.clear();
@@ -105,6 +116,32 @@ export class StudyComponent implements OnInit {
       switchMap(() => this.dialog.open(BlockButtonDialogComponent,
         fullScreenDialogWithData<BlockButtonDialogData>({ text, disableClose: true })).afterClosed())
     ).subscribe();
+  }
+
+  showPostSurvey() {
+    const survey = this.popupwindow(
+      'https://docs.google.com/forms/d/e/1FAIpQLSczKoo6Uf1wy11LoWiwvIcECIjoZy3YdAA-bCzNVDZtpxvAFg/viewform?embedded=true',
+      'Survey', 500, 500);
+    if (!survey) throw Error('Survey windows is undefined');
+    const timer = setInterval(() => {
+      if (survey.closed) {
+        clearInterval(timer);
+      }
+      this.preSurveyCompleted = true;
+    }, 100);
+  }
+
+  showPreSurvey() {
+    const survey = this.popupwindow(
+      'https://docs.google.com/forms/d/e/1FAIpQLSfUjqCloWRFFmtxktYAz-vnNuoo-YpdY1rpuS8bNAM7JiK9Jw/viewform?embedded=true',
+      'Survey', 500, 500);
+    if (!survey) throw Error('Survey windows is undefined');
+    const timer = setInterval(() => {
+      if (survey.closed) {
+        clearInterval(timer);
+      }
+      this.preSurveyCompleted = true;
+    }, 100);
   }
 
 }

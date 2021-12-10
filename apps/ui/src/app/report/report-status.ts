@@ -1,1 +1,1 @@
-export type ReportStatus = 'abandoned'|'failed'|'complete'
+export type ReportStatus = 'abandoned'|'failed'|'complete'|'block'
