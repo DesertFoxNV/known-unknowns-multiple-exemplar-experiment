@@ -32,10 +32,10 @@ import { STUDY_INSTRUCTIONS } from './study-instructions';
 })
 export class StudyComponent implements OnInit {
   blocks: ComponentType<BlockComponent>[] = [
-    // PreTestBlockComponent,
+    PreTestBlockComponent,
     ForcedChoiceBlockComponent,
-    // OperantChoiceBlockComponent,
-    // TrainingNetworksBlockComponent
+    OperantChoiceBlockComponent,
+    TrainingNetworksBlockComponent
   ];
   complete = false;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container?: ViewContainerRef;
