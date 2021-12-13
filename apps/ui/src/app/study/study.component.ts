@@ -72,7 +72,6 @@ export class StudyComponent implements OnInit {
       } else {
         this.showCompleteDialog(`THANKS FOR PARTICIPATING!\n\n PARTICIPANT ID:\n ${this.studyConfig?.participantId}`,
           'complete');
-        this.showPostSurvey()
       }
     }), untilDestroyed(this)).subscribe();
 
@@ -101,8 +100,6 @@ export class StudyComponent implements OnInit {
   }
 
   popupwindow(url: string, title: string, w: number, h: number) {
-    const left = Math.round((screen.width / 2) - (w / 2));
-    const top = Math.round((screen.height / 2) - (h / 2));
     return window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, '
       + 'menubar=no, scrollbars=yes, resizable=no, copyhistory=no');
   }
@@ -112,7 +109,10 @@ export class StudyComponent implements OnInit {
     this.container?.clear();
     timer(TRIAL_DELAY_INTERVAL_MS).pipe(
       first(),
-      switchMap(() => this.reportSvc.sendReport(status)),
+      switchMap(() => {
+        this.showPostSurvey()
+        return this.reportSvc.sendReport(status)
+      }),
       switchMap(() => this.dialog.open(BlockButtonDialogComponent,
         fullScreenDialogWithData<BlockButtonDialogData>({ text, disableClose: true })).afterClosed())
     ).subscribe();
