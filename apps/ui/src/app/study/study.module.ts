@@ -11,6 +11,7 @@ import { Network1And2Graph } from '../graph/network-1-and-2-graph';
 import { Network3And4Graph } from '../graph/network-3-and-4-graph';
 import { Network5And6Graph } from '../graph/network-5-and-6-graph';
 import { randomStimulusCase } from '../study-conditions/random-stimulus-case';
+import { SurveyDialogModule } from '../survey-dialog/survey-dialog.module';
 
 import { StudyRoutingModule } from './study-routing.module';
 import { StudyComponent } from './study.component';
@@ -33,6 +34,7 @@ export const STIMULUS_CASE = new InjectionToken('Stimulus case');
     OperantChoiceBlockModule,
     PreTestBlockModule,
     StudyRoutingModule,
+    SurveyDialogModule,
     TrainingNetworksBlockModule
   ],
   providers: [

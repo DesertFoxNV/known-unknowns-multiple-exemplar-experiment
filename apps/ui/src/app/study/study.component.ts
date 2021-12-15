@@ -21,6 +21,7 @@ import { ReportStatus } from '../report/report-status';
 import { ReportService } from '../report/report.service';
 import { StudyConfig } from '../study-config-form/study-config';
 import { StudyConfigService } from '../study-config-form/study-config.service';
+import { SurveyDialogComponent, SurveyDialogData } from '../survey-dialog/survey-dialog.component';
 import { STUDY_INSTRUCTIONS } from './study-instructions';
 
 @UntilDestroy()
@@ -99,19 +100,14 @@ export class StudyComponent implements OnInit {
     ).subscribe();
   }
 
-  popupwindow(url: string, title: string, w: number, h: number) {
-    return window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, '
-      + 'menubar=no, scrollbars=yes, resizable=no, copyhistory=no');
-  }
-
   showCompleteDialog(text: string, status: ReportStatus) {
     this.complete = true;
     this.container?.clear();
     timer(TRIAL_DELAY_INTERVAL_MS).pipe(
       first(),
       switchMap(() => {
-        this.showPostSurvey()
-        return this.reportSvc.sendReport(status)
+        this.showPostSurvey();
+        return this.reportSvc.sendReport(status);
       }),
       switchMap(() => this.dialog.open(BlockButtonDialogComponent,
         fullScreenDialogWithData<BlockButtonDialogData>({ text, disableClose: true })).afterClosed())
@@ -119,29 +115,19 @@ export class StudyComponent implements OnInit {
   }
 
   showPostSurvey() {
-    const survey = this.popupwindow(
-      'https://docs.google.com/forms/d/e/1FAIpQLSczKoo6Uf1wy11LoWiwvIcECIjoZy3YdAA-bCzNVDZtpxvAFg/viewform?embedded=true',
-      'Survey', 500, 500);
-    if (!survey) throw Error('Survey windows is undefined');
-    const timer = setInterval(() => {
-      if (survey.closed) {
-        clearInterval(timer);
-      }
-      this.preSurveyCompleted = true;
-    }, 100);
+    this.dialog.open(SurveyDialogComponent, fullScreenDialogWithData<SurveyDialogData>(
+      {
+        title: `Post Survey | Participant Id = ${this.studyConfig?.participantId}`,
+        survey: 'post'
+      })).afterClosed().pipe(tap(() => this.preSurveyCompleted = true)).subscribe();
   }
 
   showPreSurvey() {
-    const survey = this.popupwindow(
-      'https://docs.google.com/forms/d/e/1FAIpQLSfUjqCloWRFFmtxktYAz-vnNuoo-YpdY1rpuS8bNAM7JiK9Jw/viewform?embedded=true',
-      'Survey', 500, 500);
-    if (!survey) throw Error('Survey windows is undefined');
-    const timer = setInterval(() => {
-      if (survey.closed) {
-        clearInterval(timer);
-      }
-      this.preSurveyCompleted = true;
-    }, 100);
+    this.dialog.open(SurveyDialogComponent, fullScreenDialogWithData<SurveyDialogData>(
+      {
+        title: `Pre Survey | Participant Id = ${this.studyConfig?.participantId}`,
+        survey: 'pre'
+      })).afterClosed().pipe(tap(() => this.preSurveyCompleted = true)).subscribe();
   }
 
 }

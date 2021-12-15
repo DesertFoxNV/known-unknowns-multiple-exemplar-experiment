@@ -1,0 +1,16 @@
+<h1 mat-dialog-title class="p-3 text-center">{{data.title}}</h1>
+<mat-dialog-content class="mat-dialog-content-survey">
+  <iframe
+    *ngIf="data.survey === 'pre'"
+    src="https://docs.google.com/forms/d/e/1FAIpQLSfUjqCloWRFFmtxktYAz-vnNuoo-YpdY1rpuS8bNAM7JiK9Jw/viewform?embedded=true"
+  ></iframe>
+  <iframe
+    *ngIf="data.survey === 'post'"
+    src="https://docs.google.com/forms/d/e/1FAIpQLSczKoo6Uf1wy11LoWiwvIcECIjoZy3YdAA-bCzNVDZtpxvAFg/viewform?embedded=true"
+  ></iframe>
+</mat-dialog-content>
+<div mat-dialog-actions>
+  <button mat-button color="primary" (click)="ref.close()">RETURN TO STUDY</button>
+</div>
+
+
