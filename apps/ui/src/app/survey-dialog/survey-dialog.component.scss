@@ -3,14 +3,7 @@
   padding: 16px;
 }
 
-.mat-dialog-content-survey {
-  margin: 0 !important;
-  padding: 0 !important;
-  max-height: Calc(100vh - 165px) !important;
-  overflow-x: hidden !important;
-}
-
 iframe {
-  height: Calc(100vh - 95px + 100px);
+  height: Calc(100vh - 164px);
   width: Calc(100vw - 32px);
 }
