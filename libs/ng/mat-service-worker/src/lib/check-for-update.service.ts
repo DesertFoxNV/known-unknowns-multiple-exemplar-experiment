@@ -9,6 +9,6 @@ export class CheckForUpdateService {
   start() {
     // Check for updates every 60 seconds
     this.updates.checkForUpdate().then();
-    interval(60 * 1000).subscribe(() => this.updates.checkForUpdate().then());
+    interval(5 * 1000).subscribe(() => this.updates.checkForUpdate().then());
   }
 }
