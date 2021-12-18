@@ -106,7 +106,7 @@ export class StudyComponent implements OnInit {
     timer(TRIAL_DELAY_INTERVAL_MS).pipe(
       first(),
       switchMap(() => {
-        this.showPostSurvey();
+        if (status !== 'abandoned') this.showPostSurvey();
         return this.reportSvc.sendReport(status);
       }),
       switchMap(() => this.dialog.open(BlockButtonDialogComponent,
