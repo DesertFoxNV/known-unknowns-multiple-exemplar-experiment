@@ -131,15 +131,17 @@ export class ReportService {
   }
 
   async sendReport(status: ReportStatus) {
-    const studyConfig = await this.studyConfigService.studyConfig.toPromise();
+    const { participantId } = this.studyConfigService;
     const CRLF = '\r\n';
 
     // Change study failed bases on status
-    this.reportEntries[this.reportEntries.length - 1].studyFailed = status !== 'complete' ? 'TRUE' : 'FALSE';
+    if (this.reportEntries.length) this.reportEntries[this.reportEntries.length - 1].studyFailed = status !==
+    'complete' ? 'TRUE' :
+      'FALSE';
 
     const report = this.reportEntries.map(
       reportEntry => Object.values(reportEntry).map(value => value?.toString() ?? '').join(';')).join(CRLF);
-    const name = `MEEKU - ${studyConfig.participantId}.csv`;
+    const name = `MEEKU - ${participantId}.csv`;
 
     const blob = new Blob([
       status + CRLF + Object.keys(this.formGroup.value).join(';') + CRLF + report
@@ -153,7 +155,7 @@ export class ReportService {
         content,
         from_name: 'Meeku Robot',
         to_name: 'Patrick',
-        message: `New report has been issued! ${studyConfig.participantId}`,
+        message: `New report has been issued! ${participantId}`,
         participant: name
       },
       'user_OawQbiPiSgdzcdY3SkdGT').then(function(response) {

@@ -19,9 +19,8 @@ import {
 import { TRIAL_DELAY_INTERVAL_MS } from '../block/trial-animation-delay';
 import { ReportStatus } from '../report/report-status';
 import { ReportService } from '../report/report.service';
-import { StudyConfig } from '../study-config-form/study-config';
 import { StudyConfigService } from '../study-config-form/study-config.service';
-import { SurveyDialogComponent, SurveyDialogData } from '../survey-dialog/survey-dialog.component';
+import { SurveyService } from '../survey/survey.service';
 import { STUDY_INSTRUCTIONS } from './study-instructions';
 
 @UntilDestroy()
@@ -41,38 +40,34 @@ export class StudyComponent implements OnInit {
   complete = false;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container?: ViewContainerRef;
   instructions = STUDY_INSTRUCTIONS;
-  preSurveyCompleted = false;
   showInstructions = true;
-  studyConfig?: StudyConfig;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private componentFactoryResolver: ComponentFactoryResolver,
     private dialog: MatDialog,
     private reportSvc: ReportService,
-    readonly studyConfigSvc: StudyConfigService
+    readonly studyConfigSvc: StudyConfigService,
+    private surveySvc: SurveyService
   ) {
   }
 
   createBlockComponent(blockComponent: ComponentType<BlockComponent>) {
     if (!this.container) throw Error('Container is undefined');
-    if (!this.studyConfig) throw Error('Study configuration is undefined');
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(blockComponent);
     this.container.clear();
     const componentRef = this.container.createComponent(componentFactory);
     const blockInstance = componentRef.instance;
-    blockInstance.studyConfig = this.studyConfig;
+    blockInstance.studyConfig = this.studyConfigSvc.config;
 
     blockInstance.completed.pipe(first(), tap(({ failed }) => {
       if (failed) {
-        this.showCompleteDialog(`THANKS FOR PARTICIPATING!\n\n PARTICIPANT ID:\n ${this.studyConfig?.participantId}`,
-          'failed');
+        this.showCompleteDialog('failed');
       } else if (this.blocks.length) {
         this.nextBlock();
-        this.reportSvc.sendReport('block');
+        this.reportSvc.sendReport('block').then();
       } else {
-        this.showCompleteDialog(`THANKS FOR PARTICIPATING!\n\n PARTICIPANT ID:\n ${this.studyConfig?.participantId}`,
-          'complete');
+        this.showCompleteDialog('complete');
       }
     }), untilDestroyed(this)).subscribe();
 
@@ -86,27 +81,20 @@ export class StudyComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    this.studyConfigSvc.studyConfig.pipe(tap((studyConfig) => this.studyConfig = studyConfig)).subscribe();
-
-    fromEvent(document, 'visibilitychange').pipe(
-      filter(() => document.hidden),
-      first(),
-      tap(() => {
-        this.container?.clear();
-        this.showCompleteDialog(`STUDY ABANDONED!\n\n PARTICIPANT ID:\n ${this.studyConfig?.participantId}`,
-          'abandoned');
-      })
-    ).subscribe();
+    this.studyConfigSvc.loadStudyConfigFromParams().then();
   }
 
-  showCompleteDialog(text: string, status: ReportStatus) {
+  showCompleteDialog(status: ReportStatus) {
+    const { participantId } = this.studyConfigSvc;
+    const text = status === 'abandoned' ? `STUDY ABANDONED!\n\n PARTICIPANT ID:\n ${participantId}` :
+      `THANKS FOR PARTICIPATING!\n\n PARTICIPANT ID:\n ${participantId}`;
     this.complete = true;
     this.container?.clear();
     timer(TRIAL_DELAY_INTERVAL_MS).pipe(
       first(),
+      switchMap(() => this.reportSvc.sendReport(status)),
       switchMap(() => {
-        if (status !== 'abandoned') this.showPostSurvey();
+        if (status !== 'abandoned') this.surveySvc.showPostSurvey(participantId);
         return this.reportSvc.sendReport(status);
       }),
       switchMap(() => this.dialog.open(BlockButtonDialogComponent,
@@ -114,20 +102,17 @@ export class StudyComponent implements OnInit {
     ).subscribe();
   }
 
-  showPostSurvey() {
-    this.dialog.open(SurveyDialogComponent, fullScreenDialogWithData<SurveyDialogData>(
-      {
-        title: `Post Survey | Participant Id = ${this.studyConfig?.participantId}`,
-        survey: 'post'
-      })).afterClosed().pipe(tap(() => this.preSurveyCompleted = true)).subscribe();
-  }
-
   showPreSurvey() {
-    this.dialog.open(SurveyDialogComponent, fullScreenDialogWithData<SurveyDialogData>(
-      {
-        title: `Pre Survey | Participant Id = ${this.studyConfig?.participantId}`,
-        survey: 'pre'
-      })).afterClosed().pipe(tap(() => this.preSurveyCompleted = true)).subscribe();
+    this.surveySvc.showPreSurvey(this.studyConfigSvc.participantId).pipe(tap(() => {
+      fromEvent(this.document, 'visibilitychange').pipe(
+        filter(() => this.document.hidden),
+        first(),
+        tap(() => {
+          this.container?.clear();
+          this.showCompleteDialog('abandoned');
+        })
+      ).subscribe();
+    })).subscribe(() => this.nextBlock());
   }
 
 }

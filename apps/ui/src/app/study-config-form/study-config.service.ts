@@ -3,7 +3,6 @@ import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SnackBarService } from '@known-unknowns-multiple-exemplar-experiment/ng/mat-snack-bar';
 import { FormBuilder, FormGroup } from '@ngneat/reactive-forms';
-import { Observable } from 'rxjs';
 import { catchError, first, map, tap } from 'rxjs/operators';
 import { studyConfigFromParams } from '../param-conversions/study-config-from-params';
 import { CUE_TYPE } from '../study-conditions/cue.constants';
@@ -21,16 +20,15 @@ export class StudyConfigService {
   ) {
   }
 
-  get studyConfig(): Observable<StudyConfig> {
-    return this.activatedRoute.queryParams.pipe(
-      first(),
-      map(studyConfigFromParams),
-      tap((config) => this.isConfigValid(config)),
-      catchError((err) => {
-        this.snackBarSvc.error(err.message);
-        this.router.navigate([`../`]).then();
-        return [err];
-      }));
+  private _config?: StudyConfig;
+
+  get config(): StudyConfig {
+    if (!this._config) throw Error('Config is not defined');
+    return this._config;
+  }
+
+  get participantId(): string {
+    return this.config.participantId;
   }
 
   createForm(iCannotKnowBalanceDisabled = true): FormGroup<StudyConfig> {
@@ -54,5 +52,17 @@ export class StudyConfigService {
     const form = this.createForm(config?.iCannotKnow === false);
     form.patchValue(config);
     if (form.invalid) throw Error('Study configuration params are invalid.');
+  }
+
+  async loadStudyConfigFromParams(): Promise<void> {
+    this._config = await this.activatedRoute.queryParams.pipe(
+      first(),
+      map(studyConfigFromParams),
+      tap((config) => this.isConfigValid(config)),
+      catchError((err) => {
+        this.snackBarSvc.error(err.message);
+        this.router.navigate([`../`]).then();
+        return [err];
+      })).toPromise();
   }
 }
