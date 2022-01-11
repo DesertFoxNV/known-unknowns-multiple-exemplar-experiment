@@ -83,7 +83,7 @@ export class StudyComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.studyConfigSvc.loadStudyConfigFromParams().then();
+    this.studyConfigSvc.loadStudyConfigFromParams().then(() => this.showCompleteDialog('failed'));
   }
 
   showCompleteDialog(status: ReportStatus) {
@@ -96,10 +96,7 @@ export class StudyComponent implements OnInit {
     timer(TRIAL_DELAY_INTERVAL_MS).pipe(
       first(),
       switchMap(() => this.reportSvc.sendReport(status)),
-      switchMap(() => {
-        if (status !== 'abandoned') this.surveySvc.showPostSurvey(participantId);
-        return this.reportSvc.sendReport(status);
-      }),
+      switchMap(() => status !== 'abandoned' ? this.surveySvc.showPostSurvey(participantId) : [text]),
       switchMap(() => this.dialog.open(BlockButtonDialogComponent,
         fullScreenDialogWithData<BlockButtonDialogData>({text, disableClose: true})).afterClosed())
     ).subscribe();
