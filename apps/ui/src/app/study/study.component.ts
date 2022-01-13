@@ -82,7 +82,7 @@ export class StudyComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.studyConfigSvc.loadStudyConfigFromParams();
+    this.studyConfigSvc.loadStudyConfigFromParams().then();
   }
 
   showCompleteDialog(status: ReportStatus) {
