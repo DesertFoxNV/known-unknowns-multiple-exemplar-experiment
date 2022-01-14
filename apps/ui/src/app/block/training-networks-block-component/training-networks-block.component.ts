@@ -18,6 +18,13 @@ import { TRIAL_DELAY_INTERVAL_MS } from '../trial-animation-delay';
   animations: []
 })
 export class TrainingNetworksBlockComponent extends BlockComponent implements OnInit, OnDestroy {
+  ';;
+  A;
+  BREAK;
+  CLICK;
+  CONTINUE;
+  TAKE;
+  TO;
   name = 'Training Networks';
   numAllottedTimeouts = 1;
   numIdkProbeTrials = 5;
@@ -26,10 +33,11 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
   numTimeouts = 0;
   numTrainingDuplicates = 2;
   numTrainingTrials = 20;
+.
   probeFailuresAllotted = 2;
   probesFailed = 0;
   sequentialCorrectTarget = 23;
-  startInstructions = 'TAKE A BREAK.\n CLICK TO CONTINUE';
+  startInstructions = '';
   timeout?: NodeJS.Timeout;
 
   /**
@@ -195,7 +203,7 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
     if (this.trials.length === 0) this.reset();
     this.prompt(this.startInstructions, false, TRIAL_DELAY_INTERVAL_MS)
       .subscribe(() => {
-        this.started.next()
+        this.started.next();
         this.nextTrial();
       });
   }
