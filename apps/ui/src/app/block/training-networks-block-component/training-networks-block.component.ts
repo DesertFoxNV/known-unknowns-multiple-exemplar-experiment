@@ -119,7 +119,8 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
     if (!this.studyConfig) throw Error('Study configuration is undefined');
 
     // if sequential correct is greater than target advance to probe stage
-    if (this.sequentialCorrect === this.sequentialCorrectTarget) this.index = this.numTrainingTrials - 1;
+    if (this.sequentialCorrect === this.sequentialCorrectTarget && this.trialNum <=
+      this.numTrainingTrials) this.index = this.numTrainingTrials - 1;
 
     // if training is passed reset the training failures allotted
     if (this.trialNum === this.numTrainingTrials && this.percentCorrect !== 100 && this.sequentialCorrect !==
