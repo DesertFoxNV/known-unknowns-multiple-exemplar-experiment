@@ -38,6 +38,7 @@ export class BlockComponent {
   retryInstructions = 'CLICK TO TRY AGAIN';
   sequentialCorrect = 0;
   startInstructions = 'CLICK TO START';
+  @Output() started = new Subject();
   startedAt: Date|undefined;
   @Input() studyConfig?: StudyConfig;
   studyFailed = false;
@@ -276,6 +277,7 @@ export class BlockComponent {
     if (this.trials.length === 0) this.reset();
     this.prompt(this.startInstructions, false, TRIAL_DELAY_INTERVAL_MS)
       .subscribe(() => {
+        this.started.next();
         this.nextTrial();
       });
   }

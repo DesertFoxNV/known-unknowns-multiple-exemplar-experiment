@@ -5,13 +5,10 @@ import { Network1And2Graph } from '../../graph/network-1-and-2-graph';
 import { OverlayService } from '../../overlay/overlay.service';
 import { ReportService } from '../../report/report.service';
 import { CUE_NON_ARBITRARY } from '../../study-conditions/cue.constants';
-import { FADE_OUT_DURATION_MS } from '../../trial/fade-out-duration';
 import { Trial } from '../../trial/trial';
-import { FEEDBACK_FADE_OUT_DELAY_MS } from '../../trial/trial-correct/feedback-duration';
 import { TrialCounterService } from '../../trial/trial-counter.service';
 import { BlockComponent } from '../block.component';
 import { oneChoiceCueComponentConfig, twoChoiceCueComponentConfig } from '../cue-component-configs';
-import { TRIAL_DELAY_INTERVAL_MS } from '../trial-animation-delay';
 
 @Component({
   selector: 'forced-choice-block',
@@ -27,6 +24,7 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
   numProbeTrials = 10;
   probeFailuresAllotted = 10;
   probesFailed = 0;
+  startInstructions = 'TAKE A BREAK.\n CLICK TO CONTINUE';
   trainingFailuresAllotted = 10;
   trainingsFailed = 0;
 

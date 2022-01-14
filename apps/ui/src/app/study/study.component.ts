@@ -31,6 +31,7 @@ import { STUDY_INSTRUCTIONS } from './study-instructions';
   providers: []
 })
 export class StudyComponent implements OnInit {
+  abandonmentEnabled = false;
   blocks: ComponentType<BlockComponent>[] = [
     PreTestBlockComponent,
     ForcedChoiceBlockComponent,
@@ -38,7 +39,6 @@ export class StudyComponent implements OnInit {
     TrainingNetworksBlockComponent
   ];
   complete = false;
-  completeDialogShown = false;
   @ViewChild('container', { read: ViewContainerRef, static: true }) container?: ViewContainerRef;
   instructions = STUDY_INSTRUCTIONS;
   showInstructions = true;
@@ -61,7 +61,10 @@ export class StudyComponent implements OnInit {
     const blockInstance = componentRef.instance;
     blockInstance.studyConfig = this.studyConfigSvc.config;
 
+    blockInstance.started.pipe(first(), untilDestroyed(this)).subscribe(() => this.abandonmentEnabled = true);
+
     blockInstance.completed.pipe(first(), tap(({ failed }) => {
+      this.abandonmentEnabled = false;
       if (failed) {
         this.showCompleteDialog('failed');
       } else if (this.blocks.length) {
@@ -86,7 +89,6 @@ export class StudyComponent implements OnInit {
   }
 
   showCompleteDialog(status: ReportStatus) {
-    this.completeDialogShown = true;
     const { participantId } = this.studyConfigSvc;
     const text = status === 'abandoned' ? `STUDY ABANDONED!\n\n PARTICIPANT ID:\n ${participantId}` :
       `THANKS FOR PARTICIPATING!\n\n PARTICIPANT ID:\n ${participantId}`;
@@ -104,8 +106,9 @@ export class StudyComponent implements OnInit {
   showPreSurvey() {
     this.surveySvc.showPreSurvey(this.studyConfigSvc.participantId).pipe(tap(() => {
       fromEvent(this.document, 'visibilitychange').pipe(
-        filter(() => this.document.hidden && !this.completeDialogShown),
+        filter(() => this.document.hidden && this.abandonmentEnabled),
         tap(() => {
+          this.abandonmentEnabled = false;
           this.container?.clear();
           this.showCompleteDialog('abandoned');
         }),

@@ -42,6 +42,7 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
   name = 'Operant Choice';
   numAllottedTimeouts = 1;
   numTimeouts = 0;
+  startInstructions = 'TAKE A BREAK.\n CLICK TO CONTINUE';
   stimuliComparisonCopies = 2;
   timeout?: NodeJS.Timeout;
 
@@ -343,6 +344,7 @@ export class OperantChoiceBlockComponent extends BlockComponent implements OnIni
   start() {
     this.prompt(this.startInstructions, false, TRIAL_DELAY_INTERVAL_MS)
       .subscribe(() => {
+        this.started.next()
         this.nextTrial();
       });
   }
