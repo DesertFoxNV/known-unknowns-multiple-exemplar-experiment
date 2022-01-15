@@ -29,7 +29,7 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
   probeFailuresAllotted = 2;
   probesFailed = 0;
   sequentialCorrectTarget = 23;
-  startInstructions = 'TAKE A BREAK. CLICK TO CONTINUE';
+  startInstructions = 'TAKE A BREAK. 50% COMPLETE. CLICK TO CONTINUE';
   timeout?: NodeJS.Timeout;
 
   /**
@@ -195,7 +195,7 @@ export class TrainingNetworksBlockComponent extends BlockComponent implements On
     if (this.trials.length === 0) this.reset();
     this.prompt(this.startInstructions, false, TRIAL_DELAY_INTERVAL_MS)
       .subscribe(() => {
-        this.started.next()
+        this.started.next();
         this.nextTrial();
       });
   }

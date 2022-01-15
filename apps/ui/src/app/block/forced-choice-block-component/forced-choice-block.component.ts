@@ -24,7 +24,7 @@ export class ForcedChoiceBlockComponent extends BlockComponent implements OnInit
   numProbeTrials = 10;
   probeFailuresAllotted = 10;
   probesFailed = 0;
-  startInstructions = 'TAKE A BREAK. CLICK TO CONTINUE';
+  startInstructions = 'TAKE A BREAK. 14% COMPLETE. CLICK TO CONTINUE';
   trainingFailuresAllotted = 10;
   trainingsFailed = 0;
 
