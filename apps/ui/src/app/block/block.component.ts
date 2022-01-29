@@ -271,7 +271,6 @@ export class BlockComponent {
 
   /***
    * Resets block index, binds to the view, and shows a message.
-   * @param {BlockComponent} component
    */
   start() {
     if (this.trials.length === 0) this.reset();

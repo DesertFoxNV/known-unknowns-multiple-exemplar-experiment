@@ -3,8 +3,8 @@ import { DOCUMENT } from '@angular/common';
 import { Component, ComponentFactoryResolver, Inject, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { fromEvent, timer } from 'rxjs';
-import { filter, first, switchMap, tap } from 'rxjs/operators';
+import { timer } from 'rxjs';
+import { first, switchMap, tap } from 'rxjs/operators';
 import {
   BlockButtonDialogComponent, BlockButtonDialogData
 } from '../block/block-button-dialog/block-button-dialog.component';
@@ -104,17 +104,7 @@ export class StudyComponent implements OnInit {
   }
 
   showPreSurvey() {
-    this.surveySvc.showPreSurvey(this.studyConfigSvc.participantId).pipe(tap(() => {
-      fromEvent(this.document, 'visibilitychange').pipe(
-        filter(() => this.document.hidden && this.abandonmentEnabled),
-        tap(() => {
-          this.abandonmentEnabled = false;
-          this.container?.clear();
-          this.showCompleteDialog('abandoned');
-        }),
-        untilDestroyed(this)
-      ).subscribe();
-    })).subscribe(() => this.nextBlock());
+    this.surveySvc.showPreSurvey(this.studyConfigSvc.participantId).subscribe(() => this.nextBlock());
   }
 
 }
